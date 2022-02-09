@@ -1,17 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Connection
 {
     #region public fields
     //Relative normal direction and position to the library part
-    Vector3 Position;
-    Vector3 Normal;
-    float Length;
+    public Vector3 Position;
+    public Vector3 Normal;
+    public float Length;
 
     //Available becomes false if the connection has been used or if no part can be added to the connection
-    bool Available;
+    public bool Available;
 
     #endregion
 
@@ -24,9 +22,7 @@ public class Connection
         Position = position;
         Normal = normal;
         Length = length;
-
     }
-
     #endregion
     #region public functions
 

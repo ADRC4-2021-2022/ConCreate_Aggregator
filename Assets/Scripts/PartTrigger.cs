@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PartTrigger : MonoBehaviour
 {
     #region public fields
-    Part ConnectedPart;
+    public Part ConnectedPart;
 
 
     #endregion
@@ -15,7 +13,7 @@ public class PartTrigger : MonoBehaviour
     #endregion
     #region Monobehaviour functions
 
-  
+
     #endregion
 
     #region public functions
