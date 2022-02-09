@@ -5,6 +5,12 @@ using System.Collections;
 
 public class Aggregator : MonoBehaviour
 {
+    #region Serialized fields
+    [SerializeField]
+    private float connectionTollerance = 100f;
+
+    #endregion
+
     #region public fields
 
     #endregion
@@ -19,6 +25,24 @@ public class Aggregator : MonoBehaviour
     //All the connection that are available in your building
     //Regenerate this list every time you place a part
     public List<Connection> _connections = new List<Connection>();
+    public List<Connection> _availableConnections
+    {
+        get
+        {
+            return _connections.Where(c => c.Available).ToList();
+        }
+    }
+
+    /// <summary>
+    /// All the connections that are not part of a place block
+    /// </summary>
+    public List<Connection> _libraryConnections
+    {
+        get
+        {
+            return _connections.Where(c => c.LibraryConnection).ToList();
+        }
+    }
 
     #endregion
     #region Monobehaviour functions
@@ -26,14 +50,14 @@ public class Aggregator : MonoBehaviour
     void Start()
     {
         //Gather all the prefabs for the parts and load the connections
-        _library.Add(new Part(Resources.Load("Prefab/01P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefab/02P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefab/03P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefab/04P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefab/05P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefab/06P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefab/07P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefab/08P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/01P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/02P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/03P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/04P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/05P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/06P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/07P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/08P") as GameObject));
 
         foreach (var part in _library)
         {
@@ -42,8 +66,57 @@ public class Aggregator : MonoBehaviour
                 _connections.Add(connection);
             }
         }
+
+        PlaceFirstBlock();
+        FindNextConnection();
     }
 
+    private void PlaceFirstBlock()
+    {
+        int rndPartIndex = Random.Range(0, _library.Count);
+        Part randomPart = _library[rndPartIndex];
+
+        int rndY = Random.Range(0, 360);
+
+        randomPart.PlaceFirstPart(Vector3.zero, Quaternion.Euler(new Vector3(0, rndY, 0)));
+    }
+
+    private void FindNextConnection()
+    {
+        //Get a random connection out of the available connections list
+        int rndConnectionIndex = Random.Range(0, _availableConnections.Count);
+        Connection randomConnection = _availableConnections[rndConnectionIndex];
+        randomConnection.NameGameObject("NextConnection");
+
+        //Get the connection tolerance
+        float connectionLength = randomConnection.Length;
+        float minLength = connectionLength - connectionTollerance;
+        float maxLength = connectionLength + connectionTollerance;
+
+        //Find a similar connection
+        List<Connection> possibleConnections = new List<Connection>();
+
+        foreach (var connection in _libraryConnections)
+        {
+            if (connection.Length > minLength && connection.Length < maxLength)
+            {
+                possibleConnections.Add(connection);
+            }
+        }
+
+        //The line below is a shorthand notation for the foreach loop above
+        //List<Connection> possibleConnections = _libraryConnections.Where(c => c.Length > minLength && c.Length < maxLength).ToList();
+
+        //Get a random connection out of the available connections list
+        int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
+        Connection rndPossibleConnection = possibleConnections[rndPossibleConnectionIndex];
+
+        rndPossibleConnection.ThisPart.PlacePart(randomConnection.Position,/*randomConnection.Normal*/Quaternion.identity, rndPossibleConnection);
+
+
+
+    }
+    /*
     //Place a random part in a random position
     //GO.transform.randomPosition etc
     private Voxelgrid _grid;
@@ -56,12 +129,12 @@ public class Aggregator : MonoBehaviour
 
         return partToPlace.transform.position = position;
 
-    }
-#endregion
+    }*/
+    #endregion
 
-#region public functions
-public void SetNextPart()
-{
+    #region public functions
+    public void SetNextPart()
+    {/*
         //Get the list of available connection in your building
         List<Connection> connections = new List<Connection>();
         List<Connection> Connection = new List<Connection> (connections.Where(c => c.Available).ToList());
@@ -75,8 +148,15 @@ public void SetNextPart()
         //FOREACH PART IN _LIBRARY --> FOREACH CONNECTION IN PART.CONNECTIONS
         //Select a random part out of the fitting list
         //IF CONNECTIONS.NORMAL && % <CONNECTIONS.LENGTH< %
-        public Range range1(int n voxels, int n voxels -3);
-        public Range range2(int n voxels, int n voxels +3);
+
+        Vector2 range1 = new Vector2(5, 10);
+        float dist = Mathf.Abs( range1.x - range1.y);
+
+
+
+
+        //Range range1(int n voxels, int n voxels -3);
+         //Range range2(int n voxels, int n voxels +3);
 
         foreach (var part in parts)
         {
@@ -84,7 +164,8 @@ public void SetNextPart()
             {
                 List<Part> randomParts = parts.OrderBy(x => Random.value).ToList();
                 randomParts.First();
-                if (connection.Normal && range1 < connection.Length < range2)
+                if(true && true)
+                if (range1 < connection.Length )
                 {
                     partToPlace.PlacePart();
                     Coroutine();
@@ -113,7 +194,9 @@ public void SetNextPart()
         //_library.remove(partToPlace);
         //if none of the parts work, disable connection and try next connection
         //connection.Available = false;
-}
+
+        */
+    }
 
     #endregion
 

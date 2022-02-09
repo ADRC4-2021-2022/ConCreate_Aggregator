@@ -8,8 +8,9 @@ public class Part
 {
     #region public fields
     public List<Connection> Connections = new List<Connection>();
-    public GameObject GOPartPrefab;
+    public GameObject GOPart;
 
+    public bool Placed = false;
     public bool Fitting;
 
     #endregion
@@ -23,17 +24,115 @@ public class Part
     #region constructors
     public Part(GameObject partPrefab)
     {
-        GOPartPrefab = partPrefab;
-        _connectedGOPart = GOPartPrefab.AddComponent<PartTrigger>();
+        
+
+        GOPart = GameObject.Instantiate(partPrefab, Vector3.zero, Quaternion.identity);
+        GOPart.SetActive(false);
+
+        _connectedGOPart = GOPart.AddComponent<PartTrigger>();
         _connectedGOPart.ConnectedPart = this;
+
         LoadPartConnections();
     }
     #endregion
 
     #region public functions
+
+
+    public void PlaceFirstPart(Vector3 position, Quaternion rotation)
+    {
+        //Create the part gameobject in the scene
+        GOPart.name = "FirstPart";
+        GOPart.SetActive(true);
+
+        //Set all connections available (except for the one used)
+        foreach (var connection in Connections)
+        {
+            connection.Available = true;
+        }
+
+        //set the part as placed
+
+        Placed = true;
+
+    }
+
+    public void PlacePart(Vector3 position, Quaternion rotation, Connection anchorConnection)
+    {
+        anchorConnection.NameGameObject("anchor");
+        GOPart.SetActive(true);
+          
+      //Move the part so the anchor point is on the part pivot point
+      Vector3 movementAnchor =  GOPart.transform.position - anchorConnection.Position;
+        Debug.Log(movementAnchor.magnitude);        
+
+        //Movement part to used connection
+        Vector3 movement = position - GOPart.transform.position;
+        var test = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        test.transform.position = GOPart.transform.position;
+        Debug.Log(movement.magnitude);
+        GOPart.transform.Translate(movementAnchor + movement);
+
+        /* Rotation doesn't work yet. this is a certain direction.
+        //Rotate the part according to the anchorConnection rotation and the rotation
+        Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
+        float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
+        
+        GOPart.transform.RotateAround(anchorConnection.Position,upAxis , angle);
+        */
+
+        //Create the part gameobject in the scene
+
+
+        //Set all connections available (except for the one used)
+        foreach (var connection in Connections)
+        {
+            if (connection != anchorConnection)
+            {
+                connection.Available = true;
+            }
+        }
+
+        //set the part as placed
+        Placed = true;
+    }
+
+    /// <summary>
+    /// Get the quaternion for rotation between two vectors. (this only take one axis into account)
+    /// </summary>
+    /// <param name="origin">Original orientation vector</param>
+    /// <param name="target">Target orientation vector</param>
+    public Quaternion RotateFromTo(Vector3 origin, Vector3 target)
+    {
+        origin.Normalize();
+        target.Normalize();
+
+        float dot = Vector3.Dot(origin, target);
+        float s = Mathf.Sqrt((1 + dot) * 2);
+        float invs = 1 / s;
+
+        Vector3 c = Vector3.Cross(origin, target);
+
+        Quaternion rotation = new Quaternion();
+
+        rotation.x = c.x * invs;
+        rotation.y = c.y * invs;
+        rotation.z = c.z * invs;
+        rotation.w = s * 0.5f;
+
+        rotation.Normalize();
+
+        return rotation;
+
+        //source: https://stackoverflow.com/questions/21828801/how-to-find-correct-rotation-from-one-vector-to-another
+    }
+
+    /*
     public bool PlacePart(Connection connection)
     {
         //Position your part on a certain connection
+        PlacePart(connection.Position, connection.Normal, connection);
+
         //Check if part intersects with other parts
         //option 1: Turn all the part colliders in your building into triggers
         //Check when instantiation the new part prefab if any of the parts has been triggered
@@ -52,14 +151,14 @@ public class Part
 
         //Return if the part can is placed or not
         return false;
-    }
+    }*/
 
-    IEnumerator Coroutine()
+    /*IEnumerator Coroutine()
     {
         SetNextPart();
 
         yield return new WaitForSeconds(0.001f);
-    }
+    }*/
 
     #endregion
     #region private functions
@@ -68,12 +167,12 @@ public class Part
     private void LoadPartConnections()
     {
         //Find all instances of ConnectionNormal prefab in the children of your GOPartPrefab using the tags
-        List<GameObject> connectionPrefabs = GetChildObject(GOPartPrefab.transform, "ConnectionNormal");
+        List<GameObject> connectionPrefabs = GetChildObject(GOPart.transform, "ConnectionNormal");
 
         //Create a connection object for each connectionPrefab using its transform position, rotation and x scale as length
         foreach (var connectionGO in connectionPrefabs)
         {
-            Connections.Add(new Connection(connectionGO.transform.position, connectionGO.transform.rotation, connectionGO.transform.localScale.x));
+            Connections.Add(new Connection(connectionGO, this));
         }
     }
 
