@@ -114,4 +114,27 @@ public static class Util
         int z = Random.Range(0, 4) * 90;
         return Quaternion.Euler(x, y, z);
     }
+
+    public static Quaternion RotateFromTo(Vector3 origin, Vector3 target)
+    {
+        origin.Normalize();
+        target.Normalize();
+
+        float dot = Vector3.Dot(origin, target);
+        float s = Mathf.Sqrt((1 + dot) * 2);
+        float invs = 1 / s;
+
+        Vector3 c = Vector3.Cross(origin, target);
+
+        Quaternion rotation = new Quaternion();
+
+        rotation.x = c.x * invs;
+        rotation.y = c.y * invs;
+        rotation.z = c.z * invs;
+        rotation.w = s * 0.5f;
+
+        rotation.Normalize();
+
+        return rotation;
+    }
 }

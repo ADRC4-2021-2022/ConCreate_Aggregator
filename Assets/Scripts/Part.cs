@@ -70,14 +70,22 @@ public class Part
         Debug.Log(movement.magnitude);
         GOPart.transform.Translate(movementAnchor + movement);
 
+        //Rotation
+        //var normalTarget = anchorConnection.GOConnection.transform.rotation * Vector3.up;
+        //Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
+        //float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
+        Vector3 origin = GOPart.transform.rotation * Vector3.up;
+        Vector3 target = anchorConnection.GOConnection.transform.rotation * Vector3.up;
+        Quaternion finalRotation = Util.RotateFromTo(origin, target);
+        _connectedGOPart.transform.localRotation = rotation;
+
         /*Rotation doesn't work yet. this is a certain direction.
         //Rotate the part according to the anchorConnection rotation and the rotation
         Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
         float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
         
-        GOPart.transform.RotateAround(anchorConnection.Position,upAxis , angle);
+        GOPart.transform.RotateAround(anchorConnection.Position,upAxis, angle);
         */
-
 
         //Create the part gameobject in the scene
 
@@ -94,6 +102,12 @@ public class Part
         //set the part as placed
         Placed = true;
     }
+
+    /*public void MoveStartToPosition(Vector3 target)
+    {
+        //Move start point to target
+        _connectedGOPart.transform.position = target;
+    }*/
 
     /// <summary>
     /// Get the quaternion for rotation between two vectors. (this only take one axis into account)
