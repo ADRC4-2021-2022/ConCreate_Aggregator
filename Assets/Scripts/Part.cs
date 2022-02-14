@@ -11,7 +11,7 @@ public class Part
     public GameObject GOPart;
 
     public bool Placed = false;
-    public bool Fitting;
+    //public bool Fitting;
 
     #endregion
 
@@ -24,8 +24,6 @@ public class Part
     #region constructors
     public Part(GameObject partPrefab)
     {
-        
-
         GOPart = GameObject.Instantiate(partPrefab, Vector3.zero, Quaternion.identity);
         GOPart.SetActive(false);
 
@@ -52,7 +50,6 @@ public class Part
         }
 
         //set the part as placed
-
         Placed = true;
 
     }
@@ -62,8 +59,8 @@ public class Part
         anchorConnection.NameGameObject("anchor");
         GOPart.SetActive(true);
           
-      //Move the part so the anchor point is on the part pivot point
-      Vector3 movementAnchor =  GOPart.transform.position - anchorConnection.Position;
+        //Move the part so the anchor point is on the part pivot point
+        Vector3 movementAnchor =  GOPart.transform.position - anchorConnection.Position;
         Debug.Log(movementAnchor.magnitude);        
 
         //Movement part to used connection
@@ -73,13 +70,14 @@ public class Part
         Debug.Log(movement.magnitude);
         GOPart.transform.Translate(movementAnchor + movement);
 
-        /* Rotation doesn't work yet. this is a certain direction.
+        /*Rotation doesn't work yet. this is a certain direction.
         //Rotate the part according to the anchorConnection rotation and the rotation
         Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
         float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
         
         GOPart.transform.RotateAround(anchorConnection.Position,upAxis , angle);
         */
+
 
         //Create the part gameobject in the scene
 

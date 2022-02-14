@@ -38,8 +38,6 @@ public class Connection
             return ThisPart.Placed == false;
         }
     }
-
-
     #endregion
 
     #region private fields

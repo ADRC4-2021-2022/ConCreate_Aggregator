@@ -50,14 +50,14 @@ public class Aggregator : MonoBehaviour
     void Start()
     {
         //Gather all the prefabs for the parts and load the connections
-        _library.Add(new Part(Resources.Load("Prefabs/01P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/02P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/03P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/04P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/05P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/06P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/07P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/08P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/Parts/01P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/Parts/02P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/Parts/03P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/Parts/04P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/Parts/05P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/Parts/06P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/Parts/07P") as GameObject));
+        _library.Add(new Part(Resources.Load("Prefabs/Parts/08P") as GameObject));
 
         foreach (var part in _library)
         {
@@ -66,7 +66,6 @@ public class Aggregator : MonoBehaviour
                 _connections.Add(connection);
             }
         }
-
         PlaceFirstBlock();
         FindNextConnection();
     }
