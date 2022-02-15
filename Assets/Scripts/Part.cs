@@ -1,8 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
-using System.Linq;
 
 public class Part
 {
@@ -57,10 +54,10 @@ public class Part
     {
         anchorConnection.NameGameObject("anchor");
         GOPart.SetActive(true);
-          
+
         //Move the part so the anchor point is on the part pivot point
-        Vector3 movementAnchor =  GOPart.transform.position - anchorConnection.Position;
-        Debug.Log(movementAnchor.magnitude);        
+        Vector3 movementAnchor = GOPart.transform.position - anchorConnection.Position;
+        Debug.Log(movementAnchor.magnitude);
 
         //Movement part to used connection
         Vector3 movement = position - GOPart.transform.position;
@@ -74,12 +71,13 @@ public class Part
         pivot.transform.position = position;
         GOPart.transform.parent = pivot.transform;
 
-        float angle = 45f;
+        //Quaternion angle = Quaternion.Euler(-rotation.eulerAngles);
         //Vector3 orientation = position.normalized;
         //Vector3 orientation;
 
-        pivot.transform.Rotate(new Vector3(0, angle, 0));
-        //pivot.transform.LookAt(GOPart.transform.position, orientation);
+        //pivot.transform.Rotate(new Vector3(0, angle, 0));
+        //pivot.transform.LookAt(GOPart.transform.position, Vector3.up);
+        anchorConnection.GOConnection.transform.LookAt(GOPart.transform.position, Vector3.up);
 
         // remove the parent from the part
         GOPart.transform.parent = null;
@@ -89,7 +87,7 @@ public class Part
         //var normalTarget = anchorConnection.GOConnection.transform.rotation * Vector3.up;
         //Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
         //float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
-        
+
         //Vector3 origin = GOPart.transform.rotation * Vector3.up;
         //Vector3 target = anchorConnection.GOConnection.transform.rotation * Vector3.up;
         //Quaternion finalRotation = Util.RotateFromTo(origin, target);

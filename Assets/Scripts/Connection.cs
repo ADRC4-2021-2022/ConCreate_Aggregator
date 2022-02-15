@@ -22,6 +22,14 @@ public class Connection
             return GOConnection.transform.rotation * Vector3.forward;
         }
     }
+
+    public Quaternion NormalAsQuaternion
+    {
+        get
+        {
+            return GOConnection.transform.rotation;
+        }
+    }
     public float Length;
     public Part ThisPart;
 

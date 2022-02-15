@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-using System.Collections;
+using UnityEngine;
 
 public class Aggregator : MonoBehaviour
 {
@@ -38,7 +37,7 @@ public class Aggregator : MonoBehaviour
         }
     }
 
-  
+
     //All the connections that are not part of a place block
     public List<Connection> _libraryConnections
     {
@@ -114,8 +113,9 @@ public class Aggregator : MonoBehaviour
         //Get a random connection out of the available connections list
         int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
         Connection rndPossibleConnection = possibleConnections[rndPossibleConnectionIndex];
+        Quaternion rotation = Quaternion.Euler(0, randomConnection.NormalAsQuaternion.y, 0);
 
-        rndPossibleConnection.ThisPart.PlacePart(randomConnection.Position,/*randomConnection.Normal*/Quaternion.identity, rndPossibleConnection);
+        rndPossibleConnection.ThisPart.PlacePart(randomConnection.Position, rotation, rndPossibleConnection);
     }
     #endregion
 
@@ -125,20 +125,15 @@ public class Aggregator : MonoBehaviour
         //Get the list of available connections in your building
         List<Connection> connections = _connections;
 
-        for (int i = 0; i < _connections.Count; i++)
-        {
-            var currentConnection = _connections[i];
-            int randomIndex = Random.Range(i, _connections.Count);
-            _connections[i] = _connections[randomIndex];
-            _connections[randomIndex] = currentConnection;
-        }
+        connections.Shuffle();
 
         //List<Connection> shuffledList = _connections.OrderBy(x => Random.value).ToList();
         //Select a random connection
+        Connection randomConnection = connections[0];
         //var randomConnection = shuffledList[1];
         //find all the parts that have a fitting connection
-        Vector3 position = new Vector3();
-        Quaternion rotation = new Quaternion();
+        Vector3 position = randomConnection.Position;
+        Quaternion rotation = randomConnection.NormalAsQuaternion;
 
         foreach (Part partToPlace in _library)
         {

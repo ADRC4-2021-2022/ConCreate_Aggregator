@@ -12,7 +12,10 @@ public class PartTrigger : MonoBehaviour
 
     #endregion
     #region Monobehaviour functions
+    private void OnTriggerEnter(Collider other)
+    {
 
+    }
 
     #endregion
 

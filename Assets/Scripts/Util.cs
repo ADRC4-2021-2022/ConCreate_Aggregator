@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +10,7 @@ public static class Util
     /// <param name="v">the Vector3 variable this method is applied to</param>
     /// <returns>the rounded Vector3Int value of the given Vector3</returns>
     public static Vector3Int ToVector3IntRound(this Vector3 v) => new Vector3Int(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y), Mathf.RoundToInt(v.z));
-    
+
 
     /// <summary>
     /// List of the Carthesian directions (along the x, y, z axis)
@@ -136,5 +135,18 @@ public static class Util
         rotation.Normalize();
 
         return rotation;
+    }
+
+    public static void Shuffle<T>(this IList<T> ts)
+    {
+        var count = ts.Count;
+        var last = count - 1;
+        for (var i = 0; i < last; ++i)
+        {
+            var r = Random.Range(i, count);
+            var tmp = ts[i];
+            ts[i] = ts[r];
+            ts[r] = tmp;
+        }
     }
 }
