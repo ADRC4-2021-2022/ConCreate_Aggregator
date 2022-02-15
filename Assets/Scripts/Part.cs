@@ -70,14 +70,28 @@ public class Part
         Debug.Log(movement.magnitude);
         GOPart.transform.Translate(movementAnchor + movement);
 
+        var pivot = new GameObject("pivot");
+        pivot.transform.position = position;
+        GOPart.transform.parent = pivot.transform;
+
+        //float angle;
+        //Vector3 orientation;
+
+        //pivot.transform.Rotate(new Vector3(0, angle, 0));
+        //pivot.transform.LookAt();
+
+        // remove the parent from the part
+        GOPart.transform.parent = null;
+        GameObject.Destroy(pivot);
         //Rotation
         //var normalTarget = anchorConnection.GOConnection.transform.rotation * Vector3.up;
         //Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
         //float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
-        Vector3 origin = GOPart.transform.rotation * Vector3.up;
-        Vector3 target = anchorConnection.GOConnection.transform.rotation * Vector3.up;
-        Quaternion finalRotation = Util.RotateFromTo(origin, target);
-        _connectedGOPart.transform.localRotation = rotation;
+        
+        //Vector3 origin = GOPart.transform.rotation * Vector3.up;
+        //Vector3 target = anchorConnection.GOConnection.transform.rotation * Vector3.up;
+        //Quaternion finalRotation = Util.RotateFromTo(origin, target);
+        //_connectedGOPart.transform.localRotation = rotation;
 
         /*Rotation doesn't work yet. this is a certain direction.
         //Rotate the part according to the anchorConnection rotation and the rotation
