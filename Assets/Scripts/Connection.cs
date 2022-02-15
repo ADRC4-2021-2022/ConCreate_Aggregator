@@ -3,7 +3,7 @@ using UnityEngine;
 public class Connection
 {
     #region public fields
-    
+
     public GameObject GOConnection;
     //Relative rotation and position to the library part
     public Vector3 Position

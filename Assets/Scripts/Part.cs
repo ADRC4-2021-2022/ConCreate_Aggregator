@@ -11,7 +11,6 @@ public class Part
     public GameObject GOPart;
 
     public bool Placed = false;
-    //public bool Fitting;
 
     #endregion
 
@@ -70,20 +69,23 @@ public class Part
         Debug.Log(movement.magnitude);
         GOPart.transform.Translate(movementAnchor + movement);
 
+        //Rotation 3
         var pivot = new GameObject("pivot");
         pivot.transform.position = position;
         GOPart.transform.parent = pivot.transform;
 
-        //float angle;
+        float angle = 45f;
+        //Vector3 orientation = position.normalized;
         //Vector3 orientation;
 
-        //pivot.transform.Rotate(new Vector3(0, angle, 0));
-        //pivot.transform.LookAt();
+        pivot.transform.Rotate(new Vector3(0, angle, 0));
+        //pivot.transform.LookAt(GOPart.transform.position, orientation);
 
         // remove the parent from the part
         GOPart.transform.parent = null;
         GameObject.Destroy(pivot);
-        //Rotation
+
+        //Rotation 2
         //var normalTarget = anchorConnection.GOConnection.transform.rotation * Vector3.up;
         //Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
         //float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
@@ -93,12 +95,13 @@ public class Part
         //Quaternion finalRotation = Util.RotateFromTo(origin, target);
         //_connectedGOPart.transform.localRotation = rotation;
 
+        //Rotation 1
         /*Rotation doesn't work yet. this is a certain direction.
         //Rotate the part according to the anchorConnection rotation and the rotation
         Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
         float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
         
-        GOPart.transform.RotateAround(anchorConnection.Position,upAxis, angle);
+        GOPart.transform.RotateAround(anchorCwonnection.Position,upAxis, angle);
         */
 
         //Create the part gameobject in the scene
@@ -168,11 +171,6 @@ public class Part
         //GOOGLE HOW TO CHECK IF GO COLLIDERS ARE COLLIDING
         //IF statement, if managed to place the part--> return true, otherwise return false
 
-        //option 2: Your building is voxelised
-        //Voxelise your new part
-        //Check how many voxels overlap with the allready used voxels
-        // This option gives you more controll over how much overlap you want to allow
-
         //Remove the part if it can't be placed
 
         //Return if the part can is placed or not
@@ -187,6 +185,7 @@ public class Part
     }*/
 
     #endregion
+
     #region private functions
     //after having a list of connections thanks to the tag, we loop through all the connections of the individual
     //part (prefab) and we add them into the list. each connection is characterized by position, rotation, x lenght
@@ -201,6 +200,17 @@ public class Part
             Connections.Add(new Connection(connectionGO, this));
         }
     }
+
+    /*private void OnTriggerEnter(Collider collider)
+    {
+        List<Part> _buildingParts = new List<Part>();
+        _buildingParts
+        GOPart.GetComponent<Collider>();
+        if ()
+        {
+
+        }
+    }*/
 
     public List<GameObject> GetChildObject(Transform parent, string tag)
     {
