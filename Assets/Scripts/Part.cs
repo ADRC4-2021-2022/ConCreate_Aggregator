@@ -20,8 +20,9 @@ public class Part
     #region constructors
     public Part(GameObject partPrefab)
     {
-        GOPart = GameObject.Instantiate(partPrefab, Vector3.zero, Quaternion.identity);
-        GOPart.SetActive(false);
+        GOPart = partPrefab;
+        //GOPart = GameObject.Instantiate(partPrefab, Vector3.zero, Quaternion.identity);
+        GOPart.SetActive(true);
 
         _connectedGOPart = GOPart.AddComponent<PartTrigger>();
         _connectedGOPart.ConnectedPart = this;

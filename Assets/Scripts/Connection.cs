@@ -19,7 +19,7 @@ public class Connection
         get
         {
             Debug.Log(GOConnection.transform.localRotation.eulerAngles);
-            return GOConnection.transform.rotation * Vector3.forward;
+            return GOConnection.transform.localToWorldMatrix * Vector3.forward;
         }
     }
 
