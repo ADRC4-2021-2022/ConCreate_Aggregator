@@ -84,7 +84,7 @@ public class Aggregator : MonoBehaviour
         randomPart.PlaceFirstPart(Vector3.zero, Quaternion.Euler(new Vector3(0, rndY, 0)));
     }
 
-    private void FindNextConnection()
+    private bool FindNextConnection()
     {
         //Get a random connection out of the available connections list
         int rndConnectionIndex = Random.Range(0, _availableConnections.Count);
@@ -107,15 +107,21 @@ public class Aggregator : MonoBehaviour
             }
         }
 
+        if(possibleConnections.Count == 0)
+        {
+            Debug.Log("No connections found within the dimension range");
+            return false;
+        }
         //The line below is a shorthand notation for the foreach loop above
         //List<Connection> possibleConnections = _libraryConnections.Where(c => c.Length > minLength && c.Length < maxLength).ToList();
 
         //Get a random connection out of the available connections list
         int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
         Connection rndPossibleConnection = possibleConnections[rndPossibleConnectionIndex];
-        Quaternion rotation = Quaternion.Euler(0, randomConnection.NormalAsQuaternion.y, 0);
 
-        rndPossibleConnection.ThisPart.PlacePart(randomConnection.Position, rotation, rndPossibleConnection);
+        rndPossibleConnection.ThisPart.PlacePart(randomConnection, rndPossibleConnection);
+
+        return true;
     }
     #endregion
 
@@ -139,7 +145,7 @@ public class Aggregator : MonoBehaviour
         {
             foreach (Connection connection in possibleConnections)
             {
-                partToPlace.PlacePart(position, rotation, anchorConnection);
+                partToPlace.PlacePart(connection, anchorConnection);
                 _buildingParts.Add(partToPlace);
             }
         }

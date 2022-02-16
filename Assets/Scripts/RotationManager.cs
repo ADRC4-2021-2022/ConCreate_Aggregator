@@ -32,10 +32,10 @@ public class RotationManager : MonoBehaviour
         int rndIndex2 = Random.Range(0, _targetPart.Connections.Count);
         _targetConnection = _targetPart.Connections[rndIndex2];
 
-        SetConnectionMaterials(_sourceConnection,_sourceMaterial);
-        SetConnectionMaterials(_targetConnection,_targetMaterial);
+        SetConnectionMaterials(_sourceConnection, _sourceMaterial);
+        SetConnectionMaterials(_targetConnection, _targetMaterial);
 
-        
+
     }
 
     // Update is called once per frame
@@ -63,7 +63,7 @@ public class RotationManager : MonoBehaviour
         //}
         if (GUI.Button(new Rect(10, 120, 200, 50), "Rotate parrent"))
         {
-            RotateParentObjects();
+            Util.RotatePositionFromToUsingParent(_sourceConnection,_targetConnection);
         }
     }
 
@@ -72,28 +72,7 @@ public class RotationManager : MonoBehaviour
         connection.GOConnection.GetComponentInChildren<MeshRenderer>().material = material;
     }
 
-    private void RotateParentObjects()
-    {
-        GameObject connectionParrent =  
-            GameObject.Instantiate(_sourceConnection.GOConnection, 
-            _sourceConnection.GOConnection.transform.position,
-            _sourceConnection.GOConnection.transform.rotation);
-
-        _sourcePart.GOPart.transform.SetParent(connectionParrent.transform);
-        //Set to origin
-        connectionParrent.transform.position = Vector3.zero;
-        connectionParrent.transform.rotation = Quaternion.identity;
-        Quaternion rotate180 = Quaternion.LookRotation(Vector3.back,Vector3.up);
-
-        //connectionParrent.transform.Rotate(0, 180, 0);
-
-        //connectionParrent.transform.rotation = Quaternion.Euler(Vector3.Scale(_targetConnection.NormalAsQuaternion.eulerAngles , new Vector3(1,-1,1)));
-        connectionParrent.transform.rotation =  _targetConnection.NormalAsQuaternion * rotate180;
-        connectionParrent.transform.position = _targetConnection.Position;
-
-        _sourcePart.GOPart.transform.parent = null;
-        GameObject.Destroy(connectionParrent);
-    }
+    
 
     //private void RotateMatrices()
     //{

@@ -21,8 +21,8 @@ public class Part
     public Part(GameObject partPrefab)
     {
         GOPart = partPrefab;
-        //GOPart = GameObject.Instantiate(partPrefab, Vector3.zero, Quaternion.identity);
-        GOPart.SetActive(true);
+        GOPart = GameObject.Instantiate(partPrefab, Vector3.zero, Quaternion.identity);
+        GOPart.SetActive(false);
 
         _connectedGOPart = GOPart.AddComponent<PartTrigger>();
         _connectedGOPart.ConnectedPart = this;
@@ -51,60 +51,14 @@ public class Part
 
     }
 
-    public void PlacePart(Vector3 position, Quaternion rotation, Connection anchorConnection)
+    public void PlacePart(Connection targetConnection, Connection anchorConnection)
     {
+        //Enable the part gameobject in the scene
         anchorConnection.NameGameObject("anchor");
         GOPart.SetActive(true);
 
-        //Move the part so the anchor point is on the part pivot point
-        Vector3 movementAnchor = GOPart.transform.position - anchorConnection.Position;
-        Debug.Log(movementAnchor.magnitude);
-
-        //Movement part to used connection
-        Vector3 movement = position - GOPart.transform.position;
-        var test = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        test.transform.position = GOPart.transform.position;
-        Debug.Log(movement.magnitude);
-        GOPart.transform.Translate(movementAnchor + movement);
-
-        //Rotation 3
-        var pivot = new GameObject("pivot");
-        pivot.transform.position = position;
-        GOPart.transform.parent = pivot.transform;
-
-        //Quaternion angle = Quaternion.Euler(-rotation.eulerAngles);
-        //Vector3 orientation = position.normalized;
-        //Vector3 orientation;
-
-        //pivot.transform.Rotate(new Vector3(0, angle, 0));
-        //pivot.transform.LookAt(GOPart.transform.position, Vector3.up);
-        anchorConnection.GOConnection.transform.LookAt(GOPart.transform.position, Vector3.up);
-
-        // remove the parent from the part
-        GOPart.transform.parent = null;
-        GameObject.Destroy(pivot);
-
-        //Rotation 2
-        //var normalTarget = anchorConnection.GOConnection.transform.rotation * Vector3.up;
-        //Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
-        //float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
-
-        //Vector3 origin = GOPart.transform.rotation * Vector3.up;
-        //Vector3 target = anchorConnection.GOConnection.transform.rotation * Vector3.up;
-        //Quaternion finalRotation = Util.RotateFromTo(origin, target);
-        //_connectedGOPart.transform.localRotation = rotation;
-
-        //Rotation 1
-        /*Rotation doesn't work yet. this is a certain direction.
-        //Rotate the part according to the anchorConnection rotation and the rotation
-        Vector3 upAxis = (anchorConnection.GOConnection.transform.rotation * Vector3.up).normalized;
-        float angle = anchorConnection.GOConnection.transform.rotation.eulerAngles.y - rotation.eulerAngles.y;
         
-        GOPart.transform.RotateAround(anchorCwonnection.Position,upAxis, angle);
-        */
-
-        //Create the part gameobject in the scene
-
+        Util.RotatePositionFromToUsingParent(anchorConnection, targetConnection);
 
         //Set all connections available (except for the one used)
         foreach (var connection in Connections)
@@ -125,35 +79,7 @@ public class Part
         _connectedGOPart.transform.position = target;
     }*/
 
-    /// <summary>
-    /// Get the quaternion for rotation between two vectors. (this only take one axis into account)
-    /// </summary>
-    /// <param name="origin">Original orientation vector</param>
-    /// <param name="target">Target orientation vector</param>
-    public Quaternion RotateFromTo(Vector3 origin, Vector3 target)
-    {
-        origin.Normalize();
-        target.Normalize();
-
-        float dot = Vector3.Dot(origin, target);
-        float s = Mathf.Sqrt((1 + dot) * 2);
-        float invs = 1 / s;
-
-        Vector3 c = Vector3.Cross(origin, target);
-
-        Quaternion rotation = new Quaternion();
-
-        rotation.x = c.x * invs;
-        rotation.y = c.y * invs;
-        rotation.z = c.z * invs;
-        rotation.w = s * 0.5f;
-
-        rotation.Normalize();
-
-        return rotation;
-
-        //source: https://stackoverflow.com/questions/21828801/how-to-find-correct-rotation-from-one-vector-to-another
-    }
+    
 
     /*
     public bool PlacePart(Connection connection)
