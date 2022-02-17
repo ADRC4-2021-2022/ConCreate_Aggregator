@@ -126,17 +126,6 @@ public class Part
         }
     }
 
-    /*private void OnTriggerEnter(Collider collider)
-    {
-        List<Part> _buildingParts = new List<Part>();
-        _buildingParts
-        GOPart.GetComponent<Collider>();
-        if ()
-        {
-
-        }
-    }*/
-
     public List<GameObject> GetChildObject(Transform parent, string tag)
     {
         List<GameObject> taggedChildren = new List<GameObject>();

@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Collections;
 
 public class Aggregator : MonoBehaviour
 {
     #region Serialized fields
     [SerializeField]
-    private float connectionTollerance = 100f;
+    private float connectionTollerance = 300f;
 
     #endregion
 
@@ -28,7 +29,6 @@ public class Aggregator : MonoBehaviour
     //Similar connections
     public List<Connection> possibleConnections = new List<Connection>();
 
-    Connection anchorConnection;
     public List<Connection> _availableConnections
     {
         get
@@ -71,7 +71,7 @@ public class Aggregator : MonoBehaviour
         }
         PlaceFirstBlock();
         FindNextConnection();
-        SetNextPart();
+        StartCoroutine(SetNextPart());
     }
 
     private void PlaceFirstBlock()
@@ -126,29 +126,32 @@ public class Aggregator : MonoBehaviour
     #endregion
 
     #region public functions
-    public void SetNextPart()
+    IEnumerator SetNextPart()
     {
         //Get the list of available connections in your building
         List<Connection> connections = _connections;
-
         connections.Shuffle();
 
-        //List<Connection> shuffledList = _connections.OrderBy(x => Random.value).ToList();
         //Select a random connection
         Connection randomConnection = connections[0];
-        //var randomConnection = shuffledList[1];
+
         //find all the parts that have a fitting connection
         Vector3 position = randomConnection.Position;
         Quaternion rotation = randomConnection.NormalAsQuaternion;
-
+        
         foreach (Part partToPlace in _library)
         {
             foreach (Connection connection in possibleConnections)
             {
-                partToPlace.PlacePart(connection, anchorConnection);
+                var currentPart = partToPlace;
+                var previousPart = partToPlace;
+                Connection targetConnection = currentPart.GOPart.GetComponent<Connection>();
+                Connection anchorConnection = previousPart.GOPart.GetComponent<Connection>();
+                partToPlace.PlacePart(targetConnection, anchorConnection);
                 _buildingParts.Add(partToPlace);
             }
         }
+        yield return new WaitForSeconds(1f);
         //FOREACH PART IN _LIBRARY --> FOREACH CONNECTION IN PART.CONNECTIONS
         //try to place it
         //partToPlace.PlacePart
@@ -164,6 +167,12 @@ public class Aggregator : MonoBehaviour
     #endregion
 
     #region private functions
+    private void OnTriggerEnter(Collider collider)
+    {
+        //do not place the part
+        
+        //move to the next one
+    }
 
     #endregion
 
