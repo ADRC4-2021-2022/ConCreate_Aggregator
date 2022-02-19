@@ -150,15 +150,15 @@ public static class Util
         }
     }
 
-    public static void RotatePositionFromToUsingParent(Connection sourceConnection, Connection targetConnection)
+    public static bool RotatePositionFromToUsingParent(Connection movingConnection, Connection targetConnection)
     {
-        Part movingPart = sourceConnection.ThisPart;
+        Part movingPart = movingConnection.ThisPart;
 
         //Instantiate a copy of the source connection and set as parrent of the part object
         GameObject connectionParent =
-            GameObject.Instantiate(sourceConnection.GOConnection,
-            sourceConnection.GOConnection.transform.position,
-            sourceConnection.GOConnection.transform.rotation);
+            GameObject.Instantiate(movingConnection.GOConnection,
+            movingConnection.GOConnection.transform.position,
+            movingConnection.GOConnection.transform.rotation);
         movingPart.GOPart.transform.SetParent(connectionParent.transform);
 
         //Get the rotation quateernion for 180 degrees over the y axis so make the connection meet in oposite direction 
@@ -168,9 +168,18 @@ public static class Util
         connectionParent.transform.rotation = targetConnection.NormalAsQuaternion * rotate180;
         connectionParent.transform.position = targetConnection.Position;
 
+        //if the list of collisions is not null and not empty
+        if (movingPart.connectedGOPart.collisions != null && movingPart.connectedGOPart.collisions.Count > 0)
+        {
+            movingPart.GOPart.transform.parent = null;
+            GameObject.Destroy(connectionParent);
+            return false;
+        }
 
         //Set the part back in the root of the hierarchy and destroy the temporary parent object. The part wil not move
         movingPart.GOPart.transform.parent = null;
         GameObject.Destroy(connectionParent);
+
+        return true;
     }
 }

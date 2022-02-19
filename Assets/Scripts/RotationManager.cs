@@ -61,7 +61,7 @@ public class RotationManager : MonoBehaviour
         //    //_goSourcePart.transform.rotation = rotation;
         //    _goSourcePart.transform.Rotate(rotation.eulerAngles);
         //}
-        if (GUI.Button(new Rect(10, 120, 200, 50), "Rotate parrent"))
+        if (GUI.Button(new Rect(10, 120, 200, 50), "Rotate parent"))
         {
             Util.RotatePositionFromToUsingParent(_sourceConnection,_targetConnection);
         }

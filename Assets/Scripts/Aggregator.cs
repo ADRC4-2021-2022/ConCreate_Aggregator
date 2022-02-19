@@ -7,7 +7,7 @@ public class Aggregator : MonoBehaviour
 {
     #region Serialized fields
     [SerializeField]
-    private float connectionTollerance = 500f;
+    private float connectionTolerance = 200f;
 
     #endregion
 
@@ -65,6 +65,7 @@ public class Aggregator : MonoBehaviour
                 _connections.Add(connection);
             }
         }
+
         PlaceFirstBlock();
         StartCoroutine(StartFindNextConnection());
     }
@@ -89,17 +90,17 @@ public class Aggregator : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    private bool FindNextConnection()
+    private void FindNextConnection()
     {
         //Get a random connection out of the available connections list
         int rndConnectionIndex = Random.Range(0, _availableConnections.Count);
-        Connection randomConnection = _availableConnections[rndConnectionIndex];
-        randomConnection.NameGameObject("NextConnection");
+        Connection randomAvailableConnection = _availableConnections[rndConnectionIndex];
+        //randomConnection.NameGameObject("NextConnection");
 
         //Get the connection tolerance
-        float connectionLength = randomConnection.Length;
-        float minLength = connectionLength - connectionTollerance;
-        float maxLength = connectionLength + connectionTollerance;
+        float connectionLength = randomAvailableConnection.Length;
+        float minLength = connectionLength - connectionTolerance;
+        float maxLength = connectionLength + connectionTolerance;
 
         //Find a similar connection
         List<Connection> possibleConnections = new List<Connection>();
@@ -115,16 +116,17 @@ public class Aggregator : MonoBehaviour
         if(possibleConnections.Count == 0)
         {
             Debug.Log("No connections found within the dimension range");
-            return false;
+            return;
         }
         //The line below is a shorthand notation for the foreach loop above
         //List<Connection> possibleConnections = _libraryConnections.Where(c => c.Length > minLength && c.Length < maxLength).ToList();
 
         //Get a random connection out of the available connections list
         int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
-        Connection rndPossibleConnection = possibleConnections[rndPossibleConnectionIndex];
+        Connection connectionToPlace = possibleConnections[rndPossibleConnectionIndex];
 
-        return rndPossibleConnection.ThisPart.PlacePart(randomConnection, rndPossibleConnection);
+        bool wasSuccessful = connectionToPlace.ThisPart.PlacePart(randomAvailableConnection, connectionToPlace);
+        
     }
     #endregion
 
@@ -134,7 +136,6 @@ public class Aggregator : MonoBehaviour
     #region private functions
     #endregion
 
-    #region Canvas function
-
+    #region Canvas functions
     #endregion
 }

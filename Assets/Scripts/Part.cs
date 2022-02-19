@@ -13,7 +13,7 @@ public class Part
 
     #region private fields
     //For communication with object in unity
-    PartTrigger _connectedGOPart;
+    public PartTrigger connectedGOPart;
 
     #endregion
 
@@ -24,8 +24,8 @@ public class Part
         GOPart = GameObject.Instantiate(partPrefab, Vector3.zero, Quaternion.identity);
         GOPart.SetActive(false);
 
-        _connectedGOPart = GOPart.AddComponent<PartTrigger>();
-        _connectedGOPart.ConnectedPart = this;
+        connectedGOPart = GOPart.AddComponent<PartTrigger>();
+        connectedGOPart.ConnectedPart = this;
 
         LoadPartConnections();
     }
@@ -51,21 +51,30 @@ public class Part
 
     }
 
-    public bool PlacePart(Connection targetConnection, Connection anchorConnection)
+    public bool PlacePart(Connection availableConnection, Connection connectionToPlace)
     {
         //Enable the part gameobject in the scene
-        anchorConnection.NameGameObject("anchor");
+        //anchorConnection.NameGameObject("anchor");
         GOPart.SetActive(true);
 
-        
-        Util.RotatePositionFromToUsingParent(anchorConnection, targetConnection);
+        //false is when objs are colliding
+        bool wasSuccessful = Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);
+        if (!wasSuccessful)
+        {
+            GOPart.SetActive(false);
+            Placed = false;
+            return false;
+        }
 
         //Set all connections available (except for the one used)
         foreach (var connection in Connections)
         {
-            if (connection != anchorConnection)
+            if (connection != connectionToPlace)
             {
                 connection.Available = true;
+            } else
+            {
+                connection.Available = false;
             }
         }
 
