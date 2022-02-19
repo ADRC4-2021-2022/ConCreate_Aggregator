@@ -51,7 +51,7 @@ public class Part
 
     }
 
-    public void PlacePart(Connection targetConnection, Connection anchorConnection)
+    public bool PlacePart(Connection targetConnection, Connection anchorConnection)
     {
         //Enable the part gameobject in the scene
         anchorConnection.NameGameObject("anchor");
@@ -71,15 +71,8 @@ public class Part
 
         //set the part as placed
         Placed = true;
+        return true;
     }
-
-    /*public void MoveStartToPosition(Vector3 target)
-    {
-        //Move start point to target
-        _connectedGOPart.transform.position = target;
-    }*/
-
-    
 
     /*
     public bool PlacePart(Connection connection)
@@ -89,7 +82,7 @@ public class Part
 
         //Check if part intersects with other parts
         //option 1: Turn all the part colliders in your building into triggers
-        //Check when instantiation the new part prefab if any of the parts has been triggered
+        //Check when instantiating the new part prefab if any of the parts has been triggered
         //Try this first since it is easy
 
         //using GOPartPrefab. blablabla getComponent blablabla
@@ -100,13 +93,6 @@ public class Part
 
         //Return if the part can is placed or not
         return false;
-    }*/
-
-    /*IEnumerator Coroutine()
-    {
-        SetNextPart();
-
-        yield return new WaitForSeconds(0.001f);
     }*/
 
     #endregion

@@ -7,7 +7,7 @@ public class Aggregator : MonoBehaviour
 {
     #region Serialized fields
     [SerializeField]
-    private float connectionTollerance = 300f;
+    private float connectionTollerance = 500f;
 
     #endregion
 
@@ -23,11 +23,7 @@ public class Aggregator : MonoBehaviour
     public List<Part> _buildingParts = new List<Part>();
 
     //All the connection that are available in your building
-    //Regenerate this list every time you place a part
     public List<Connection> _connections = new List<Connection>();
-
-    //Similar connections
-    public List<Connection> possibleConnections = new List<Connection>();
 
     public List<Connection> _availableConnections
     {
@@ -70,8 +66,7 @@ public class Aggregator : MonoBehaviour
             }
         }
         PlaceFirstBlock();
-        FindNextConnection();
-        StartCoroutine(SetNextPart());
+        StartCoroutine(StartFindNextConnection());
     }
 
     private void PlaceFirstBlock()
@@ -82,6 +77,16 @@ public class Aggregator : MonoBehaviour
         int rndY = Random.Range(0, 360);
 
         randomPart.PlaceFirstPart(Vector3.zero, Quaternion.Euler(new Vector3(0, rndY, 0)));
+    }
+
+    IEnumerator StartFindNextConnection()
+    {
+        for (int i = 0; i < _library.Count; i++)
+        {
+            FindNextConnection();
+            yield return new WaitForSeconds(1f);
+        }
+        yield return new WaitForSeconds(1f);
     }
 
     private bool FindNextConnection()
@@ -119,61 +124,14 @@ public class Aggregator : MonoBehaviour
         int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
         Connection rndPossibleConnection = possibleConnections[rndPossibleConnectionIndex];
 
-        rndPossibleConnection.ThisPart.PlacePart(randomConnection, rndPossibleConnection);
-
-        return true;
+        return rndPossibleConnection.ThisPart.PlacePart(randomConnection, rndPossibleConnection);
     }
     #endregion
 
     #region public functions
-    IEnumerator SetNextPart()
-    {
-        //Get the list of available connections in your building
-        List<Connection> connections = _connections;
-        connections.Shuffle();
-
-        //Select a random connection
-        Connection randomConnection = connections[0];
-
-        //find all the parts that have a fitting connection
-        Vector3 position = randomConnection.Position;
-        Quaternion rotation = randomConnection.NormalAsQuaternion;
-        
-        foreach (Part partToPlace in _library)
-        {
-            foreach (Connection connection in possibleConnections)
-            {
-                var currentPart = partToPlace;
-                var previousPart = partToPlace;
-                Connection targetConnection = currentPart.GOPart.GetComponent<Connection>();
-                Connection anchorConnection = previousPart.GOPart.GetComponent<Connection>();
-                partToPlace.PlacePart(targetConnection, anchorConnection);
-                _buildingParts.Add(partToPlace);
-            }
-        }
-        yield return new WaitForSeconds(1f);
-        //FOREACH PART IN _LIBRARY --> FOREACH CONNECTION IN PART.CONNECTIONS
-        //try to place it
-        //partToPlace.PlacePart
-
-        //if success => hooray
-        //consider coroutine to move to the next part to try to place (call SetNextPart again)
-        //if failure => remove part from list and try another one
-        //_library.remove(partToPlace);
-        //if none of the parts work, disable connection and try next connection
-        //connection.Available = false;
-    }
-
     #endregion
 
     #region private functions
-    private void OnTriggerEnter(Collider collider)
-    {
-        //do not place the part
-        
-        //move to the next one
-    }
-
     #endregion
 
     #region Canvas function
