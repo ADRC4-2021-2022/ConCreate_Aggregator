@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,28 +7,34 @@ public class Part
     #region public fields
     public List<Connection> Connections = new List<Connection>();
     public GameObject GOPart;
+    //For communication with object in unity
+    public PartTrigger connectedGOPart;
 
     public bool Placed = false;
 
     #endregion
 
     #region private fields
-    //For communication with object in unity
-    public PartTrigger connectedGOPart;
-
+    private GameObject _prefab;
     #endregion
 
     #region constructors
     public Part(GameObject partPrefab)
     {
-        GOPart = partPrefab;
-        GOPart = GameObject.Instantiate(partPrefab, Vector3.zero, Quaternion.identity);
+        _prefab = partPrefab;
+        InitializeGO();
+        LoadPartConnections();
+    }
+
+    public void InitializeGO()
+    {
+        //GOPart = _prefab;
+        GameObject.Destroy(GOPart);
+        GOPart = GameObject.Instantiate(_prefab, Vector3.zero, Quaternion.identity);
         GOPart.SetActive(false);
 
         connectedGOPart = GOPart.AddComponent<PartTrigger>();
         connectedGOPart.ConnectedPart = this;
-
-        LoadPartConnections();
     }
     #endregion
 
@@ -40,7 +47,7 @@ public class Part
         GOPart.name = "FirstPart";
         GOPart.SetActive(true);
 
-        //Set all connections available (except for the one used)
+        //Set all connections available
         foreach (var connection in Connections)
         {
             connection.Available = true;
@@ -62,6 +69,8 @@ public class Part
         if (!wasSuccessful)
         {
             GOPart.SetActive(false);
+            //Destroy(GOPart);
+            InitializeGO();
             Placed = false;
             return false;
         }

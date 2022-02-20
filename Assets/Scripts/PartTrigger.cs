@@ -5,28 +5,23 @@ public class PartTrigger : MonoBehaviour
 {
     #region public fields
     public Part ConnectedPart;
-    public List<GameObject> collisions { get; private set; }
+    public List<GameObject> Collisions = new List<GameObject>();
     #endregion
 
     #region private fields
     #endregion
 
     #region Monobehaviour functions
-    private void Start()
-    {
-        collisions = new List<GameObject>();
-    }
-
     private void OnTriggerEnter(Collider collider)
     {
         Debug.Log($"Colliding with {collider.attachedRigidbody}");
-        collisions.Add(collider.gameObject);
+        Collisions.Add(collider.gameObject);
     }
 
     private void OnTriggerExit(Collider collider)
     {
         Debug.Log($"No longer colliding with {collider.attachedRigidbody}");
-        collisions.Remove(collider.gameObject);
+        Collisions.Remove(collider.gameObject);
     }
     #endregion
 

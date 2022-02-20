@@ -7,7 +7,7 @@ public class Aggregator : MonoBehaviour
 {
     #region Serialized fields
     [SerializeField]
-    private float connectionTolerance = 200f;
+    private float connectionTolerance = 10f;
 
     #endregion
 
@@ -51,7 +51,7 @@ public class Aggregator : MonoBehaviour
         //Gather all the prefabs for the parts and load the connections
         _library.Add(new Part(Resources.Load("Prefabs/Parts/01P") as GameObject));
         _library.Add(new Part(Resources.Load("Prefabs/Parts/02P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/Parts/03P") as GameObject));
+        //_library.Add(new Part(Resources.Load("Prefabs/Parts/03P") as GameObject));
         _library.Add(new Part(Resources.Load("Prefabs/Parts/04P") as GameObject));
         _library.Add(new Part(Resources.Load("Prefabs/Parts/05P") as GameObject));
         _library.Add(new Part(Resources.Load("Prefabs/Parts/06P") as GameObject));
@@ -67,7 +67,7 @@ public class Aggregator : MonoBehaviour
         }
 
         PlaceFirstBlock();
-        StartCoroutine(StartFindNextConnection());
+        //StartCoroutine(StartFindNextConnection());
     }
 
     private void PlaceFirstBlock()
@@ -126,7 +126,7 @@ public class Aggregator : MonoBehaviour
         Connection connectionToPlace = possibleConnections[rndPossibleConnectionIndex];
 
         bool wasSuccessful = connectionToPlace.ThisPart.PlacePart(randomAvailableConnection, connectionToPlace);
-        
+
     }
     #endregion
 
@@ -137,5 +137,12 @@ public class Aggregator : MonoBehaviour
     #endregion
 
     #region Canvas functions
-    #endregion
-}
+    private void OnGUI()
+    {
+        if (GUI.Button(new Rect(10, 120, 200, 50), "Place Next Part"))
+        {
+            FindNextConnection();
+        }
+    }
+        #endregion
+    }

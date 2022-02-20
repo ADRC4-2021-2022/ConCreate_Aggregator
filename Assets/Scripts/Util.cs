@@ -169,7 +169,7 @@ public static class Util
         connectionParent.transform.position = targetConnection.Position;
 
         //if the list of collisions is not null and not empty
-        if (movingPart.connectedGOPart.collisions != null && movingPart.connectedGOPart.collisions.Count > 0)
+        if (movingPart.connectedGOPart.Collisions != null && movingPart.connectedGOPart.Collisions.Count > 0)
         {
             movingPart.GOPart.transform.parent = null;
             GameObject.Destroy(connectionParent);
