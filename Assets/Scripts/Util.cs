@@ -169,10 +169,13 @@ public static class Util
         connectionParent.transform.position = targetConnection.Position;
 
         //if the list of collisions is not null and not empty
+            //(the problem is that it is not null but always empty,
+            //because the triggerexit is not happening properly
         if (movingPart.connectedGOPart.Collisions != null && movingPart.connectedGOPart.Collisions.Count > 0)
         {
             movingPart.GOPart.transform.parent = null;
             GameObject.Destroy(connectionParent);
+            movingPart.Placed = false;
             return false;
         }
 

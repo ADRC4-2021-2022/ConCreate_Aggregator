@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,6 +34,8 @@ public class Part
 
         connectedGOPart = GOPart.AddComponent<PartTrigger>();
         connectedGOPart.ConnectedPart = this;
+
+        Placed = false;
     }
     #endregion
 
@@ -70,7 +71,7 @@ public class Part
         {
             GOPart.SetActive(false);
             //Destroy(GOPart);
-            InitializeGO();
+            InitializeGO();     //re-initialize GO
             Placed = false;
             return false;
         }
@@ -81,7 +82,8 @@ public class Part
             if (connection != connectionToPlace)
             {
                 connection.Available = true;
-            } else
+            }
+            else
             {
                 connection.Available = false;
             }

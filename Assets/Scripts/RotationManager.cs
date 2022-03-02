@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RotationManager : MonoBehaviour
@@ -63,7 +61,7 @@ public class RotationManager : MonoBehaviour
         //}
         if (GUI.Button(new Rect(10, 120, 200, 50), "Rotate parent"))
         {
-            Util.RotatePositionFromToUsingParent(_sourceConnection,_targetConnection);
+            Util.RotatePositionFromToUsingParent(_sourceConnection, _targetConnection);
         }
     }
 
@@ -72,7 +70,7 @@ public class RotationManager : MonoBehaviour
         connection.GOConnection.GetComponentInChildren<MeshRenderer>().material = material;
     }
 
-    
+
 
     //private void RotateMatrices()
     //{

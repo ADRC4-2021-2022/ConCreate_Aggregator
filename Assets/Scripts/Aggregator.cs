@@ -1,7 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System.Collections;
 
 public class Aggregator : MonoBehaviour
 {
@@ -113,7 +113,7 @@ public class Aggregator : MonoBehaviour
             }
         }
 
-        if(possibleConnections.Count == 0)
+        if (possibleConnections.Count == 0)
         {
             Debug.Log("No connections found within the dimension range");
             return;
@@ -144,5 +144,5 @@ public class Aggregator : MonoBehaviour
             FindNextConnection();
         }
     }
-        #endregion
-    }
+    #endregion
+}
