@@ -19,12 +19,11 @@ public class Aggregator : MonoBehaviour
     private GameObject _goVoxelGrid;
     #endregion
 
-    #region public fields
-
-
+    #region private fields
+    private int _maxOverlap = 3;
     #endregion
 
-    #region private fields
+    #region public fields
     //Library contains all the parts that haven't been placed yet
     public List<Part> _library = new List<Part>();
 
@@ -48,7 +47,6 @@ public class Aggregator : MonoBehaviour
         }
     }
 
-
     //All the connections that are not part of a place block
     public List<Connection> _libraryConnections
     {
@@ -57,8 +55,8 @@ public class Aggregator : MonoBehaviour
             return _connections.Where(c => c.LibraryConnection).ToList();
         }
     }
-
     #endregion
+
     #region Monobehaviour functions
     // Start is called before the first frame update
     void Start()
@@ -81,8 +79,6 @@ public class Aggregator : MonoBehaviour
         PlaceFirstBlock();
         //StartCoroutine(StartFindNextConnection());
     }
-
-
     #endregion
 
     #region public functions
@@ -109,11 +105,9 @@ public class Aggregator : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-
-
     private void FindNextConnection()
     {
-        
+
         //Get a random connection out of the available connections list
         int rndConnectionIndex = Random.Range(0, _availableConnections.Count);
         Connection randomAvailableConnection = _availableConnections[rndConnectionIndex];
@@ -145,29 +139,31 @@ public class Aggregator : MonoBehaviour
 
 
         bool partPlaced = false;
-        //______While(partPlaced==false&&possibleConnection.count>0)
 
-        //Get a random connection out of the available connections list
-        int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
-        Connection connectionToPlace = possibleConnections[rndPossibleConnectionIndex];
-        Part currentPart = connectionToPlace.ThisPart;
-        currentPart.PositionPart(randomAvailableConnection, connectionToPlace);
-
-        RegenerateVoxelGrid(currentPart);
-        if( CheckCollision(currentPart))
+        while (partPlaced == false && possibleConnections.Count > 0)
         {
-            //Set the part as placed
-            partPlaced = true;
-        }
-        else
-        {
-            //reset the part
-            //remove the tried connection from the list of possible connections
-        }
+            //Get a random connection out of the available connections list
+            int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
+            Connection connectionToPlace = possibleConnections[rndPossibleConnectionIndex];
+            Part currentPart = connectionToPlace.ThisPart;
+            currentPart.PositionPart(randomAvailableConnection, connectionToPlace);
 
-
+            RegenerateVoxelGrid(currentPart);
+            if (CheckCollision(currentPart))
+            {
+                //Set the part as placed
+                currentPart.Status = PartStatus.Placed;
+                partPlaced = true;
+            }
+            else
+            {
+                //reset the part
+                currentPart.ResetPart();
+                //remove the tried connection from the list of possible connections
+                possibleConnections.Remove(connectionToPlace);
+            }
+        }
         ///End While loop
-
 
         if (!partPlaced)
             Debug.Log("No parts could be added");
@@ -177,10 +173,31 @@ public class Aggregator : MonoBehaviour
     private bool CheckCollision(Part partToCheck)
     {
         //Set all voxels inactive
+        _grid.GetVoxels().ToList().ForEach(v => v.Status = VoxelState.Available);
+
         //Set the voxels in the placed building parts active
+        foreach (var part in _buildingParts)
+        {
+            var buildingPartBounds = part.GOPart.GetComponentInChildren<MeshCollider>().bounds;
+            var voxelsInBounds = _grid.GetVoxels().ToList().Where(v => buildingPartBounds.Contains(v.Centre)).ToList();
+            foreach (var voxel in voxelsInBounds)
+            {
+                voxel.Status = VoxelState.Alive;
+            }
+        }
+
         //Get all the voxels in the partToCheck
+        List<Voxel> partToCheckVoxels = _grid.GetVoxels().ToList().Where(v =>
+            partToCheck.GOPart.GetComponentInChildren<MeshCollider>().bounds.Contains(v.Centre)).ToList();
+
         //Check how many of the voxels in partToCheck are active
-        //If (the active voxels in the part to check < maxOverlap) retrun true
+        List<Voxel> partToCheckActiveVoxels = partToCheckVoxels.Where(v => v.Status == VoxelState.Alive).ToList();
+
+        //If (the active voxels in the part to check < maxOverlap) return true
+        if (partToCheckActiveVoxels.Count < _maxOverlap)
+        {
+            return true;
+        }
 
         return false;
     }
@@ -191,7 +208,7 @@ public class Aggregator : MonoBehaviour
     /// <param name="newPart">the new part to check intersections with</param>
     private void RegenerateVoxelGrid(Part newPart)
     {
-        if(_goVoxelGrid != null)GameObject.Destroy(_goVoxelGrid);
+        if (_goVoxelGrid != null) GameObject.Destroy(_goVoxelGrid);
         _goVoxelGrid = new GameObject("VoxelGrid");
         Vector3Int gridDimensions;
         Vector3 origin;

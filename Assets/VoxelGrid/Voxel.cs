@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading.Tasks;
 
 /// <summary>
 /// Status of the voxel. Dead are voxels that won't be used,
@@ -110,8 +108,8 @@ public class Voxel
     {
         bool visible = false;
         if (Status == VoxelState.Dead) visible = false;
-        if (Status == VoxelState.Available&&_showAvailableVoxel) visible = true;
-        if (Status == VoxelState.Alive&&_showAliveVoxel) visible = true;
+        if (Status == VoxelState.Available && _showAvailableVoxel) visible = true;
+        if (Status == VoxelState.Alive && _showAliveVoxel) visible = true;
 
         _goVoxelTrigger.SetActive(visible);
     }
@@ -119,7 +117,7 @@ public class Voxel
 
     #region public functions
 
-    
+
 
     public void CreateGameobject()
     {

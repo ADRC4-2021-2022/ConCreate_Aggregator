@@ -23,13 +23,14 @@ public class PartTrigger : MonoBehaviour
     {
         Debug.Log($"No longer colliding with {collider.attachedRigidbody}");
         Collisions.Remove(collider.gameObject);
-        ConnectedPart.Intersecting=false;
+        ConnectedPart.Intersecting = false;
     }
     #endregion
 
     #region public functions
 
     #endregion
+
     #region private functions
 
     #endregion

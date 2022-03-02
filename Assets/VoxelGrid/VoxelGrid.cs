@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 public class VoxelGrid
 {
     #region public fields
@@ -81,7 +80,7 @@ public class VoxelGrid
     private Voxel[,,] _voxels;
     private bool _showAliveVoxels = false;
     private bool _showAvailableVoxels = false;
-    
+
 
     #region block fields
     private List<Block> _blocks = new List<Block>();
@@ -121,7 +120,7 @@ public class VoxelGrid
     /// <param name="z">Z dimensions of the grid</param>
     /// <param name="voxelSize">The size of the voxels</param>
     /// <param name="origin">Where the voxelgrid starts</param>
-    public VoxelGrid(int x, int y, int z, float voxelSize, Vector3 origin, GameObject goGrid) : this(new Vector3Int(x, y, z), voxelSize, origin,goGrid) { }
+    public VoxelGrid(int x, int y, int z, float voxelSize, Vector3 origin, GameObject goGrid) : this(new Vector3Int(x, y, z), voxelSize, origin, goGrid) { }
 
 
     #endregion

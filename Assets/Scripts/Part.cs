@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PartStatus { Available, Checking, Placed}
+public enum PartStatus { Available, Checking, Placed }
 public class Part
 {
     #region public fields
@@ -89,50 +89,9 @@ public class Part
     public void ResetPart()
     {
         GOPart.SetActive(false);
-        //Destroy(GOPart);
-        InitializeGO();     //re-initialize GO
+        InitializeGO();
         Status = PartStatus.Available;
     }
-
-    private void CheckCollision()
-    {
-        //if the list of collisions is not null and not empty
-        //(the problem is that it is not null but always empty,
-        //because the triggerexit is not happening properly
-        /*
-        if (movingPart.connectedGOPart.Collisions != null && movingPart.connectedGOPart.Collisions.Count > 0)
-        {
-            movingPart.GOPart.transform.parent = null;
-            GameObject.Destroy(connectionParent);
-            movingPart.Placed = false;
-            return false;
-        }
-        */
-
-        //
-    }
-
-    /*
-    public bool PlacePart(Connection connection)
-    {
-        //Position your part on a certain connection
-        PlacePart(connection.Position, connection.Normal, connection);
-
-        //Check if part intersects with other parts
-        //option 1: Turn all the part colliders in your building into triggers
-        //Check when instantiating the new part prefab if any of the parts has been triggered
-        //Try this first since it is easy
-
-        //using GOPartPrefab. blablabla getComponent blablabla
-        //GOOGLE HOW TO CHECK IF GO COLLIDERS ARE COLLIDING
-        //IF statement, if managed to place the part--> return true, otherwise return false
-
-        //Remove the part if it can't be placed
-
-        //Return if the part can is placed or not
-        return false;
-    }*/
-
     #endregion
 
     #region private functions
