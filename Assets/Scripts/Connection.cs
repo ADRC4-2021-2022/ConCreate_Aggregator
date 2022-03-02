@@ -43,7 +43,7 @@ public class Connection
     {
         get
         {
-            return ThisPart.Placed == false;
+            return ThisPart.Status == PartStatus.Available;
         }
     }
     #endregion

@@ -16,12 +16,14 @@ public class PartTrigger : MonoBehaviour
     {
         Debug.Log($"Colliding with {collider.attachedRigidbody}");
         Collisions.Add(collider.gameObject);
+        ConnectedPart.Intersecting = true;
     }
 
     private void OnTriggerExit(Collider collider)
     {
         Debug.Log($"No longer colliding with {collider.attachedRigidbody}");
         Collisions.Remove(collider.gameObject);
+        ConnectedPart.Intersecting=false;
     }
     #endregion
 

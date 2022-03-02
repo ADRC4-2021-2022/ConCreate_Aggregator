@@ -9,9 +9,18 @@ public class Aggregator : MonoBehaviour
     [SerializeField]
     private float connectionTolerance = 10f;
 
+    [SerializeField]
+    private float _voxelSize = 0.75f;
+
+    [SerializeField]
+    private int _voxelOffset = 0;
+
+    private VoxelGrid _grid;
+    private GameObject _goVoxelGrid;
     #endregion
 
     #region public fields
+
 
     #endregion
 
@@ -20,7 +29,13 @@ public class Aggregator : MonoBehaviour
     public List<Part> _library = new List<Part>();
 
     //All the parts that are already place in the building
-    public List<Part> _buildingParts = new List<Part>();
+    public List<Part> _buildingParts
+    {
+        get
+        {
+            return _library.Where(p => p.Status == PartStatus.Placed).ToList();
+        }
+    }
 
     //All the connection that are available in your building
     public List<Connection> _connections = new List<Connection>();
@@ -48,15 +63,12 @@ public class Aggregator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Gather all the prefabs for the parts and load the connections
-        _library.Add(new Part(Resources.Load("Prefabs/Parts/01P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/Parts/02P") as GameObject));
-        //_library.Add(new Part(Resources.Load("Prefabs/Parts/03P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/Parts/04P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/Parts/05P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/Parts/06P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/Parts/07P") as GameObject));
-        _library.Add(new Part(Resources.Load("Prefabs/Parts/08P") as GameObject));
+        //Load all the prefabs
+        GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
+
+        //Select the prefabs with tag Part
+        _library = prefabs.Where(g => g.tag == "Part").Select(g => new Part(g)).ToList();
+
 
         foreach (var part in _library)
         {
@@ -70,6 +82,13 @@ public class Aggregator : MonoBehaviour
         //StartCoroutine(StartFindNextConnection());
     }
 
+
+    #endregion
+
+    #region public functions
+    #endregion
+
+    #region private functions
     private void PlaceFirstBlock()
     {
         int rndPartIndex = Random.Range(0, _library.Count);
@@ -90,8 +109,11 @@ public class Aggregator : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
+
+
     private void FindNextConnection()
     {
+        
         //Get a random connection out of the available connections list
         int rndConnectionIndex = Random.Range(0, _availableConnections.Count);
         Connection randomAvailableConnection = _availableConnections[rndConnectionIndex];
@@ -121,19 +143,85 @@ public class Aggregator : MonoBehaviour
         //The line below is a shorthand notation for the foreach loop above
         //List<Connection> possibleConnections = _libraryConnections.Where(c => c.Length > minLength && c.Length < maxLength).ToList();
 
+
+        bool partPlaced = false;
+        //______While(partPlaced==false&&possibleConnection.count>0)
+
         //Get a random connection out of the available connections list
         int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
         Connection connectionToPlace = possibleConnections[rndPossibleConnectionIndex];
+        Part currentPart = connectionToPlace.ThisPart;
+        currentPart.PositionPart(randomAvailableConnection, connectionToPlace);
 
-        bool wasSuccessful = connectionToPlace.ThisPart.PlacePart(randomAvailableConnection, connectionToPlace);
+        RegenerateVoxelGrid(currentPart);
+        if( CheckCollision(currentPart))
+        {
+            //Set the part as placed
+            partPlaced = true;
+        }
+        else
+        {
+            //reset the part
+            //remove the tried connection from the list of possible connections
+        }
 
+
+        ///End While loop
+
+
+        if (!partPlaced)
+            Debug.Log("No parts could be added");
     }
-    #endregion
 
-    #region public functions
-    #endregion
 
-    #region private functions
+    private bool CheckCollision(Part partToCheck)
+    {
+        //Set all voxels inactive
+        //Set the voxels in the placed building parts active
+        //Get all the voxels in the partToCheck
+        //Check how many of the voxels in partToCheck are active
+        //If (the active voxels in the part to check < maxOverlap) retrun true
+
+        return false;
+    }
+
+    /// <summary>
+    /// Create A Voxelgrid for the current building
+    /// </summary>
+    /// <param name="newPart">the new part to check intersections with</param>
+    private void RegenerateVoxelGrid(Part newPart)
+    {
+        if(_goVoxelGrid != null)GameObject.Destroy(_goVoxelGrid);
+        _goVoxelGrid = new GameObject("VoxelGrid");
+        Vector3Int gridDimensions;
+        Vector3 origin;
+
+        //Get the bounds of your building
+        Bounds bounds = newPart.GOPart.GetComponentInChildren<MeshCollider>().bounds;
+
+        foreach (var part in _buildingParts)
+        {
+            bounds.Encapsulate(part.GOPart.GetComponentInChildren<MeshCollider>().bounds);
+        }
+
+        //Get the grid parameters and create grid
+        gridDimensions = (bounds.size / _voxelSize).ToVector3IntRound() + Vector3Int.one * _voxelOffset * 2;
+        origin = bounds.center - (Vector3)gridDimensions * _voxelSize / 2;
+        _grid = new VoxelGrid(gridDimensions, _voxelSize, origin, _goVoxelGrid);
+    }
+
+
+    /// <summary>
+    /// Check if a voxel is inside the mesh, using the Voxel centre
+    /// </summary>
+    /// <param name="voxel">voxel to check</param>
+    /// <returns>true if inside the mesh</returns>
+    public bool IsInsideCentre(Voxel voxel, Collider collider)
+    {
+        var point = voxel.Centre;
+        return Util.PointInsideCollider(point, collider);
+    }
+
     #endregion
 
     #region Canvas functions

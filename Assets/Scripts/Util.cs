@@ -150,7 +150,7 @@ public static class Util
         }
     }
 
-    public static bool RotatePositionFromToUsingParent(Connection movingConnection, Connection targetConnection)
+    public static void RotatePositionFromToUsingParent(Connection movingConnection, Connection targetConnection)
     {
         Part movingPart = movingConnection.ThisPart;
 
@@ -168,21 +168,9 @@ public static class Util
         connectionParent.transform.rotation = targetConnection.NormalAsQuaternion * rotate180;
         connectionParent.transform.position = targetConnection.Position;
 
-        //if the list of collisions is not null and not empty
-            //(the problem is that it is not null but always empty,
-            //because the triggerexit is not happening properly
-        if (movingPart.connectedGOPart.Collisions != null && movingPart.connectedGOPart.Collisions.Count > 0)
-        {
-            movingPart.GOPart.transform.parent = null;
-            GameObject.Destroy(connectionParent);
-            movingPart.Placed = false;
-            return false;
-        }
 
         //Set the part back in the root of the hierarchy and destroy the temporary parent object. The part wil not move
         movingPart.GOPart.transform.parent = null;
         GameObject.Destroy(connectionParent);
-
-        return true;
     }
 }

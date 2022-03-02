@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PartStatus { Available, Checking, Placed}
 public class Part
 {
     #region public fields
@@ -9,7 +10,8 @@ public class Part
     //For communication with object in unity
     public PartTrigger connectedGOPart;
 
-    public bool Placed = false;
+    public bool Intersecting = false;
+    public PartStatus Status;
 
     #endregion
 
@@ -23,6 +25,7 @@ public class Part
         _prefab = partPrefab;
         InitializeGO();
         LoadPartConnections();
+        Status = PartStatus.Available;
     }
 
     public void InitializeGO()
@@ -35,7 +38,6 @@ public class Part
         connectedGOPart = GOPart.AddComponent<PartTrigger>();
         connectedGOPart.ConnectedPart = this;
 
-        Placed = false;
     }
     #endregion
 
@@ -55,26 +57,17 @@ public class Part
         }
 
         //set the part as placed
-        Placed = true;
+        Status = PartStatus.Placed;
 
     }
 
-    public bool PlacePart(Connection availableConnection, Connection connectionToPlace)
+    public void PositionPart(Connection availableConnection, Connection connectionToPlace)
     {
         //Enable the part gameobject in the scene
         //anchorConnection.NameGameObject("anchor");
         GOPart.SetActive(true);
 
-        //false is when objs are colliding
-        bool wasSuccessful = Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);
-        if (!wasSuccessful)
-        {
-            GOPart.SetActive(false);
-            //Destroy(GOPart);
-            InitializeGO();     //re-initialize GO
-            Placed = false;
-            return false;
-        }
+        Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);
 
         //Set all connections available (except for the one used)
         foreach (var connection in Connections)
@@ -90,8 +83,33 @@ public class Part
         }
 
         //set the part as placed
-        Placed = true;
-        return true;
+        Status = PartStatus.Checking;
+    }
+
+    public void ResetPart()
+    {
+        GOPart.SetActive(false);
+        //Destroy(GOPart);
+        InitializeGO();     //re-initialize GO
+        Status = PartStatus.Available;
+    }
+
+    private void CheckCollision()
+    {
+        //if the list of collisions is not null and not empty
+        //(the problem is that it is not null but always empty,
+        //because the triggerexit is not happening properly
+        /*
+        if (movingPart.connectedGOPart.Collisions != null && movingPart.connectedGOPart.Collisions.Count > 0)
+        {
+            movingPart.GOPart.transform.parent = null;
+            GameObject.Destroy(connectionParent);
+            movingPart.Placed = false;
+            return false;
+        }
+        */
+
+        //
     }
 
     /*
