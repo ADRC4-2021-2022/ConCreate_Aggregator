@@ -152,9 +152,11 @@ public static class Util
 
     public static void RotatePositionFromToUsingParent(Connection movingConnection, Connection targetConnection)
     {
+        if (movingConnection.GOConnection == null || targetConnection.GOConnection == null) return;
+
         Part movingPart = movingConnection.ThisPart;
 
-        //Instantiate a copy of the source connection and set as parrent of the part object
+        //Instantiate a copy of the source connection and set as parent of the part object
         GameObject connectionParent =
             GameObject.Instantiate(movingConnection.GOConnection,
             movingConnection.GOConnection.transform.position,

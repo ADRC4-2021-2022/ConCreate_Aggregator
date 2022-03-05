@@ -17,6 +17,8 @@ public class Aggregator : MonoBehaviour
 
     private VoxelGrid _grid;
     private GameObject _goVoxelGrid;
+
+    private Corner _corner;
     #endregion
 
     #region private fields
@@ -65,8 +67,7 @@ public class Aggregator : MonoBehaviour
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
 
         //Select the prefabs with tag Part
-        _library = prefabs.Where(g => g.tag == "Part").Select(g => new Part(g)).ToList();
-
+        _library = prefabs.Where(g => g.tag == "Part").Select(g => new Part(g)).ToList();      
 
         foreach (var part in _library)
         {
@@ -107,7 +108,6 @@ public class Aggregator : MonoBehaviour
 
     private void FindNextConnection()
     {
-
         //Get a random connection out of the available connections list
         int rndConnectionIndex = Random.Range(0, _availableConnections.Count);
         Connection randomAvailableConnection = _availableConnections[rndConnectionIndex];
@@ -137,10 +137,9 @@ public class Aggregator : MonoBehaviour
         //The line below is a shorthand notation for the foreach loop above
         //List<Connection> possibleConnections = _libraryConnections.Where(c => c.Length > minLength && c.Length < maxLength).ToList();
 
-
         bool partPlaced = false;
 
-        while (partPlaced == false && possibleConnections.Count > 0)
+        while (partPlaced == false && possibleConnections.Count > 0 && randomAvailableConnection != null)
         {
             //Get a random connection out of the available connections list
             int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
@@ -169,29 +168,39 @@ public class Aggregator : MonoBehaviour
             Debug.Log("No parts could be added");
     }
 
-
     private bool CheckCollision(Part partToCheck)
     {
         //Set all voxels inactive
         _grid.GetVoxels().ToList().ForEach(v => v.Status = VoxelState.Available);
 
-        //Set the voxels in the placed building parts active
+        //Set the voxels in the placed building parts active, starting from corners and getting the voxels connected to them
         foreach (var part in _buildingParts)
         {
             var buildingPartBounds = part.GOPart.GetComponentInChildren<MeshCollider>().bounds;
-            var voxelsInBounds = _grid.GetVoxels().ToList().Where(v => buildingPartBounds.Contains(v.Centre)).ToList();
-            foreach (var voxel in voxelsInBounds)
+
+            var cornersInBounds = _grid.GetCorners().Where(c => buildingPartBounds.Contains(c.Index)).ToList();
+            
+            foreach (var corner in cornersInBounds)
             {
-                voxel.Status = VoxelState.Alive;
+                corner.GetConnectedVoxels().ToList().ForEach(v => v.Status = VoxelState.Alive);
             }
         }
 
-        //Get all the voxels in the partToCheck
-        List<Voxel> partToCheckVoxels = _grid.GetVoxels().ToList().Where(v =>
-            partToCheck.GOPart.GetComponentInChildren<MeshCollider>().bounds.Contains(v.Centre)).ToList();
+        //Get all the corners in the partToCheck
+        List<Corner> partToCheckCorners = _grid.GetCorners().Where(c =>
+            partToCheck.GOPart.GetComponentInChildren<MeshCollider>().bounds.Contains(c.Index)).ToList();
 
-        //Check how many of the voxels in partToCheck are active
-        List<Voxel> partToCheckActiveVoxels = partToCheckVoxels.Where(v => v.Status == VoxelState.Alive).ToList();
+        // From the corners get the connected voxels alive and add to the list of voxels inside the part being placed
+        List<Voxel> partToCheckActiveVoxels = new List<Voxel>();
+
+        foreach (var corner in partToCheckCorners)
+        {
+            var voxelsInPartToCheck = corner.GetConnectedVoxels().Where(v => v.Status == VoxelState.Alive);
+            foreach (var voxel in voxelsInPartToCheck)
+            {
+                partToCheckActiveVoxels.Add(voxel);
+            }
+        }
 
         //If (the active voxels in the part to check < maxOverlap) return true
         if (partToCheckActiveVoxels.Count < _maxOverlap)

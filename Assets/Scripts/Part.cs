@@ -42,8 +42,6 @@ public class Part
     #endregion
 
     #region public functions
-
-
     public void PlaceFirstPart(Vector3 position, Quaternion rotation)
     {
         //Create the part gameobject in the scene
@@ -66,24 +64,26 @@ public class Part
         //Enable the part gameobject in the scene
         //anchorConnection.NameGameObject("anchor");
         GOPart.SetActive(true);
-
-        Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);
-
-        //Set all connections available (except for the one used)
-        foreach (var connection in Connections)
+        if (availableConnection != null && connectionToPlace != null)
         {
-            if (connection != connectionToPlace)
-            {
-                connection.Available = true;
-            }
-            else
-            {
-                connection.Available = false;
-            }
-        }
+            Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);
 
-        //set the part as placed
-        Status = PartStatus.Checking;
+            //Set all connections available (except for the one used)
+            foreach (var connection in Connections)
+            {
+                if (connection != connectionToPlace)
+                {
+                    connection.Available = true;
+                }
+                else
+                {
+                    connection.Available = false;
+                }
+            }
+
+            //set the part as placed
+            Status = PartStatus.Checking;
+        }
     }
 
     public void ResetPart()

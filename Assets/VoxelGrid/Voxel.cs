@@ -15,9 +15,9 @@ public class Voxel
 {
 
     #region public fields
-
-    //index can not be set outside of the scope of this class
     public Vector3Int Index { get; private set; }
+
+    public Corner[] Corners; 
 
     /// <summary>
     /// Change the value of _showVoxel and enable/disable the _goVoxelTrigger 
@@ -98,9 +98,9 @@ public class Voxel
         _grid = grid;
         CreateGameobject();
 
+
         Status = VoxelState.Available;
     }
-
     #endregion
 
     #region private functions
@@ -116,9 +116,6 @@ public class Voxel
     #endregion
 
     #region public functions
-
-
-
     public void CreateGameobject()
     {
         _goVoxelTrigger = GameObject.CreatePrimitive(PrimitiveType.Cube);
