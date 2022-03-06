@@ -10,7 +10,7 @@ public class Aggregator : MonoBehaviour
     private float connectionTolerance = 10f;
 
     [SerializeField]
-    private float _voxelSize = 0.75f;
+    private float _voxelSize = 1f;
 
     [SerializeField]
     private int _voxelOffset = 0;
@@ -20,7 +20,7 @@ public class Aggregator : MonoBehaviour
     #endregion
 
     #region private fields
-    private int _maxOverlap = 3;
+    private int _maxOverlap = 1;
     #endregion
 
     #region public fields
@@ -176,25 +176,18 @@ public class Aggregator : MonoBehaviour
         _grid.GetVoxels().ToList().ForEach(v => v.Status = VoxelState.Available);
 
         //Set the voxels in the placed building parts active
-        foreach (var part in _buildingParts)
-        {
-            var buildingPartBounds = part.GOPart.GetComponentInChildren<MeshCollider>().bounds;
-            var voxelsInBounds = _grid.GetVoxels().ToList().Where(v => buildingPartBounds.Contains(v.Centre)).ToList();
-            foreach (var voxel in voxelsInBounds)
-            {
-                voxel.Status = VoxelState.Alive;
-            }
-        }
+        _buildingParts.ForEach(part => {
+            _grid.GetVoxels().Where(v => IsInsideCentre(v, part.GOPart.GetComponent<MeshCollider>())).ToList().ForEach(v => v.Status = VoxelState.Alive);
+        });
 
         //Get all the voxels in the partToCheck
-        List<Voxel> partToCheckVoxels = _grid.GetVoxels().ToList().Where(v =>
-            partToCheck.GOPart.GetComponentInChildren<MeshCollider>().bounds.Contains(v.Centre)).ToList();
+        var voxelsInPartToCheck = _grid.GetVoxels().Where(v => IsInsideCentre(v, partToCheck.GOPart.GetComponent<MeshCollider>()));
 
         //Check how many of the voxels in partToCheck are active
-        List<Voxel> partToCheckActiveVoxels = partToCheckVoxels.Where(v => v.Status == VoxelState.Alive).ToList();
+        int aliveVoxelsInPartToCheck = voxelsInPartToCheck.Count(v => v.Status == VoxelState.Alive);
 
         //If (the active voxels in the part to check < maxOverlap) return true
-        if (partToCheckActiveVoxels.Count < _maxOverlap)
+        if (aliveVoxelsInPartToCheck < _maxOverlap)
         {
             return true;
         }
