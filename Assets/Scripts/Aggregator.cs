@@ -138,9 +138,12 @@ public class Aggregator : MonoBehaviour
         //List<Connection> possibleConnections = _libraryConnections.Where(c => c.Length > minLength && c.Length < maxLength).ToList();
 
         bool partPlaced = false;
+        int attemptCounter = 1;
 
         while (partPlaced == false && possibleConnections.Count > 0 && randomAvailableConnection != null)
         {
+            Debug.Log($"Part placement attempt number #{attemptCounter}");
+            attemptCounter++;
             //Get a random connection out of the available connections list
             int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
             Connection connectionToPlace = possibleConnections[rndPossibleConnectionIndex];
@@ -179,6 +182,7 @@ public class Aggregator : MonoBehaviour
             var buildingPartBounds = part.GOPart.GetComponentInChildren<MeshCollider>().bounds;
 
             var cornersInBounds = _grid.GetCorners().Where(c => buildingPartBounds.Contains(c.Index)).ToList();
+            Debug.Log($"cornersInBounds count: {cornersInBounds.Count}");
             
             foreach (var corner in cornersInBounds)
             {
@@ -201,7 +205,7 @@ public class Aggregator : MonoBehaviour
                 partToCheckActiveVoxels.Add(voxel);
             }
         }
-
+        Debug.Log($"partToCheckActiveVoxels count: {partToCheckActiveVoxels.Count}");
         //If (the active voxels in the part to check < maxOverlap) return true
         if (partToCheckActiveVoxels.Count < _maxOverlap)
         {
@@ -247,7 +251,6 @@ public class Aggregator : MonoBehaviour
         var point = voxel.Centre;
         return Util.PointInsideCollider(point, collider);
     }
-
     #endregion
 
     #region Canvas functions
