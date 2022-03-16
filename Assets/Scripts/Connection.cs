@@ -5,6 +5,8 @@ public class Connection
     #region public fields
 
     public GameObject GOConnection;
+    public string Name { get; private set; }
+
     //Relative rotation and position to the library part
     public Vector3 Position
     {
@@ -30,11 +32,31 @@ public class Connection
             return GOConnection.transform.rotation;
         }
     }
+
+    public bool Visible
+    {
+        set
+        {
+            GOConnection.SetActive(value);
+        }
+    }
+
     public float Length;
     public Part ThisPart;
 
     //Available becomes false if the connection has been used or if no part can be added to the connection
-    public bool Available = false;
+    public bool Available
+    {
+        get
+        {
+            return _available;
+        }
+        set
+        {
+            _available = value;
+            //Debug.Log($"Connection available is {value}");
+        }
+    }
 
     /// <summary>
     /// Is this connection in the library of parts that are not place yet
@@ -49,7 +71,7 @@ public class Connection
     #endregion
 
     #region private fields
-
+    bool _available = false;
     #endregion
     #region constructors
     public Connection(GameObject goConnection, Part thisPart)
@@ -63,7 +85,10 @@ public class Connection
     public void NameGameObject(string name)
     {
         GOConnection.name = name;
+        Name = name;
     }
+
+
     #endregion
     #region private functions
 

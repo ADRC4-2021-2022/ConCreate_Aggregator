@@ -10,7 +10,7 @@ public class Aggregator : MonoBehaviour
     private float connectionTolerance = 10f;
 
     [SerializeField]
-    private float _voxelSize = 0.75f;
+    private float _voxelSize = 0.4f;
 
     [SerializeField]
     private int _voxelOffset = 0;
@@ -22,12 +22,24 @@ public class Aggregator : MonoBehaviour
     #endregion
 
     #region private fields
-    private int _maxOverlap = 3;
+    private int _maxOverlap = 1;
+    private Material _matTrans;
     #endregion
 
     #region public fields
     //Library contains all the parts that haven't been placed yet
     public List<Part> _library = new List<Part>();
+    public Material MatTrans
+    {
+        get
+        {
+            if (_matTrans == null)
+            {
+                _matTrans = Resources.Load<Material>("Materials/matTrans");
+            }
+            return _matTrans;
+        }
+    }
 
     //All the parts that are already place in the building
     public List<Part> _buildingParts
@@ -67,7 +79,7 @@ public class Aggregator : MonoBehaviour
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
 
         //Select the prefabs with tag Part
-        _library = prefabs.Where(g => g.tag == "Part").Select(g => new Part(g)).ToList();      
+        _library = prefabs.Where(g => g.tag == "Part").Select(g => new Part(g)).ToList();
 
         foreach (var part in _library)
         {
@@ -94,6 +106,7 @@ public class Aggregator : MonoBehaviour
         int rndY = Random.Range(0, 360);
 
         randomPart.PlaceFirstPart(Vector3.zero, Quaternion.Euler(new Vector3(0, rndY, 0)));
+        randomPart.Name = $"{randomPart.Name} added {_buildingParts.Count}";
     }
 
     IEnumerator StartFindNextConnection()
@@ -106,8 +119,13 @@ public class Aggregator : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    private void FindNextConnection()
+    private bool FindNextConnection()
     {
+        if (_availableConnections.Count == 0)
+        {
+            Debug.Log("There are no more available connections");
+            return false;
+        }
         //Get a random connection out of the available connections list
         int rndConnectionIndex = Random.Range(0, _availableConnections.Count);
         Connection randomAvailableConnection = _availableConnections[rndConnectionIndex];
@@ -132,7 +150,8 @@ public class Aggregator : MonoBehaviour
         if (possibleConnections.Count == 0)
         {
             Debug.Log("No connections found within the dimension range");
-            return;
+            randomAvailableConnection.Available = false;
+            return false;
         }
         //The line below is a shorthand notation for the foreach loop above
         //List<Connection> possibleConnections = _libraryConnections.Where(c => c.Length > minLength && c.Length < maxLength).ToList();
@@ -140,22 +159,27 @@ public class Aggregator : MonoBehaviour
         bool partPlaced = false;
         int attemptCounter = 1;
 
-        while (partPlaced == false && possibleConnections.Count > 0 && randomAvailableConnection != null)
+        while (!partPlaced && possibleConnections.Count > 0 && randomAvailableConnection.Available == true)
         {
-            Debug.Log($"Part placement attempt number #{attemptCounter}");
+            // Debug.Log($"Part placement attempt number #{attemptCounter}");
             attemptCounter++;
             //Get a random connection out of the available connections list
             int rndPossibleConnectionIndex = Random.Range(0, possibleConnections.Count);
             Connection connectionToPlace = possibleConnections[rndPossibleConnectionIndex];
             Part currentPart = connectionToPlace.ThisPart;
+
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             currentPart.PositionPart(randomAvailableConnection, connectionToPlace);
 
             RegenerateVoxelGrid(currentPart);
             if (CheckCollision(currentPart))
             {
                 //Set the part as placed
-                currentPart.Status = PartStatus.Placed;
+                currentPart.PlacePart(connectionToPlace);
+                randomAvailableConnection.Available = false;
+                currentPart.Name = $"{currentPart.Name} added {_buildingParts.Count}";
                 partPlaced = true;
+                return true;
             }
             else
             {
@@ -163,14 +187,29 @@ public class Aggregator : MonoBehaviour
                 currentPart.ResetPart();
                 //remove the tried connection from the list of possible connections
                 possibleConnections.Remove(connectionToPlace);
+                RegenerateVoxelGrid(currentPart);
+                if (possibleConnections.Count <= 0)
+                {
+                    randomAvailableConnection.Available = false;
+                    Debug.LogWarning($"Connection doesn't have any possible connecting parts");
+                    randomAvailableConnection.Visible = true;
+                    return false;
+                }
             }
         }
         ///End While loop
 
         if (!partPlaced)
             Debug.Log("No parts could be added");
+
+        return true;
     }
 
+    /// <summary>
+    /// Check if the new positioned part is intersecting with the existing building parts.
+    /// </summary>
+    /// <param name="partToCheck">The new positioned part</param>
+    /// <returns>Return true if the part to check does not collide with the existing building.</returns>
     private bool CheckCollision(Part partToCheck)
     {
         //Set all voxels inactive
@@ -180,16 +219,38 @@ public class Aggregator : MonoBehaviour
         foreach (var part in _buildingParts)
         {
             var buildingPartBounds = part.GOPart.GetComponentInChildren<MeshCollider>().bounds;
-
-            var cornersInBounds = _grid.GetCorners().Where(c => buildingPartBounds.Contains(c.Index)).ToList();
-            Debug.Log($"cornersInBounds count: {cornersInBounds.Count}");
             
+
+            //Activate voxels inside the parts
+            foreach (Voxel voxel in _grid.GetVoxels())
+            {
+                if (IsInsideCentre(voxel, part.Collider))
+                {
+                    voxel.Status = VoxelState.Alive;
+                    voxel.ChangeVoxelVisability();
+                    
+                }
+            }
+
+            
+
+
+            /*
+            var cornersInBounds = _grid.GetCorners().Where(c => buildingPartBounds.Contains(c.Index)).ToList();
+            //Debug.Log($"cornersInBounds count: {cornersInBounds.Count}");
+
             foreach (var corner in cornersInBounds)
             {
                 corner.GetConnectedVoxels().ToList().ForEach(v => v.Status = VoxelState.Alive);
-            }
+            }*/
+        }
+        int voxelsOverlap = 0;
+        foreach (var voxel in _grid.GetVoxels())
+        {
+            if (voxel.Status == VoxelState.Alive && IsInsideCentre(voxel, partToCheck.Collider)) voxelsOverlap++;
         }
 
+        /*
         //Get all the corners in the partToCheck
         List<Corner> partToCheckCorners = _grid.GetCorners().Where(c =>
             partToCheck.GOPart.GetComponentInChildren<MeshCollider>().bounds.Contains(c.Index)).ToList();
@@ -205,13 +266,14 @@ public class Aggregator : MonoBehaviour
                 partToCheckActiveVoxels.Add(voxel);
             }
         }
-        Debug.Log($"partToCheckActiveVoxels count: {partToCheckActiveVoxels.Count}");
+        //Debug.Log($"partToCheckActiveVoxels count: {partToCheckActiveVoxels.Count}");
         //If (the active voxels in the part to check < maxOverlap) return true
-        if (partToCheckActiveVoxels.Count < _maxOverlap)
+        */
+        if (voxelsOverlap < _maxOverlap)
         {
             return true;
         }
-
+        Debug.Log("Part overlapping");
         return false;
     }
 
@@ -237,7 +299,7 @@ public class Aggregator : MonoBehaviour
         //Get the grid parameters and create grid
         gridDimensions = (bounds.size / _voxelSize).ToVector3IntRound() + Vector3Int.one * _voxelOffset * 2;
         origin = bounds.center - (Vector3)gridDimensions * _voxelSize / 2;
-        _grid = new VoxelGrid(gridDimensions, _voxelSize, origin, _goVoxelGrid);
+        _grid = new VoxelGrid(gridDimensions, _voxelSize, origin, _goVoxelGrid, MatTrans);
     }
 
 

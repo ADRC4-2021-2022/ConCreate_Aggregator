@@ -17,6 +17,8 @@ public class VoxelGrid
 
     public Voxel[,,] Voxels;
 
+    public Material MatTrans;
+
     public bool ShowAliveVoxels
     {
         get
@@ -77,12 +79,13 @@ public class VoxelGrid
     /// <param name="gridDimensions">X,Y,Z dimensions of the grid</param>
     /// <param name="voxelSize">The size of the voxels</param>
     /// <param name="origin">Where the voxelgrid starts</param>
-    public VoxelGrid(Vector3Int gridDimensions, float voxelSize, Vector3 origin, GameObject goGrid)
+    public VoxelGrid(Vector3Int gridDimensions, float voxelSize, Vector3 origin, GameObject goGrid, Material matTrans)
     {
         GridDimensions = gridDimensions;
         VoxelSize = voxelSize;
         Origin = origin;
         GOGrid = goGrid;
+        MatTrans = matTrans;
 
         MakeVoxels();
         MakeCorners();
@@ -97,7 +100,7 @@ public class VoxelGrid
     /// <param name="z">Z dimensions of the grid</param>
     /// <param name="voxelSize">The size of the voxels</param>
     /// <param name="origin">Where the voxelgrid starts</param>
-    public VoxelGrid(int x, int y, int z, float voxelSize, Vector3 origin, GameObject goGrid) : this(new Vector3Int(x, y, z), voxelSize, origin, goGrid) { }
+    public VoxelGrid(int x, int y, int z, float voxelSize, Vector3 origin, GameObject goGrid, Material matTrans) : this(new Vector3Int(x, y, z), voxelSize, origin, goGrid, matTrans) { }
     #endregion
 
     #region private functions

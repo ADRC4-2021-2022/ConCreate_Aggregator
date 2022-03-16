@@ -97,25 +97,28 @@ public class Voxel
         Index = index;
         _grid = grid;
         CreateGameobject();
+        ChangeMaterial(grid.MatTrans);
 
 
         Status = VoxelState.Available;
+        ChangeVoxelVisability();
     }
     #endregion
 
     #region private functions
-    private void ChangeVoxelVisability()
+
+    #endregion
+
+    #region public functions
+    public void ChangeVoxelVisability()
     {
         bool visible = false;
         if (Status == VoxelState.Dead) visible = false;
-        if (Status == VoxelState.Available && _showAvailableVoxel) visible = true;
+        if (Status == VoxelState.Available && _showAvailableVoxel) visible = false;
         if (Status == VoxelState.Alive && _showAliveVoxel) visible = true;
 
         _goVoxelTrigger.SetActive(visible);
     }
-    #endregion
-
-    #region public functions
     public void CreateGameobject()
     {
         _goVoxelTrigger = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -124,9 +127,15 @@ public class Voxel
         _goVoxelTrigger.transform.position = Centre;
         _goVoxelTrigger.transform.localScale = Vector3.one * _voxelSixe * _scalefactor;
         _goVoxelTrigger.transform.SetParent(_grid.GOGrid.transform);
+        
 
         VoxelTrigger trigger = _goVoxelTrigger.AddComponent<VoxelTrigger>();
         trigger.AttachedVoxel = this;
+    }
+
+    public void ChangeMaterial(Material mat)
+    {
+        _goVoxelTrigger.GetComponent<MeshRenderer>().material = mat;
     }
 
     public List<Voxel> GetFaceNeighbourList()

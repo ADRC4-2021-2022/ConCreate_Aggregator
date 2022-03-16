@@ -175,4 +175,24 @@ public static class Util
         movingPart.GOPart.transform.parent = null;
         GameObject.Destroy(connectionParent);
     }
+
+    public static List<GameObject> GetChildObject(Transform parent, string tag)
+    {
+        List<GameObject> taggedChildren = new List<GameObject>();
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.tag == tag)
+            {
+                taggedChildren.Add(child.gameObject);
+            }
+            if (child.childCount > 0)
+            {
+                GetChildObject(child, tag);
+            }
+        }
+
+        return taggedChildren;
+    }
 }
