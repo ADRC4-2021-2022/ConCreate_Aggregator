@@ -87,8 +87,6 @@ public class Connection
         GOConnection.name = name;
         Name = name;
     }
-
-
     #endregion
     #region private functions
 

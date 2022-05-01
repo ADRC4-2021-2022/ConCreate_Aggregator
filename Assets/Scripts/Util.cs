@@ -170,7 +170,6 @@ public static class Util
         connectionParent.transform.rotation = targetConnection.NormalAsQuaternion * rotate180;
         connectionParent.transform.position = targetConnection.Position;
 
-
         //Set the part back in the root of the hierarchy and destroy the temporary parent object. The part wil not move
         movingPart.GOPart.transform.parent = null;
         GameObject.Destroy(connectionParent);

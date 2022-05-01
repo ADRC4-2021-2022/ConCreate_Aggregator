@@ -7,13 +7,16 @@ public class Aggregator : MonoBehaviour
 {
     #region Serialized fields
     [SerializeField]
-    private float connectionTolerance = 10f;
+    private float connectionTolerance = 0.1f;
 
     [SerializeField]
     private float _voxelSize = 0.4f;
 
     [SerializeField]
     private int _voxelOffset = 0;
+
+    [SerializeField]
+    private int _maxOverlap = 2;
 
     private VoxelGrid _grid;
     private GameObject _goVoxelGrid;
@@ -22,7 +25,6 @@ public class Aggregator : MonoBehaviour
     #endregion
 
     #region private fields
-    private int _maxOverlap = 1;
     private Material _matTrans;
     #endregion
 
@@ -75,20 +77,22 @@ public class Aggregator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Load all the prefabs
-        GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
-
-        //Select the prefabs with tag Part
-        _library = prefabs.Where(g => g.tag == "Part").Select(g => new Part(g)).ToList();
-
-        foreach (var part in _library)
+        for (int i = 0; i < 50; i++)
         {
-            foreach (var connection in part.Connections)
+            //Load all the prefabs
+            GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
+
+            //Select the prefabs with tag Part
+            _library = prefabs.Where(g => g.CompareTag("Part")).Select(g => new Part(g)).ToList();
+
+            foreach (var part in _library)
             {
-                _connections.Add(connection);
+                foreach (var connection in part.Connections)
+                {
+                    _connections.Add(connection);
+                }
             }
         }
-
         PlaceFirstBlock();
         //StartCoroutine(StartFindNextConnection());
     }

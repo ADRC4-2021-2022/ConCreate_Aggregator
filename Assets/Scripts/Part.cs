@@ -42,8 +42,6 @@ public class Part
             GOPart.name = value;
         }
     }
-
-
     #endregion
 
     #region private fields
@@ -95,7 +93,6 @@ public class Part
 
         //set the part as placed
         Status = PartStatus.Placed;
-
     }
 
     public void PositionPart(Connection availableConnection, Connection connectionToPlace)
@@ -106,8 +103,6 @@ public class Part
         if (availableConnection != null && connectionToPlace != null)
         {
             Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);
-
-
 
             //set the part as placed
             Status = PartStatus.Checking;
@@ -155,9 +150,5 @@ public class Part
             Connections.Add(new Connection(connectionGO, this));
         }
     }
-
-    
-
-
     #endregion
 }
