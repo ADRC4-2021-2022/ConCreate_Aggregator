@@ -42,6 +42,7 @@ public class Connection
     }
 
     public float Length;
+    public float Width;
     public Part ThisPart;
 
     //Available becomes false if the connection has been used or if no part can be added to the connection
@@ -78,6 +79,7 @@ public class Connection
     {
         GOConnection = goConnection;
         Length = GOConnection.transform.localScale.z;
+        Width = GOConnection.transform.localScale.x;
         ThisPart = thisPart;
     }
     #endregion

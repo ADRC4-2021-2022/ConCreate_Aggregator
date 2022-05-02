@@ -165,10 +165,16 @@ public static class Util
 
         //Get the rotation quateernion for 180 degrees over the y axis so make the connection meet in oposite direction 
         Quaternion rotate180 = Quaternion.LookRotation(Vector3.back, Vector3.up);
+        if (movingConnection.GOConnection.CompareTag("StackingConnectionNormal")
+            && targetConnection.GOConnection.CompareTag("StackingConnectionNormal"))
+        //    && movingConnection.GOConnection.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size.Equals(
+        //        targetConnection.GOConnection.transform.GetChild(0).GetComponent<MeshRenderer>().bounds.size))
+        {
+            rotate180 = Quaternion.identity;
+        }
 
         //Set the rotation and position of the parrent to match the target  and rotate with the 180 rotation quaternion
-        connectionParent.transform.rotation = targetConnection.NormalAsQuaternion * rotate180;
-        connectionParent.transform.position = targetConnection.Position;
+        connectionParent.transform.SetPositionAndRotation(targetConnection.Position, targetConnection.NormalAsQuaternion * rotate180);
 
         //Set the part back in the root of the hierarchy and destroy the temporary parent object. The part wil not move
         movingPart.GOPart.transform.parent = null;

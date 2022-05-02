@@ -85,6 +85,8 @@ public class Part
         //Create the part gameobject in the scene
         GOPart.SetActive(true);
 
+        GOPart.transform.SetPositionAndRotation(position, rotation);
+
         //Set all connections available
         foreach (var connection in Connections)
         {
@@ -104,7 +106,7 @@ public class Part
         {
             Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);
 
-            //set the part as placed
+            //set the part status as 'placed and being checked'
             Status = PartStatus.Checking;
         }
     }
@@ -117,13 +119,13 @@ public class Part
         //Set all connections available (except for the one used)
         foreach (var connection in Connections)
         {
-            if (connection != connectionToPlace)
+            if (connection == connectionToPlace)
             {
-                connection.Available = true;
+                connection.Available = false;
             }
             else
             {
-                connection.Available = false;
+                connection.Available = true;
             }
         }
     }
@@ -143,9 +145,14 @@ public class Part
     {
         //Find all instances of ConnectionNormal prefab in the children of your GOPartPrefab using the tags
         List<GameObject> connectionPrefabs = Util.GetChildObject(GOPart.transform, "ConnectionNormal");
+        List<GameObject> stackingConnectionPrefabs = Util.GetChildObject(GOPart.transform, "StackingConnectionNormal");
 
         //Create a connection object for each connectionPrefab using its transform position, rotation and x scale as length
         foreach (var connectionGO in connectionPrefabs)
+        {
+            Connections.Add(new Connection(connectionGO, this));
+        }
+        foreach (var connectionGO in stackingConnectionPrefabs)
         {
             Connections.Add(new Connection(connectionGO, this));
         }

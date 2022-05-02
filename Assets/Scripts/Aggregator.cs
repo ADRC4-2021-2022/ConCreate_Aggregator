@@ -107,9 +107,10 @@ public class Aggregator : MonoBehaviour
         int rndPartIndex = Random.Range(0, _library.Count);
         Part randomPart = _library[rndPartIndex];
 
-        int rndY = Random.Range(0, 360);
+        int rndZ = Random.Range(0, 4);
+        int rndY = Random.Range(0, 4);
 
-        randomPart.PlaceFirstPart(Vector3.zero, Quaternion.Euler(new Vector3(0, rndY, 0)));
+        randomPart.PlaceFirstPart(Vector3.zero, Quaternion.Euler(new Vector3(0, rndY * 90, rndZ * 90)));
         randomPart.Name = $"{randomPart.Name} added {_buildingParts.Count}";
     }
 
@@ -117,7 +118,11 @@ public class Aggregator : MonoBehaviour
     {
         for (int i = 0; i < _library.Count; i++)
         {
-            FindNextConnection();
+            if (!FindNextConnection())
+            {
+
+                StartCoroutine(StartFindNextConnection());
+            }
             yield return new WaitForSeconds(1f);
         }
         yield return new WaitForSeconds(1f);
@@ -139,13 +144,20 @@ public class Aggregator : MonoBehaviour
         float connectionLength = randomAvailableConnection.Length;
         float minLength = connectionLength - connectionTolerance;
         float maxLength = connectionLength + connectionTolerance;
+        Debug.Log($"minlength is {minLength} and maxlenght is {maxLength}");
+
+        float connectionWidth = randomAvailableConnection.Width;
+        float minWidth = connectionWidth - connectionTolerance;
+        float maxWidth = connectionWidth + connectionTolerance;
+        Debug.Log($"minwodth is {minWidth} and maxwidth is {maxWidth}");
 
         //Find a similar connection
         List<Connection> possibleConnections = new List<Connection>();
 
         foreach (var connection in _libraryConnections)
         {
-            if (connection.Length > minLength && connection.Length < maxLength)
+            if (connection.Length > minLength && connection.Length < maxLength
+                && connection.Width > minWidth && connection.Width < maxWidth)
             {
                 possibleConnections.Add(connection);
             }
@@ -216,6 +228,14 @@ public class Aggregator : MonoBehaviour
     /// <returns>Return true if the part to check does not collide with the existing building.</returns>
     private bool CheckCollision(Part partToCheck)
     {
+        var boundingBoxBounds = GameObject.FindGameObjectWithTag("BoundingBox").GetComponent<MeshCollider>().bounds;
+        //if (!boundingBoxBounds.Contains(partToCheck.Collider.bounds.min) && !boundingBoxBounds.Contains(partToCheck.Collider.bounds.max))
+        if (!boundingBoxBounds.Intersects(partToCheck.Collider.bounds))
+        {
+            Debug.Log($"{partToCheck.Name} is outside bounds");
+            return false;
+        }
+
         //Set all voxels inactive
         _grid.GetVoxels().ToList().ForEach(v => v.Status = VoxelState.Available);
 
@@ -235,9 +255,6 @@ public class Aggregator : MonoBehaviour
                     
                 }
             }
-
-            
-
 
             /*
             var cornersInBounds = _grid.GetCorners().Where(c => buildingPartBounds.Contains(c.Index)).ToList();
@@ -298,6 +315,7 @@ public class Aggregator : MonoBehaviour
         foreach (var part in _buildingParts)
         {
             bounds.Encapsulate(part.GOPart.GetComponentInChildren<MeshCollider>().bounds);
+            //Debug.Log($"bound extents: {bounds.extents.x *2}, {bounds.extents.y *2}, {bounds.extents.z *2}");
         }
 
         //Get the grid parameters and create grid
@@ -325,6 +343,10 @@ public class Aggregator : MonoBehaviour
         if (GUI.Button(new Rect(10, 120, 200, 50), "Place Next Part"))
         {
             FindNextConnection();
+        }
+        else if (GUI.Button(new Rect(10, 200, 200, 50), "AutoFiller"))
+        {
+            StartCoroutine(StartFindNextConnection());
         }
     }
     #endregion
