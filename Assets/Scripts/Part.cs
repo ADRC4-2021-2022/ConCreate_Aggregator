@@ -145,17 +145,17 @@ public class Part
     {
         //Find all instances of ConnectionNormal prefab in the children of your GOPartPrefab using the tags
         List<GameObject> connectionPrefabs = Util.GetChildObject(GOPart.transform, "ConnectionNormal");
-        List<GameObject> stackingConnectionPrefabs = Util.GetChildObject(GOPart.transform, "StackingConnectionNormal");
+        //List<GameObject> stackingConnectionPrefabs = Util.GetChildObject(GOPart.transform, "StackingConnectionNormal");
 
         //Create a connection object for each connectionPrefab using its transform position, rotation and x scale as length
         foreach (var connectionGO in connectionPrefabs)
         {
             Connections.Add(new Connection(connectionGO, this));
         }
-        foreach (var connectionGO in stackingConnectionPrefabs)
+        /*foreach (var connectionGO in stackingConnectionPrefabs)
         {
             Connections.Add(new Connection(connectionGO, this));
-        }
+        }*/
     }
     #endregion
 }

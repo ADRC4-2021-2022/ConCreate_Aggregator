@@ -77,7 +77,7 @@ public class Aggregator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 2; i++)
         {
             //Load all the prefabs
             GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
@@ -203,7 +203,7 @@ public class Aggregator : MonoBehaviour
                 currentPart.ResetPart();
                 //remove the tried connection from the list of possible connections
                 possibleConnections.Remove(connectionToPlace);
-                RegenerateVoxelGrid(currentPart);
+                //RegenerateVoxelGrid(currentPart);
                 if (possibleConnections.Count <= 0)
                 {
                     randomAvailableConnection.Available = false;
@@ -230,6 +230,7 @@ public class Aggregator : MonoBehaviour
     {
         var boundingBoxBounds = GameObject.FindGameObjectWithTag("BoundingBox").GetComponent<MeshCollider>().bounds;
         //if (!boundingBoxBounds.Contains(partToCheck.Collider.bounds.min) && !boundingBoxBounds.Contains(partToCheck.Collider.bounds.max))
+        //Check if the corners of the bounds of your part are inside your bounding box to avoid parts sticking out of your bounding box.
         if (!boundingBoxBounds.Intersects(partToCheck.Collider.bounds))
         {
             Debug.Log($"{partToCheck.Name} is outside bounds");
