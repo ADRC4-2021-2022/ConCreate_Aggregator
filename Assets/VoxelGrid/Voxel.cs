@@ -17,7 +17,7 @@ public class Voxel
     #region public fields
     public Vector3Int Index { get; private set; }
 
-    public Corner[] Corners; 
+    public Corner[] Corners;
 
     /// <summary>
     /// Change the value of _showVoxel and enable/disable the _goVoxelTrigger 
@@ -127,7 +127,7 @@ public class Voxel
         _goVoxelTrigger.transform.position = Centre;
         _goVoxelTrigger.transform.localScale = Vector3.one * _voxelSixe * _scalefactor;
         _goVoxelTrigger.transform.SetParent(_grid.GOGrid.transform);
-        
+
 
         VoxelTrigger trigger = _goVoxelTrigger.AddComponent<VoxelTrigger>();
         trigger.AttachedVoxel = this;

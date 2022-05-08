@@ -1,18 +1,23 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Visualises the minimum translation vectors required to separate apart from other colliders found in a given radius
-// Attach to a GameObject that has a Collider attached.
 public class CollisionTest : MonoBehaviour
 {
     [SerializeField]
     private Text _debugText;
 
+    [SerializeField]
+    private Toggle _toggleConnectionMatching;
+
     private readonly float _radius = 25f; // check for penetration within a radius of 50m (radius of a sphere)
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in CollisionCheck
     private readonly float _overlapTolerance = 0.03f;
+    private readonly float _connectionTolerance = 0.1f;
+    private bool _connectionMatchingEnabled = true;
+
     private Collider[] _neighbours;
     private Vector3 _collisionTestSpherePosition = Vector3Int.zero;
 
@@ -21,6 +26,8 @@ public class CollisionTest : MonoBehaviour
 
     public void Start()
     {
+        _toggleConnectionMatching.onValueChanged.AddListener(delegate { _connectionMatchingEnabled = !_connectionMatchingEnabled; });
+
         for (int i = 0; i < 50; i++)
         {
             //Load all the prefabs
@@ -32,7 +39,7 @@ public class CollisionTest : MonoBehaviour
         _neighbours = new Collider[_maxNeighboursToCheck];
         PlaceFirstPart();
         EnableAllConnections();
-        
+
     }
 
     private void EnableAllConnections()
@@ -73,32 +80,21 @@ public class CollisionTest : MonoBehaviour
         {
             foreach (Connection connection in unplacedPart.Connections)
             {
-                if (connection.Available) availableConnectionsInUnplacedParts.Add(connection);
+                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection))
+                {
+                    availableConnectionsInUnplacedParts.Add(connection);
+                }
             }
         }
-
-        //int randomIndexInUnplacedParts = Random.Range(0, availableConnectionsInUnplacedParts.Count);
-        //Connection randomAvailableConnectionsInUnplacedParts = availableConnectionsInUnplacedParts[randomIndexInUnplacedParts];
 
         foreach (Connection unplacedConnection in availableConnectionsInUnplacedParts)
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
-            
+
             if (CheckCollision())
             {
                 //the part collided, so reset the part
                 unplacedConnection.ThisPart.ResetPart();
-                //remove the tried connection from the list of possible connections
-                /*availableConnectionsInUnplacedParts.Remove(unplacedConnection);
-                //RegenerateVoxelGrid(currentPart);
-                if (availableConnectionsInUnplacedParts.Count <= 0)
-                {
-                    randomAvailableConnectionInCurrentBuilding.Available = false;
-                    Debug.LogWarning($"{randomAvailableConnectionInCurrentBuilding.GOConnection.name} for " +
-                        $"{randomAvailableConnectionInCurrentBuilding.ThisPart.Name} doesn't have any possible connecting parts");
-                    randomAvailableConnectionInCurrentBuilding.Visible = true;
-                    continue;
-                }*/
             }
             else
             {
@@ -114,9 +110,31 @@ public class CollisionTest : MonoBehaviour
     }
 
     /// <summary>
-    /// Check for collisions with a particular part
+    /// Check if two connections are of compatible length/width, within a margin of tolerance
+    /// (If connection matching is off, this function returns true by default)
     /// </summary>
-    /// <param name="partToCheck">The Part to be checked</param>
+    /// <param name="connectionInBuilding">A connection in the current building</param>
+    /// <param name="connectionToPlace">A potential connection, to be checked for compatibility</param>
+    /// <returns>True if within tolerable measurements, false if not</returns>
+    private bool AreConnectionsCompatible(Connection connectionInBuilding, Connection connectionToPlace)
+    {
+        if (!_connectionMatchingEnabled) return true;
+
+        float connectionLength = connectionInBuilding.Length;
+        float minLength = connectionLength - _connectionTolerance;
+        float maxLength = connectionLength + _connectionTolerance;
+
+        float connectionWidth = connectionInBuilding.Width;
+        float minWidth = connectionWidth - _connectionTolerance;
+        float maxWidth = connectionWidth + _connectionTolerance;
+
+        return connectionToPlace.Length > minLength && connectionToPlace.Length < maxLength
+                && connectionToPlace.Width > minWidth && connectionToPlace.Width < maxWidth;
+    }
+
+    /// <summary>
+    /// Check for collisions between the parts of the building
+    /// </summary>
     /// <returns>True if collision is found, false if not</returns>
     private bool CheckCollision()
     {
@@ -151,7 +169,7 @@ public class CollisionTest : MonoBehaviour
                 // draw a line showing the depenetration direction if overlapped
                 if (isOverlapping && distance > _overlapTolerance)
                 {
-                    _debugText.text += $"Part {partToCheck.Name} collision info:\n"+
+                    _debugText.text += $"Part {partToCheck.Name} collision info:\n" +
                         $"Colliding with {otherCollider.gameObject.name}:\n" +
                         $"Direction: {direction.x}, {direction.y}, {direction.z}\n" +
                         $"Distance: {distance} meters\n\n";
@@ -162,12 +180,25 @@ public class CollisionTest : MonoBehaviour
         return false;
     }
 
-    private void OnGUI()
+    private IEnumerator AutoPlacement()
     {
-        if (GUI.Button(new Rect(880, 16, 200, 50), "Place Next Part"))
+        for (int i = 0; i < 50; i++)
         {
+
             PlaceNextPart();
+            yield return new WaitForSeconds(1f);
         }
+        yield return new WaitForSeconds(1f);
+    }
+
+    public void OnPlaceNextPartButtonClicked()
+    {
+        PlaceNextPart();
+    }
+
+    public void OnAutoPlacementButtonClicked()
+    {
+        StartCoroutine(AutoPlacement());
     }
 
     private void OnDrawGizmos()

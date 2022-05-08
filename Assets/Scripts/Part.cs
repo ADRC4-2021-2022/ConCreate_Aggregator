@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 public enum PartStatus { Available, Checking, Placed }
 public class Part
@@ -18,14 +18,14 @@ public class Part
     {
         get
         {
-            if(_collider == null)
+            if (_collider == null)
             {
                 //Debug.Log($"Searching Collider found for {Name}");
                 var goCollider = Util.GetChildObject(GOPart.transform, "PartCollider").First();
                 if (goCollider != null)
                     _collider = goCollider.GetComponentInChildren<MeshCollider>();
                 //else
-                    //Debug.Log($"No Collider found for {Name}");
+                //Debug.Log($"No Collider found for {Name}");
             }
             return _collider;
         }

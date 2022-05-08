@@ -280,7 +280,7 @@ public class Aggregator : MonoBehaviour
         foreach (var part in _buildingParts)
         {
             var buildingPartBounds = part.GOPart.GetComponentInChildren<MeshCollider>().bounds;
-            
+
 
             //Activate voxels inside the parts
             foreach (Voxel voxel in _grid.GetVoxels())
@@ -289,7 +289,7 @@ public class Aggregator : MonoBehaviour
                 {
                     voxel.Status = VoxelState.Alive;
                     voxel.ChangeVoxelVisability();
-                    
+
                 }
             }
 
