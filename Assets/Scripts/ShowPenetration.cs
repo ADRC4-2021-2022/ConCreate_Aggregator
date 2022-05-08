@@ -58,6 +58,9 @@ public class ShowPenetration : MonoBehaviour
                 _depenetrationDirectionText.text = $"Direction: {direction.x}, {direction.y}, {direction.z}";
                 _depenetrationMagnitudeText.text = $"Distance: {distance} meters";
             }
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, radius);
         }
     }
 }

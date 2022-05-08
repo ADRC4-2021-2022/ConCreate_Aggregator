@@ -123,10 +123,6 @@ public class Part
             {
                 connection.Available = false;
             }
-            else
-            {
-                connection.Available = true;
-            }
         }
     }
 

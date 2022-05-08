@@ -13,6 +13,12 @@ public class Aggregator : MonoBehaviour
     private float _voxelSize = 0.4f;
 
     [SerializeField]
+    private float _collisionCheckRadius = 3f;
+
+    [SerializeField]
+    private int _collisionMaxNeighboursToCheck = 16;
+
+    [SerializeField]
     private int _voxelOffset = 0;
 
     [SerializeField]
@@ -26,6 +32,7 @@ public class Aggregator : MonoBehaviour
 
     #region private fields
     private Material _matTrans;
+    private Collider[] _collisionNeighbours;
     #endregion
 
     #region public fields
@@ -77,7 +84,7 @@ public class Aggregator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 50; i++)
         {
             //Load all the prefabs
             GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
@@ -93,6 +100,7 @@ public class Aggregator : MonoBehaviour
                 }
             }
         }
+        _collisionNeighbours = new Collider[_collisionMaxNeighboursToCheck];
         PlaceFirstBlock();
         //StartCoroutine(StartFindNextConnection());
     }
@@ -144,12 +152,12 @@ public class Aggregator : MonoBehaviour
         float connectionLength = randomAvailableConnection.Length;
         float minLength = connectionLength - connectionTolerance;
         float maxLength = connectionLength + connectionTolerance;
-        Debug.Log($"minlength is {minLength} and maxlenght is {maxLength}");
+        Debug.Log($"minlength is {minLength} and maxlength is {maxLength}");
 
         float connectionWidth = randomAvailableConnection.Width;
         float minWidth = connectionWidth - connectionTolerance;
         float maxWidth = connectionWidth + connectionTolerance;
-        Debug.Log($"minwodth is {minWidth} and maxwidth is {maxWidth}");
+        Debug.Log($"minwidth is {minWidth} and maxwidth is {maxWidth}");
 
         //Find a similar connection
         List<Connection> possibleConnections = new List<Connection>();
@@ -187,8 +195,8 @@ public class Aggregator : MonoBehaviour
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             currentPart.PositionPart(randomAvailableConnection, connectionToPlace);
 
-            RegenerateVoxelGrid(currentPart);
-            if (CheckCollision(currentPart))
+            //RegenerateVoxelGrid(currentPart);
+            if (CheckCollisionWithPhysicsPenetration(currentPart))
             {
                 //Set the part as placed
                 currentPart.PlacePart(connectionToPlace);
@@ -218,6 +226,34 @@ public class Aggregator : MonoBehaviour
         if (!partPlaced)
             Debug.Log("No parts could be added");
 
+        return true;
+    }
+
+    /// <returns>Return true if the part to check does not collide with the existing building.</returns>
+    private bool CheckCollisionWithPhysicsPenetration(Part currentPart)
+    {
+        var thisCollider = currentPart.Collider;
+        if (!thisCollider) return true; // nothing to do without a Collider attached
+
+        int count = Physics.OverlapSphereNonAlloc(thisCollider.gameObject.transform.position, _collisionCheckRadius, _collisionNeighbours);
+
+        for (int i = 0; i < count; ++i)
+        {
+            var otherCollider = _collisionNeighbours[i];
+
+            if (otherCollider == thisCollider || otherCollider.gameObject.CompareTag("BoundingBox"))
+                continue; // skip this collider or bounding box collider
+
+            Vector3 otherPosition = otherCollider.gameObject.transform.position;
+            Quaternion otherRotation = otherCollider.gameObject.transform.rotation;
+            bool isOverlapping = Physics.ComputePenetration(
+                thisCollider, thisCollider.gameObject.transform.position, thisCollider.gameObject.transform.rotation,
+                otherCollider, otherPosition, otherRotation,
+                out _, out _);
+
+            // draw a line showing the depenetration direction if overlapped
+            if (isOverlapping) return false;
+        }
         return true;
     }
 
