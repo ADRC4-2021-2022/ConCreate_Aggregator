@@ -6,26 +6,29 @@ using UnityEngine.UI;
 
 public class CollisionTest : MonoBehaviour
 {
+    //text with info about collision during play mode (top left game scene)
     [SerializeField]
     private Text _debugText;
 
+    //to decide whether aggregate parts according to length or not
     [SerializeField]
     private Toggle _toggleConnectionMatching;
 
     private readonly float _radius = 25f; // check for penetration within a radius of 50m (radius of a sphere)
-    private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in CollisionCheck
-    private readonly float _overlapTolerance = 0.03f;
-    private readonly float _connectionTolerance = 0.1f;
+    private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
+    private readonly float _overlapTolerance = 0.03f; // used by compute penetration
+    private readonly float _connectionTolerance = 0.1f; // tolerance of matching connections
     private bool _connectionMatchingEnabled = true;
 
-    private Collider[] _neighbours;
-    private Vector3 _collisionTestSpherePosition = Vector3Int.zero;
+    private Collider[] _neighbours; // "ingredient" of compute penetration
+    private Vector3 _collisionTestSpherePosition = Vector3Int.zero; // "ingredient" of compute penetration
 
-    private List<Part> _parts = new();
+    private List<Part> _parts = new(); // LIBRARY OF PARTS
     private List<Part> _placedParts = new();
 
     public void Start()
     {
+        // check if the toggle for matching/non matching connections is on/off
         _toggleConnectionMatching.onValueChanged.AddListener(delegate { _connectionMatchingEnabled = !_connectionMatchingEnabled; });
 
         for (int i = 0; i < 50; i++)
@@ -36,7 +39,7 @@ public class CollisionTest : MonoBehaviour
             //Select the prefabs with tag Part
             _parts.AddRange(prefabs.Where(g => g.CompareTag("Part")).Select(g => new Part(g)).ToList());
         }
-        _neighbours = new Collider[_maxNeighboursToCheck];
+        _neighbours = new Collider[_maxNeighboursToCheck]; // initialize neighbors' array
         PlaceFirstPart();
         EnableAllConnections();
 
@@ -63,6 +66,7 @@ public class CollisionTest : MonoBehaviour
 
     private void PlaceNextPart()
     {
+        // find all the available connections in the entire building made up of placed parts
         List<Connection> availableConnectionsInCurrentBuilding = new();
         foreach (Part placedPart in _placedParts)
         {
@@ -72,15 +76,18 @@ public class CollisionTest : MonoBehaviour
             }
         }
 
+        // take random connection
         int randomIndexInCurrentBuilding = Random.Range(0, availableConnectionsInCurrentBuilding.Count);
         Connection randomAvailableConnectionInCurrentBuilding = availableConnectionsInCurrentBuilding[randomIndexInCurrentBuilding];
 
+        // get list of av connections in UNPLACED PARTS
         List<Connection> availableConnectionsInUnplacedParts = new();
         foreach (Part unplacedPart in _parts)
         {
             foreach (Connection connection in unplacedPart.Connections)
             {
-                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection))
+                // compatible = the toggle is on and we want matching connections
+                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection)) 
                 {
                     availableConnectionsInUnplacedParts.Add(connection);
                 }
@@ -91,9 +98,9 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (CheckCollision())
+            if (IsColliding())
             {
-                //the part collided, so reset the part
+                //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
             }
             else
@@ -133,10 +140,10 @@ public class CollisionTest : MonoBehaviour
     }
 
     /// <summary>
-    /// Check for collisions between the parts of the building
+    /// ComputePenetration method: tells direction and distance in order to avoid collision between 2 objects
     /// </summary>
     /// <returns>True if collision is found, false if not</returns>
-    private bool CheckCollision()
+    private bool IsColliding()
     {
         foreach (Part partToCheck in _placedParts)
         {
@@ -144,12 +151,12 @@ public class CollisionTest : MonoBehaviour
             if (!thisCollider)
             {
                 Debug.Log($"{partToCheck.Name} has no collider attached!");
-                continue; // nothing to do without a Collider attached
+                continue; // nothing to do without a collider attached
             }
 
             //create the sphere with the features created on top
             int count = Physics.OverlapSphereNonAlloc(_collisionTestSpherePosition, _radius, _neighbours);
-            // Iterate through the neighbouring colliders of the collider that this script is attached to
+            // Iterate through the neighbours' colliders and check if their collider is colliding with the part's one
             for (int i = 0; i < count; ++i)
             {
                 var otherCollider = _neighbours[i];
@@ -163,10 +170,9 @@ public class CollisionTest : MonoBehaviour
                 bool isOverlapping = Physics.ComputePenetration(
                     thisCollider, thisCollider.gameObject.transform.position, thisCollider.gameObject.transform.rotation,
                     otherCollider, otherPosition, otherRotation,
-                    out Vector3 direction, out float distance
-                );
+                    out Vector3 direction, out float distance);
 
-                // draw a line showing the depenetration direction if overlapped
+                // overlapping colliders and too big overlap --> IsColliding = true --> not place the part
                 if (isOverlapping && distance > _overlapTolerance)
                 {
                     _debugText.text += $"Part {partToCheck.Name} collision info:\n" +
@@ -177,6 +183,7 @@ public class CollisionTest : MonoBehaviour
                 }
             }
         }
+        // if we reach this point there's no collision --> place part
         return false;
     }
 
@@ -201,6 +208,7 @@ public class CollisionTest : MonoBehaviour
         StartCoroutine(AutoPlacement());
     }
 
+    // visualize the sphere of compute penetration (in which checking for collision)
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
