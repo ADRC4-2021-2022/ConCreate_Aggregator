@@ -87,7 +87,7 @@ public class CollisionTest : MonoBehaviour
             foreach (Connection connection in unplacedPart.Connections)
             {
                 // compatible = the toggle is on and we want matching connections
-                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection)) 
+                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection))
                 {
                     availableConnectionsInUnplacedParts.Add(connection);
                 }
