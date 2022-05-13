@@ -1,78 +1,108 @@
-using static System.Math;
 using System.Collections.Generic;
 using UnityEngine;
+using static System.Math;
 
 public class Room
 {
     #region Private variables
     float _area;
     float _volume;
-
-    string _name;
-
     float _xDim; //Length
     float _yDim; //Height
     float _zDim; //Width
-
-    Vector3 _roomPosition;
-
-
-    //every room has a list of rooms connected to it with a certain distance (vector3)
-    List<(Room, Vector3)> _roomConnections = new List<(Room, Vector3)>();
     #endregion
 
     #region Public variables
-    public GameObject gameObject;
+    public string Name;
 
-    bool placed;
+    public GameObject GO;
+
+    public bool Placed;
+
+    //every room has a list of rooms connected to it with a certain distance (vector3)
+    public List<(Room, int)> ConnectedRooms = new List<(Room, int)>();
+
+    //everytime we place a room we place the corresponding GO
+    public Vector3 RoomPosition
+    {
+        get
+        {
+            return GO.transform.position;
+        }
+        set
+        {
+            GO.transform.position = value;
+        }
+    }
     #endregion
 
     #region Constructor
     //option 1: create room through given dimensions (floats)
     public Room(string name, float length, float width, float height, Vector3 roomPosition)
     {
-        _name = name;
+        Name = name;
         _xDim = length;
         _yDim = height;
         _zDim = width;
         _area = length * width;
         _volume = length * width * height;
-        _roomPosition = roomPosition;
+        RoomPosition = roomPosition;
 
         //create assigned GO option 1
-        gameObject = new GameObject("RoomGameobject made from Code");
+        GO = new GameObject("RoomGameobject made from Code");
         //Add Components
-        gameObject.AddComponent<Rigidbody>();
-        gameObject.GetComponent<Rigidbody>().isKinematic = true;
-        gameObject.AddComponent<MeshFilter>();
-        gameObject.AddComponent<BoxCollider>();
-        gameObject.AddComponent<MeshRenderer>();
-        gameObject.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/matTrans");
+        GO.AddComponent<Rigidbody>();
+        GO.GetComponent<Rigidbody>().isKinematic = true;
+        GO.AddComponent<MeshFilter>();
+        GO.AddComponent<BoxCollider>();
+        GO.AddComponent<MeshRenderer>();
+        GO.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/matTrans");
+
+        Placed = true;
     }
 
     //option 2: create room through vector3
     public Room(string name, int area, Vector3 roomPosition)
     {
-        _name = name;
+        Name = name;
         _area = area;
         (_xDim, _zDim) = GetFactorsFromArea(area);
         _yDim = 2.7f;
         _volume = area * _zDim;
-        _roomPosition = roomPosition;
+        RoomPosition = roomPosition;
 
         //create assigned GO option 2: by primitive
-        gameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        gameObject.transform.position = roomPosition;
-        gameObject.transform.localScale = new Vector3(_xDim, _yDim, _zDim);
-        gameObject.transform.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/matTrans");
-        var roomBounds = gameObject.GetComponent<Collider>().bounds;
+        GO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        GO.transform.position = roomPosition;
+        GO.transform.localScale = new Vector3(_xDim, _yDim, _zDim);
+        GO.transform.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/matTrans");
+        var roomBounds = GO.GetComponent<Collider>().bounds;
+
+        Placed = true;
+    }
+
+    public Room(string name, int area)
+    {
+        Name = name;
+        _area = area;
+        (_xDim, _zDim) = GetFactorsFromArea(area);
+        _yDim = 2.7f;
+        _volume = area * _zDim;
+
+        //create assigned GO option 2: by primitive
+        GO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        GO.transform.localScale = new Vector3(_xDim, _yDim, _zDim);
+        GO.transform.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/matTrans");
+        var roomBounds = GO.GetComponent<Collider>().bounds;
+
+        Placed = false;
     }
     #endregion
 
     #region Public methods
-    public void AddRoomConnection(Room otherRoom, Vector3 distanceBetweenRooms)
+    public void AddRoomConnection(Room otherRoom, int distanceBetweenRooms)
     {
-        _roomConnections.Add((otherRoom, distanceBetweenRooms));
+        ConnectedRooms.Add((otherRoom, distanceBetweenRooms));
     }
     #endregion
 
@@ -120,7 +150,7 @@ public class Room
 
         foreach (var tuple in tuples)
         {
-            if (Abs(tuple.Item1 - tuple.Item2) < diff) 
+            if (Abs(tuple.Item1 - tuple.Item2) < diff)
             {
                 diff = Abs(tuple.Item1 - tuple.Item2);
                 minPair = tuple;
