@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2301289512801104184}
   - component: {fileID: 5175236160732441343}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: 06P
   m_TagString: Part
   m_Icon: {fileID: 0}
@@ -67,6 +67,10 @@ PrefabInstance:
     - target: {fileID: 198249804653266722, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
       propertyPath: m_Name
       value: Connection
+      objectReference: {fileID: 0}
+    - target: {fileID: 198249804653266722, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 198249804653266722, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
       propertyPath: m_IsActive
@@ -128,6 +132,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 657e9f8463d4edc4f88ddf272d68e4a4, type: 2}
+    - target: {fileID: 9173155991502815227, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 9173155991502815227, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -199,12 +207,20 @@ PrefabInstance:
       value: 06
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9fc204a92fff66b4f9d3eebbd521a29a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9fc204a92fff66b4f9d3eebbd521a29a, type: 3}
       propertyPath: m_TagString
       value: PartCollider
       objectReference: {fileID: 0}
     - target: {fileID: 2699092741681021261, guid: 9fc204a92fff66b4f9d3eebbd521a29a, type: 3}
       propertyPath: m_Convex
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: 9fc204a92fff66b4f9d3eebbd521a29a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9fc204a92fff66b4f9d3eebbd521a29a, type: 3}
@@ -220,6 +236,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2301289512801104184}
     m_Modifications:
+    - target: {fileID: 3480088843281701837, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3480088843281701837, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -273,6 +293,10 @@ PrefabInstance:
       value: Connection06
       objectReference: {fileID: 0}
     - target: {fileID: 5604177493989286676, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5604177493989286676, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -309,6 +333,10 @@ PrefabInstance:
     - target: {fileID: 198249804653266722, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
       propertyPath: m_Name
       value: Connection (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 198249804653266722, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 198249804653266722, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
       propertyPath: m_IsActive
@@ -371,6 +399,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 657e9f8463d4edc4f88ddf272d68e4a4, type: 2}
     - target: {fileID: 9173155991502815227, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9173155991502815227, guid: fb6c9cfcc21ec974ca30e3d48cbfb0e9, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -388,6 +420,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2301289512801104184}
     m_Modifications:
+    - target: {fileID: 3480088843281701837, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3480088843281701837, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -439,6 +475,10 @@ PrefabInstance:
     - target: {fileID: 5604177493989286676, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
       propertyPath: m_Name
       value: Connection06 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5604177493989286676, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5604177493989286676, guid: 722114e42c3534a42b73a7a1fd65b392, type: 3}
       propertyPath: m_IsActive

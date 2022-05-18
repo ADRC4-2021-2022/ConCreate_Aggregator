@@ -102,6 +102,7 @@ public class Part
         //Enable the part gameobject in the scene
         //anchorConnection.NameGameObject("anchor");
         GOPart.SetActive(true);
+        GOPart.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material.color = Util.RandomColor;
         if (availableConnection != null && connectionToPlace != null)
         {
             Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);
@@ -131,6 +132,28 @@ public class Part
         GOPart.SetActive(false);
         InitializeGO();
         Status = PartStatus.Available;
+    }
+
+    public bool CheckInsideBoundingBox(List<Transform> boxes, out float distance, out Vector3 direction)
+    {
+        distance = 0;
+        direction = Vector3.zero;
+        foreach (var box in boxes)
+        {
+            var boxCollider = box.GetComponent<BoxCollider>();
+            bool intersects = Physics.ComputePenetration(
+                Collider,
+                GOPart.transform.position,
+                GOPart.transform.rotation,
+                boxCollider,
+                box.position,
+                box.rotation,
+                out direction,
+                out distance);
+            if (intersects) return true;
+        }
+
+        return false;
     }
     #endregion
 

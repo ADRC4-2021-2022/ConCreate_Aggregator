@@ -26,8 +26,12 @@ public class CollisionTest : MonoBehaviour
     private List<Part> _parts = new(); // LIBRARY OF PARTS
     private List<Part> _placedParts = new();
 
+    GameObject _boundingBox;
+
     public void Start()
     {
+        _boundingBox = GameObject.Find("BoundingBox");
+
         // check if the toggle for matching/non matching connections is on/off
         _toggleConnectionMatching.onValueChanged.AddListener(delegate { _connectionMatchingEnabled = !_connectionMatchingEnabled; });
 
@@ -98,7 +102,7 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding())
+            if (IsColliding(unplacedConnection.ThisPart) || !CheckPartInBounds(unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -143,48 +147,62 @@ public class CollisionTest : MonoBehaviour
     /// ComputePenetration method: tells direction and distance in order to avoid collision between 2 objects
     /// </summary>
     /// <returns>True if collision is found, false if not</returns>
-    private bool IsColliding()
+    private bool IsColliding(Part newPart)
     {
-        foreach (Part partToCheck in _placedParts)
+
+        var thisCollider = newPart.Collider;
+        if (!thisCollider)
         {
-            var thisCollider = partToCheck.Collider;
-            if (!thisCollider)
+            Debug.Log($"{newPart.Name} has no collider attached!");
+            return false; // nothing to do without a collider attached
+        }
+
+        //create the sphere with the features created on top
+        //int count = Physics.OverlapSphereNonAlloc(_collisionTestSpherePosition, _radius, _neighbours, 6);
+
+        // Iterate through the neighbours' colliders and check if their collider is colliding with the part's one
+        foreach (Part nextPart in _placedParts)
+        {
+            var otherCollider = nextPart.Collider;
+
+            if (nextPart.GOPart == newPart.GOPart)
             {
-                Debug.Log($"{partToCheck.Name} has no collider attached!");
-                continue; // nothing to do without a collider attached
+                continue; // skip ourself
             }
+                
 
-            //create the sphere with the features created on top
-            int count = Physics.OverlapSphereNonAlloc(_collisionTestSpherePosition, _radius, _neighbours);
-            // Iterate through the neighbours' colliders and check if their collider is colliding with the part's one
-            for (int i = 0; i < count; ++i)
+            Vector3 otherPosition = otherCollider.gameObject.transform.position;
+            Quaternion otherRotation = otherCollider.gameObject.transform.rotation;
+
+            bool isOverlapping = Physics.ComputePenetration(
+                thisCollider, thisCollider.gameObject.transform.position, thisCollider.gameObject.transform.rotation,
+                otherCollider, otherPosition, otherRotation,
+                out Vector3 direction, out float distance);
+
+            // overlapping colliders and too big overlap --> IsColliding = true --> not place the part
+            if (isOverlapping && distance > _overlapTolerance)
             {
-                var otherCollider = _neighbours[i];
-
-                if (otherCollider == thisCollider)
-                    continue; // skip ourself
-
-                Vector3 otherPosition = otherCollider.gameObject.transform.position;
-                Quaternion otherRotation = otherCollider.gameObject.transform.rotation;
-
-                bool isOverlapping = Physics.ComputePenetration(
-                    thisCollider, thisCollider.gameObject.transform.position, thisCollider.gameObject.transform.rotation,
-                    otherCollider, otherPosition, otherRotation,
-                    out Vector3 direction, out float distance);
-
-                // overlapping colliders and too big overlap --> IsColliding = true --> not place the part
-                if (isOverlapping && distance > _overlapTolerance)
-                {
-                    _debugText.text += $"Part {partToCheck.Name} collision info:\n" +
-                        $"Colliding with {otherCollider.gameObject.name}:\n" +
-                        $"Direction: {direction.x}, {direction.y}, {direction.z}\n" +
-                        $"Distance: {distance} meters\n\n";
-                    return true;
-                }
+                _debugText.text += $"Part {newPart.Name} collision info:\n" +
+                    $"Colliding with {otherCollider.gameObject.name}:\n" +
+                    $"Direction: {direction.x}, {direction.y}, {direction.z}\n" +
+                    $"Distance: {distance} meters\n\n";
+                return true;
             }
         }
         // if we reach this point there's no collision --> place part
         return false;
+    }
+
+    bool CheckPartInBounds(Part part)
+    {
+        List<Transform> boundingBoxes = new List<Transform>();
+        for (int j = 0; j < _boundingBox.transform.childCount; j++)
+        {
+            boundingBoxes.Add(_boundingBox.transform.GetChild(j));
+        }
+        bool isInBounds = part.CheckInsideBoundingBox(boundingBoxes, out float distance, out Vector3 direction);
+        Debug.Log($"{isInBounds}, dist {distance}");
+        return isInBounds && distance > 0.5f;
     }
 
     private IEnumerator AutoPlacement()
@@ -193,7 +211,7 @@ public class CollisionTest : MonoBehaviour
         {
 
             PlaceNextPart();
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.1f);
         }
         yield return new WaitForSeconds(1f);
     }
