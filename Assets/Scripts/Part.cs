@@ -14,7 +14,7 @@ public class Part
     public bool Intersecting = false;
     public PartStatus Status;
 
-    public MeshCollider Collider
+    public BoxCollider Collider
     {
         get
         {
@@ -23,7 +23,7 @@ public class Part
                 //Debug.Log($"Searching Collider found for {Name}");
                 var goCollider = Util.GetChildObject(GOPart.transform, "PartCollider").First();
                 if (goCollider != null)
-                    _collider = goCollider.GetComponentInChildren<MeshCollider>();
+                    _collider = goCollider.GetComponentInChildren<BoxCollider>();
                 //else
                 //Debug.Log($"No Collider found for {Name}");
             }
@@ -46,7 +46,7 @@ public class Part
 
     #region private fields
     private GameObject _prefab;
-    private MeshCollider _collider;
+    private BoxCollider _collider;
     #endregion
 
     #region constructors
@@ -140,7 +140,8 @@ public class Part
         direction = Vector3.zero;
         foreach (var box in boxes)
         {
-            var boxCollider = box.GetComponent<BoxCollider>();
+            //var boxCollider = box.GetComponent<BoxCollider>();
+            var boxCollider = box.GetChild(0).GetComponent<MeshCollider>();
             bool intersects = Physics.ComputePenetration(
                 Collider,
                 GOPart.transform.position,

@@ -9,10 +9,15 @@ public class CollisionTest : MonoBehaviour
     //text with info about collision during play mode (top left game scene)
     [SerializeField]
     private Text _debugText;
+    
+    [SerializeField]
+    private Text _lastPartPlacedText;
 
     //to decide whether aggregate parts according to length or not
     [SerializeField]
     private Toggle _toggleConnectionMatching;
+
+    private IEnumerator _autoPlacementCoroutine;
 
     private readonly float _radius = 25f; // check for penetration within a radius of 50m (radius of a sphere)
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
@@ -30,12 +35,23 @@ public class CollisionTest : MonoBehaviour
 
     public void Start()
     {
-        _boundingBox = GameObject.Find("BoundingBox");
+        _autoPlacementCoroutine = AutoPlacement();
+
+        _boundingBox = GameObject.Find("BoundingBox2");
 
         // check if the toggle for matching/non matching connections is on/off
         _toggleConnectionMatching.onValueChanged.AddListener(delegate { _connectionMatchingEnabled = !_connectionMatchingEnabled; });
 
-        for (int i = 0; i < 50; i++)
+        LoadPartPrefabs();
+        _neighbours = new Collider[_maxNeighboursToCheck]; // initialize neighbors' array
+        PlaceFirstPart();
+        EnableAllConnections();
+
+    }
+
+    private void LoadPartPrefabs()
+    {
+        for (int i = 0; i < 100; i++)
         {
             //Load all the prefabs
             GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
@@ -43,10 +59,6 @@ public class CollisionTest : MonoBehaviour
             //Select the prefabs with tag Part
             _parts.AddRange(prefabs.Where(g => g.CompareTag("Part")).Select(g => new Part(g)).ToList());
         }
-        _neighbours = new Collider[_maxNeighboursToCheck]; // initialize neighbors' array
-        PlaceFirstPart();
-        EnableAllConnections();
-
     }
 
     private void EnableAllConnections()
@@ -56,16 +68,18 @@ public class CollisionTest : MonoBehaviour
 
     private void PlaceFirstPart()
     {
-        int rndPartIndex = Random.Range(0, _parts.Count);
-        Part randomPart = _parts[rndPartIndex];
+        //int rndPartIndex = Random.Range(0, _parts.Count);
+        //Part randomPart = _parts[rndPartIndex];
 
         int rndZ = Random.Range(0, 4);
         int rndY = Random.Range(0, 4);
 
-        randomPart.PlaceFirstPart(Vector3.zero, Quaternion.Euler(new Vector3(0, rndY * 90, rndZ * 90)));
-        _parts.Remove(randomPart);
-        _placedParts.Add(randomPart);
-        randomPart.Name = $"{randomPart.Name} added {_placedParts.Count}";
+        Part firstPart = _parts.Find(part => part.Name == "04P 1(Clone)");
+        firstPart.PlaceFirstPart(new Vector3(-0.263f, 1.35f, -0.203f), Quaternion.Euler(new Vector3(0, 0, 0)));
+        _parts.Remove(firstPart);
+        _placedParts.Add(firstPart);
+        firstPart.Name = $"{firstPart.Name} added {_placedParts.Count}";
+        CheckPartInBounds(firstPart);
     }
 
     private void PlaceNextPart()
@@ -112,7 +126,10 @@ public class CollisionTest : MonoBehaviour
                 //Set the part as placed
                 unplacedConnection.ThisPart.PlacePart(unplacedConnection);
                 randomAvailableConnectionInCurrentBuilding.Available = false;
-                unplacedConnection.ThisPart.Name = $"{unplacedConnection.ThisPart.Name}";
+                string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedParts.Count + 1}";
+                Vector3 unplacedPartPos = unplacedConnection.ThisPart.GOPart.transform.position;
+                _lastPartPlacedText.text = $"Last Part Placed:\n{newName}\n\nPosition:\n{unplacedPartPos.x}, {unplacedPartPos.y}, {unplacedPartPos.z}";
+                unplacedConnection.ThisPart.Name = newName;
                 _parts.Remove(unplacedConnection.ThisPart);
                 _placedParts.Add(unplacedConnection.ThisPart);
                 return;
@@ -195,23 +212,36 @@ public class CollisionTest : MonoBehaviour
 
     bool CheckPartInBounds(Part part)
     {
-        List<Transform> boundingBoxes = new List<Transform>();
+        List<Transform> boundingBoxes = new();
         for (int j = 0; j < _boundingBox.transform.childCount; j++)
         {
             boundingBoxes.Add(_boundingBox.transform.GetChild(j));
         }
         bool isInBounds = part.CheckInsideBoundingBox(boundingBoxes, out float distance, out Vector3 direction);
-        Debug.Log($"{isInBounds}, dist {distance}");
-        return isInBounds && distance > 0.5f;
+        Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
+        float x = part.Collider.bounds.extents.x;
+        float y = part.Collider.bounds.extents.y;
+        float z = part.Collider.bounds.extents.z;
+
+        if (direction.x != 0 && direction.y != 0 && direction.z != 0) return isInBounds && distance > x && distance > y && distance > z;
+        if (direction.x != 0 && direction.z != 0) return isInBounds && distance > x && distance > z;
+        if (direction.x != 0 && direction.y != 0) return isInBounds && distance > x && distance > y;
+        if (direction.y != 0 && direction.z != 0) return isInBounds && distance > y && distance > z;
+        if (direction.x != 0) return isInBounds && distance > x;
+        if (direction.y != 0) return isInBounds && distance > y;
+        if (direction.z != 0) return isInBounds && distance > z;
+
+        return false;
     }
+        
 
     private IEnumerator AutoPlacement()
     {
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 250; i++)
         {
-
+            if (i % 50 == 0) LoadPartPrefabs();
             PlaceNextPart();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.25f);
         }
         yield return new WaitForSeconds(1f);
     }
@@ -223,13 +253,19 @@ public class CollisionTest : MonoBehaviour
 
     public void OnAutoPlacementButtonClicked()
     {
-        StartCoroutine(AutoPlacement());
+        _autoPlacementCoroutine = AutoPlacement();
+        StartCoroutine(_autoPlacementCoroutine);
+    }
+
+    public void OnStopButtonClicked()
+    {
+        StopCoroutine(_autoPlacementCoroutine);
     }
 
     // visualize the sphere of compute penetration (in which checking for collision)
-    private void OnDrawGizmos()
+    /*private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(_collisionTestSpherePosition, _radius);
-    }
+    }*/
 }
