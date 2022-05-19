@@ -46,7 +46,7 @@ public class Room
         _zDim = width;
         _area = length * width;
         _volume = length * width * height;
-        RoomPosition = roomPosition;
+        
 
         //create assigned GO option 1
         GO = new GameObject("RoomGameobject made from Code");
@@ -58,6 +58,7 @@ public class Room
         GO.AddComponent<MeshRenderer>();
         GO.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/matTrans");
 
+        RoomPosition = roomPosition;
         Placed = true;
     }
 
@@ -69,7 +70,7 @@ public class Room
         (_xDim, _zDim) = GetFactorsFromArea(area);
         _yDim = 2.7f;
         _volume = area * _zDim;
-        RoomPosition = roomPosition;
+        
 
         //create assigned GO option 2: by primitive
         GO = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -78,6 +79,7 @@ public class Room
         GO.transform.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/matTrans");
         var roomBounds = GO.GetComponent<Collider>().bounds;
 
+        RoomPosition = roomPosition;
         Placed = true;
     }
 
@@ -91,6 +93,7 @@ public class Room
 
         //create assigned GO option 2: by primitive
         GO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        GO.name = name;
         GO.transform.localScale = new Vector3(_xDim, _yDim, _zDim);
         GO.transform.GetComponent<MeshRenderer>().material = Resources.Load<Material>("Materials/matTrans");
         var roomBounds = GO.GetComponent<Collider>().bounds;

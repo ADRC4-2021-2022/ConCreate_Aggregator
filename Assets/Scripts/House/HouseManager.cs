@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class HouseManager : MonoBehaviour
     };
 
     List<Room> _rooms = new List<Room>();
-
+    Bounds _houseBounds = new Bounds();
     float _collisionCheckRadius = 50f;
     Collider[] _collisionNeighbours = new Collider[25];
     #endregion
@@ -31,7 +32,7 @@ public class HouseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     //create rooms given their positions (coordinates)
@@ -73,22 +74,23 @@ public class HouseManager : MonoBehaviour
             new Room("LivingRoom", 24),
             new Room("Kitchen", 16),
             new Room("Bedroom1", 16),
-            new Room("EnsuiteBathroom", 6),
             new Room("Bedroom2", 12),
+            new Room("EnsuiteBathroom", 6),
             new Room("Storage", 3),
             new Room("Bathroom", 4)
         };
-        _rooms[0].AddRoomConnection(GetRoomByName("Bathroom"), 20);
-        _rooms[0].AddRoomConnection(GetRoomByName("Storage"), 20);
-        _rooms[0].AddRoomConnection(GetRoomByName("LivingRoom"), 20);
-        _rooms[0].AddRoomConnection(GetRoomByName("Bedroom1"), 20);
-        _rooms[0].AddRoomConnection(GetRoomByName("Bedroom2"), 20);
+        _rooms[0].AddRoomConnection(GetRoomByName("Bathroom"), 5);
+        _rooms[0].AddRoomConnection(GetRoomByName("Storage"), 5);
+        _rooms[0].AddRoomConnection(GetRoomByName("LivingRoom"), 5);
+        _rooms[0].AddRoomConnection(GetRoomByName("Bedroom1"), 5);
+        _rooms[0].AddRoomConnection(GetRoomByName("Bedroom2"), 5);
 
-        _rooms[1].AddRoomConnection(GetRoomByName("Kitchen"), 20);
+        _rooms[1].AddRoomConnection(GetRoomByName("Kitchen"), 5);
         
-        _rooms[5].AddRoomConnection(GetRoomByName("EnsuiteBathroom"), 20);
+        _rooms[3].AddRoomConnection(GetRoomByName("EnsuiteBathroom"), 5);
 
         AttemptToPlaceRooms();
+        OffsetBounds();
     }
 
     private Room GetRoomByName(string name)
@@ -170,9 +172,14 @@ public class HouseManager : MonoBehaviour
 
     public void OffsetBounds()
     {
-        foreach (Room room in _rooms.Where(r => r.Placed = true))
+        var offsetColliders = new List<BoxCollider>();
+        foreach (Room room in _rooms)
         {
-            room.GO.GetComponent<Collider>().bounds.Expand(3f);
+            var collider = room.GO.AddComponent<BoxCollider>();
+            collider.transform.position = room.GO.transform.position;
+            collider.size = room.GO.GetComponent<BoxCollider>().size * 1.5f;
+            _houseBounds.Encapsulate(room.GO.GetComponent<Collider>().bounds);
         }
+        _houseBounds.Expand(3f);
     }
 }
