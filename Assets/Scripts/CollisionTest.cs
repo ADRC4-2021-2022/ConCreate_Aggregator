@@ -239,7 +239,10 @@ public class CollisionTest : MonoBehaviour
     {
         for (int i = 0; i < 250; i++)
         {
-            if (i % 50 == 0) LoadPartPrefabs();
+            if (i % 50 == 0)
+            {
+                LoadPartPrefabs();
+            }
             PlaceNextPart();
             yield return new WaitForSeconds(0.25f);
         }

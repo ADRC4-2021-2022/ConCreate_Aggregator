@@ -183,12 +183,12 @@ public static class Util
 
     public static List<GameObject> GetChildObject(Transform parent, string tag)
     {
-        List<GameObject> taggedChildren = new List<GameObject>();
+        List<GameObject> taggedChildren = new();
 
         for (int i = 0; i < parent.childCount; i++)
         {
             Transform child = parent.GetChild(i);
-            if (child.tag == tag)
+            if (child.CompareTag(tag))
             {
                 taggedChildren.Add(child.gameObject);
             }
