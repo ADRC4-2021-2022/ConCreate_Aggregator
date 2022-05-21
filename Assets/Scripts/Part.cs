@@ -164,14 +164,17 @@ public class Part
     private void LoadPartConnections()
     {
         //Find all instances of ConnectionNormal prefab in the children of your GOPartPrefab using the tags
-        List<GameObject> connectionPrefabs = Util.GetChildObject(GOPart.transform, "ConnectionNormal");
+        List<GameObject> wallConnections = Util.GetChildObject(GOPart.transform, "onlyWallConn");
+        List<GameObject> floorConnections = Util.GetChildObject(GOPart.transform, "onlyFloorConn");
+        List<GameObject> wallAndFloorConnections = Util.GetChildObject(GOPart.transform, "bothWallFloorConn");
+        List<GameObject> surfaceConnections = Util.GetChildObject(GOPart.transform, "surfaceConn");
         //List<GameObject> stackingConnectionPrefabs = Util.GetChildObject(GOPart.transform, "StackingConnectionNormal");
 
         //Create a connection object for each connectionPrefab using its transform position, rotation and x scale as length
-        foreach (var connectionGO in connectionPrefabs)
-        {
-            Connections.Add(new Connection(connectionGO, this));
-        }
+        foreach (var connectionGO in wallConnections) Connections.Add(new Connection(connectionGO, this));
+        foreach (var connectionGO in floorConnections) Connections.Add(new Connection(connectionGO, this));
+        foreach (var connectionGO in wallAndFloorConnections) Connections.Add(new Connection(connectionGO, this));
+        foreach (var connectionGO in surfaceConnections) Connections.Add(new Connection(connectionGO, this));
         /*foreach (var connectionGO in stackingConnectionPrefabs)
         {
             Connections.Add(new Connection(connectionGO, this));
