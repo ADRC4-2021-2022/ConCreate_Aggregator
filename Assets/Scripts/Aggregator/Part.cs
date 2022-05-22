@@ -136,9 +136,6 @@ public class Part
 
     public bool CheckInsideBoundingBox(Transform boundingBox, out float distance, out Vector3 direction)
     {
-        distance = 0;
-        direction = Vector3.zero;
-
         var boxCollider = boundingBox.GetComponent<BoxCollider>();
         bool intersects = Physics.ComputePenetration(
             Collider,
