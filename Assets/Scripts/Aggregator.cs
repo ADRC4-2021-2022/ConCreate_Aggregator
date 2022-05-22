@@ -288,7 +288,7 @@ public class Aggregator : MonoBehaviour
                 if (IsInsideCentre(voxel, part.Collider))
                 {
                     voxel.Status = VoxelState.Alive;
-                    voxel.ChangeVoxelVisability();
+                    voxel.ChangeVoxelVisibility();
 
                 }
             }

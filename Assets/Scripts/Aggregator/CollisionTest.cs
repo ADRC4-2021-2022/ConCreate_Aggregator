@@ -9,7 +9,7 @@ public class CollisionTest : MonoBehaviour
     //text with info about collision during play mode (top left game scene)
     [SerializeField]
     private Text _debugText;
-    
+
     [SerializeField]
     private Text _lastPartPlacedText;
 
@@ -22,7 +22,7 @@ public class CollisionTest : MonoBehaviour
     private readonly float _radius = 25f; // check for penetration within a radius of 50m (radius of a sphere)
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
     private readonly float _overlapTolerance = 0.03f; // used by compute penetration
-    private readonly float _connectionTolerance = 0.1f; // tolerance of matching connections
+    private readonly float _connectionTolerance = 0.2f; // tolerance of matching connections
     private bool _connectionMatchingEnabled = true;
 
     private Collider[] _neighbours; // "ingredient" of compute penetration
@@ -38,8 +38,6 @@ public class CollisionTest : MonoBehaviour
 
     public void Start()
     {
-        _autoPlacementCoroutine = AutoPlacement();
-
         _boundingBox = GameObject.Find("BoundingBox2");
         _floorBB = GameObject.Find("FloorBB");
 
@@ -51,9 +49,11 @@ public class CollisionTest : MonoBehaviour
         PlaceFirstPart();
         EnableAllConnections();
 
-        LoadFloorPartPrefabs();
-        PlaceFirstFloorPart();
-        EnableAllFloorConnections();
+        //LoadFloorPartPrefabs();
+        //PlaceFirstFloorPart();
+        //EnableAllFloorConnections();
+
+        _autoPlacementCoroutine = AutoPlacement();
     }
 
     private void LoadPartPrefabs()
@@ -77,7 +77,8 @@ public class CollisionTest : MonoBehaviour
             GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
 
             //Select the prefabs with tag Part
-            _floorParts.AddRange(prefabs.Where(g => {
+            _floorParts.AddRange(prefabs.Where(g =>
+            {
                 var childCount = g.transform.childCount;
                 for (int j = 0; j < childCount; ++j)
                 {
@@ -86,7 +87,7 @@ public class CollisionTest : MonoBehaviour
                     // Do something based on tag
                 }
                 return false;
-                }).Select(g => new Part(g)).ToList());
+            }).Select(g => new Part(g)).ToList());
         }
         EnableAllFloorConnections();
     }
@@ -119,14 +120,15 @@ public class CollisionTest : MonoBehaviour
 
     private void PlaceFirstFloorPart()
     {
-        int rndPartIndex = Random.Range(0, _floorParts.Count);
-        Part randomPart = _parts[rndPartIndex];
-        var extents = randomPart.Collider.size / 2;
-        randomPart.PlaceFirstPart(new Vector3(-extents.x, extents.y, -extents.z), Quaternion.Euler(new Vector3(0, 0, 0)));
-        _floorParts.Remove(randomPart);
-        _placedFloorParts.Add(randomPart);
-        randomPart.Name = $"{randomPart.Name} added {_placedFloorParts.Count} (floor)";
-        CheckPartInBounds(randomPart, _floorBB);
+        //int rndPartIndex = Random.Range(0, _floorParts.Count);
+        //Part randomPart = _floorParts[rndPartIndex];
+        //var extents = randomPart.Collider.size / 2;
+        Part firstPart = _floorParts.Find(part => part.Name == "02P 1(Clone)");
+        firstPart.PlaceFirstPart(new Vector3(-2.89f, 0.26f, -1.36f), Quaternion.Euler(new Vector3(90, 0, 0)));
+        _floorParts.Remove(firstPart);
+        _placedFloorParts.Add(firstPart);
+        firstPart.Name = $"{firstPart.Name} added {_placedFloorParts.Count} (floor)";
+        CheckPartInBounds(firstPart, _floorBB);
     }
 
     private void PlaceNextPart()
@@ -137,7 +139,7 @@ public class CollisionTest : MonoBehaviour
         {
             foreach (Connection connection in placedPart.Connections)
             {
-                if (connection.Available && (connection.GOConnection.CompareTag("onlyWallConn") || connection.GOConnection.CompareTag("bothWallFloorConn"))) availableConnectionsInCurrentBuilding.Add(connection);
+                if (connection.Available) availableConnectionsInCurrentBuilding.Add(connection);
             }
         }
 
@@ -152,18 +154,20 @@ public class CollisionTest : MonoBehaviour
             foreach (Connection connection in unplacedPart.Connections)
             {
                 // compatible = the toggle is on and we want matching connections
-                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection))
+                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection)
+                     && (connection.GOConnection.CompareTag("onlyWallConn") || connection.GOConnection.CompareTag("bothWallFloorConn")))
                 {
                     availableConnectionsInUnplacedParts.Add(connection);
                 }
             }
         }
 
+        availableConnectionsInUnplacedParts.Shuffle();
         foreach (Connection unplacedConnection in availableConnectionsInUnplacedParts)
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart) || !CheckPartInBounds(unplacedConnection.ThisPart, _boundingBox))
+            if (IsColliding(unplacedConnection.ThisPart, _placedParts) || !CheckPartInBounds(unplacedConnection.ThisPart, _boundingBox))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -192,7 +196,7 @@ public class CollisionTest : MonoBehaviour
         {
             foreach (Connection connection in placedPart.Connections)
             {
-                if (connection.Available && (connection.GOConnection.CompareTag("onlyFloorConn") || connection.GOConnection.CompareTag("bothWallFloorConn")))
+                if (connection.Available)
                     availableConnectionsInFloor.Add(connection);
             }
         }
@@ -208,7 +212,8 @@ public class CollisionTest : MonoBehaviour
             foreach (Connection connection in unplacedPart.Connections)
             {
                 // compatible = the toggle is on and we want matching connections
-                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInFloor, connection))
+                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInFloor, connection)
+                    && (connection.GOConnection.CompareTag("onlyFloorConn") || connection.GOConnection.CompareTag("bothWallFloorConn")))
                 {
                     availableConnectionsInUnplacedFloorParts.Add(connection);
                 }
@@ -219,9 +224,7 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInFloor, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart)
-                // || !CheckPartInBounds(unplacedConnection.ThisPart, _floorBB)
-                )
+            if (IsColliding(unplacedConnection.ThisPart, _placedFloorParts) || !CheckPartInBounds(unplacedConnection.ThisPart, _floorBB))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -253,23 +256,18 @@ public class CollisionTest : MonoBehaviour
     {
         if (!_connectionMatchingEnabled) return true;
 
-        float connectionLength = connectionInBuilding.Length;
-        float minLength = connectionLength - _connectionTolerance;
-        float maxLength = connectionLength + _connectionTolerance;
-
-        float connectionWidth = connectionInBuilding.Width;
+        float connectionWidth = connectionInBuilding.Properties.ConnectionWidth;
         float minWidth = connectionWidth - _connectionTolerance;
         float maxWidth = connectionWidth + _connectionTolerance;
 
-        return connectionToPlace.Length > minLength && connectionToPlace.Length < maxLength
-                && connectionToPlace.Width > minWidth && connectionToPlace.Width < maxWidth;
+        return connectionToPlace.Properties.ConnectionWidth > minWidth && connectionToPlace.Properties.ConnectionWidth < maxWidth;
     }
 
     /// <summary>
     /// ComputePenetration method: tells direction and distance in order to avoid collision between 2 objects
     /// </summary>
     /// <returns>True if collision is found, false if not</returns>
-    private bool IsColliding(Part newPart)
+    private bool IsColliding(Part newPart, List<Part> parts)
     {
 
         var thisCollider = newPart.Collider;
@@ -283,7 +281,7 @@ public class CollisionTest : MonoBehaviour
         //int count = Physics.OverlapSphereNonAlloc(_collisionTestSpherePosition, _radius, _neighbours, 6);
 
         // Iterate through the neighbours' colliders and check if their collider is colliding with the part's one
-        foreach (Part nextPart in _placedParts)
+        foreach (Part nextPart in parts)
         {
             var otherCollider = nextPart.Collider;
 
@@ -291,7 +289,6 @@ public class CollisionTest : MonoBehaviour
             {
                 continue; // skip ourself
             }
-                
 
             Vector3 otherPosition = otherCollider.gameObject.transform.position;
             Quaternion otherRotation = otherCollider.gameObject.transform.rotation;
@@ -317,16 +314,27 @@ public class CollisionTest : MonoBehaviour
 
     bool CheckPartInBounds(Part part, GameObject boundingBox)
     {
-        List<Transform> boundingBoxes = new();
-        for (int j = 0; j < boundingBox.transform.childCount; j++)
+        bool isInBounds;
+        float distance;
+        Vector3 direction;
+        if (boundingBox.transform.childCount > 0)
         {
-            boundingBoxes.Add(boundingBox.transform.GetChild(j));
+            List<Transform> boundingBoxes = new();
+            for (int j = 0; j < boundingBox.transform.childCount; j++)
+            {
+                boundingBoxes.Add(boundingBox.transform.GetChild(j));
+            }
+            isInBounds = part.CheckInsideBoundingBoxWithChildren(boundingBoxes, out distance, out direction);
         }
-        bool isInBounds = part.CheckInsideBoundingBox(boundingBoxes, out float distance, out Vector3 direction);
+        else
+        {
+            isInBounds = part.CheckInsideBoundingBox(boundingBox.transform, out distance, out direction);
+        }
         Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
-        float x = part.Collider.bounds.extents.x;
-        float y = part.Collider.bounds.extents.y;
-        float z = part.Collider.bounds.extents.z;
+        var extents = part.Collider.size / 2;
+        float x = extents.x;
+        float y = extents.y;
+        float z = extents.z;
 
         if (direction.x != 0 && direction.y != 0 && direction.z != 0) return isInBounds && distance > x && distance > y && distance > z;
         if (direction.x != 0 && direction.z != 0) return isInBounds && distance > x && distance > z;
@@ -338,7 +346,7 @@ public class CollisionTest : MonoBehaviour
 
         return false;
     }
-        
+
 
     private IEnumerator AutoPlacement()
     {
@@ -349,10 +357,10 @@ public class CollisionTest : MonoBehaviour
                 LoadPartPrefabs();
             }
             PlaceNextPart();
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.1f);
         }
         yield return new WaitForSeconds(1f);
-    }        
+    }
 
     private IEnumerator AutoFloorPlacement()
     {
@@ -363,7 +371,6 @@ public class CollisionTest : MonoBehaviour
                 LoadFloorPartPrefabs();
             }
             PlaceNextFloorPart();
-            yield return new WaitForSeconds(0.25f);
         }
         yield return new WaitForSeconds(1f);
     }

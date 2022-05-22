@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 //static classes can be accessed in the entire solution without creating an object of the class
@@ -199,5 +200,14 @@ public static class Util
         }
 
         return taggedChildren;
+    }
+
+    public static List<List<T>> ChunkBy<T>(this List<T> source, int chunkSize)
+    {
+        return source
+            .Select((x, i) => new { Index = i, Value = x })
+            .GroupBy(x => x.Index / chunkSize)
+            .Select(x => x.Select(v => v.Value).ToList())
+            .ToList();
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class Connection
 {
     #region public fields
+    public ConnectionProperties Properties;
 
     public GameObject GOConnection;
     public string Name { get; private set; }
@@ -81,6 +82,7 @@ public class Connection
         Length = GOConnection.transform.localScale.z;
         Width = GOConnection.transform.localScale.x;
         ThisPart = thisPart;
+        Properties = goConnection.GetComponent<ConnectionProperties>();
     }
     #endregion
     #region public functions

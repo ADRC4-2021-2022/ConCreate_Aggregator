@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class HouseManager : MonoBehaviour
@@ -32,7 +30,7 @@ public class HouseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     //create rooms given their positions (coordinates)
@@ -86,7 +84,7 @@ public class HouseManager : MonoBehaviour
         _rooms[0].AddRoomConnection(GetRoomByName("Bedroom2"), 5);
 
         _rooms[1].AddRoomConnection(GetRoomByName("Kitchen"), 5);
-        
+
         _rooms[3].AddRoomConnection(GetRoomByName("EnsuiteBathroom"), 5);
 
         AttemptToPlaceRooms();

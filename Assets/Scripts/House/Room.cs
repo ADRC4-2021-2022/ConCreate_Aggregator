@@ -46,7 +46,7 @@ public class Room
         _zDim = width;
         _area = length * width;
         _volume = length * width * height;
-        
+
 
         //create assigned GO option 1
         GO = new GameObject("RoomGameobject made from Code");
@@ -70,7 +70,7 @@ public class Room
         (_xDim, _zDim) = GetFactorsFromArea(area);
         _yDim = 2.7f;
         _volume = area * _zDim;
-        
+
 
         //create assigned GO option 2: by primitive
         GO = GameObject.CreatePrimitive(PrimitiveType.Cube);

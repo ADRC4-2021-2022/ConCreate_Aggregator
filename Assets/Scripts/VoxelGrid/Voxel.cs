@@ -31,7 +31,7 @@ public class Voxel
         set
         {
             _showAliveVoxel = value;
-            ChangeVoxelVisability();
+            ChangeVoxelVisibility();
         }
     }
 
@@ -47,7 +47,7 @@ public class Voxel
         set
         {
             _showAvailableVoxel = value;
-            ChangeVoxelVisability();
+            ChangeVoxelVisibility();
         }
     }
 
@@ -63,14 +63,14 @@ public class Voxel
         set
         {
             _voxelStatus = value;
-            ChangeVoxelVisability();
+            ChangeVoxelVisibility();
         }
     }
 
     /// <summary>
     /// Get the centre point of the voxel in worldspace
     /// </summary>
-    public Vector3 Centre => _gridOrigin + (Vector3)Index * _voxelSixe + Vector3.one * 0.5f * _voxelSixe;
+    public Vector3 Centre => _gridOrigin + (Vector3)Index * _voxelSize + Vector3.one * 0.5f * _voxelSize;
     #endregion
 
     #region private fields
@@ -82,7 +82,7 @@ public class Voxel
     private bool _showAvailableVoxel;
 
     private float _scalefactor = 0.95f;
-    private float _voxelSixe => _grid.VoxelSize;
+    private float _voxelSize => _grid.VoxelSize;
     private Vector3 _gridOrigin => _grid.Origin;
 
 
@@ -101,7 +101,7 @@ public class Voxel
 
 
         Status = VoxelState.Available;
-        ChangeVoxelVisability();
+        ChangeVoxelVisibility();
     }
     #endregion
 
@@ -110,11 +110,11 @@ public class Voxel
     #endregion
 
     #region public functions
-    public void ChangeVoxelVisability()
+    public void ChangeVoxelVisibility()
     {
         bool visible = false;
         if (Status == VoxelState.Dead) visible = false;
-        if (Status == VoxelState.Available && _showAvailableVoxel) visible = false;
+        if (Status == VoxelState.Available && _showAvailableVoxel) visible = true;
         if (Status == VoxelState.Alive && _showAliveVoxel) visible = true;
 
         _goVoxelTrigger.SetActive(visible);
@@ -125,7 +125,7 @@ public class Voxel
         _goVoxelTrigger.name = $"Voxel {Index}";
         _goVoxelTrigger.tag = "Voxel";
         _goVoxelTrigger.transform.position = Centre;
-        _goVoxelTrigger.transform.localScale = Vector3.one * _voxelSixe * _scalefactor;
+        _goVoxelTrigger.transform.localScale = _scalefactor * _voxelSize * Vector3.one;
         _goVoxelTrigger.transform.SetParent(_grid.GOGrid.transform);
 
 

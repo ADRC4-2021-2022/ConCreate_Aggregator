@@ -134,7 +134,27 @@ public class Part
         Status = PartStatus.Available;
     }
 
-    public bool CheckInsideBoundingBox(List<Transform> boxes, out float distance, out Vector3 direction)
+    public bool CheckInsideBoundingBox(Transform boundingBox, out float distance, out Vector3 direction)
+    {
+        distance = 0;
+        direction = Vector3.zero;
+
+        var boxCollider = boundingBox.GetComponent<BoxCollider>();
+        bool intersects = Physics.ComputePenetration(
+            Collider,
+            GOPart.transform.position,
+            GOPart.transform.rotation,
+            boxCollider,
+            boundingBox.position,
+            boundingBox.rotation,
+            out direction,
+            out distance);
+        if (intersects) return true;
+
+        return false;
+    }
+
+    public bool CheckInsideBoundingBoxWithChildren(List<Transform> boxes, out float distance, out Vector3 direction)
     {
         distance = 0;
         direction = Vector3.zero;
@@ -167,14 +187,14 @@ public class Part
         List<GameObject> wallConnections = Util.GetChildObject(GOPart.transform, "onlyWallConn");
         List<GameObject> floorConnections = Util.GetChildObject(GOPart.transform, "onlyFloorConn");
         List<GameObject> wallAndFloorConnections = Util.GetChildObject(GOPart.transform, "bothWallFloorConn");
-        List<GameObject> surfaceConnections = Util.GetChildObject(GOPart.transform, "surfaceConn");
+        //List<GameObject> surfaceConnections = Util.GetChildObject(GOPart.transform, "surfaceConn");
         //List<GameObject> stackingConnectionPrefabs = Util.GetChildObject(GOPart.transform, "StackingConnectionNormal");
 
         //Create a connection object for each connectionPrefab using its transform position, rotation and x scale as length
         foreach (var connectionGO in wallConnections) Connections.Add(new Connection(connectionGO, this));
         foreach (var connectionGO in floorConnections) Connections.Add(new Connection(connectionGO, this));
         foreach (var connectionGO in wallAndFloorConnections) Connections.Add(new Connection(connectionGO, this));
-        foreach (var connectionGO in surfaceConnections) Connections.Add(new Connection(connectionGO, this));
+        //foreach (var connectionGO in surfaceConnections) Connections.Add(new Connection(connectionGO, this));
         /*foreach (var connectionGO in stackingConnectionPrefabs)
         {
             Connections.Add(new Connection(connectionGO, this));
