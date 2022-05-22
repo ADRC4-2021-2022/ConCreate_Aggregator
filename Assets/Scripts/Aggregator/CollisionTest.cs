@@ -46,10 +46,10 @@ public class CollisionTest : MonoBehaviour
         // check if the toggle for matching/non matching connections is on/off
         _toggleConnectionMatching.onValueChanged.AddListener(delegate { _connectionMatchingEnabled = !_connectionMatchingEnabled; });
 
-        //LoadPartPrefabs();
+        LoadPartPrefabs();
         _neighbours = new Collider[_maxNeighboursToCheck]; // initialize neighbors' array
-        //PlaceFirstPart();
-        //EnableAllConnections();
+        PlaceFirstPart();
+        EnableAllConnections();
 
         LoadFloorPartPrefabs();
         PlaceFirstFloorPart();
@@ -127,31 +127,44 @@ public class CollisionTest : MonoBehaviour
     #region PLACING FIRST PARTS (wall/floor)
     private void PlaceFirstPart()
     {
-        //int rndPartIndex = Random.Range(0, _parts.Count);
-        //Part randomPart = _parts[rndPartIndex];
+        int rndPartIndex = Random.Range(0, _parts.Count);
+        Part randomPart = _parts[rndPartIndex];
+        var size = randomPart.Collider.size;
+        var extents = size / 2;
 
-        //int rndZ = Random.Range(0, 4);
-        //int rndY = Random.Range(0, 4);
-
-        Part firstPart = _parts.Find(part => part.Name == "04P 1(Clone)");
+        /*Part firstPart = _parts.Find(part => part.Name == "04P 1(Clone)");
         firstPart.PlaceFirstPart(new Vector3(-0.263f, 1.35f, -0.203f), Quaternion.Euler(new Vector3(0, 0, 0)));
         _parts.Remove(firstPart);
         _placedParts.Add(firstPart);
         firstPart.Name = $"{firstPart.Name} added {_placedParts.Count} (wall)";
-        CheckPartInBounds(firstPart, _boundingBox);
+        CheckPartInBounds(firstPart, _boundingBox);*/
+
+        randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y + 0.3f, extents.z - size.z), Quaternion.Euler(new Vector3(0, 0, 0)));
+        _parts.Remove(randomPart);
+        _placedParts.Add(randomPart);
+        randomPart.Name = $"{randomPart.Name} added {_placedParts.Count} (wall)";
+        CheckPartInBounds(randomPart, _boundingBox);
     }
 
     private void PlaceFirstFloorPart()
     {
-        //int rndPartIndex = Random.Range(0, _floorParts.Count);
-        //Part randomPart = _floorParts[rndPartIndex];
-        //var extents = randomPart.Collider.size / 2;
-        Part firstPart = _floorParts.Find(part => part.Name == "02P 1(Clone)");
+        int rndPartIndex = Random.Range(0, _floorParts.Count);
+        Part randomPart = _floorParts[rndPartIndex];
+        var size = randomPart.Collider.size;
+        var extents = size / 2;
+
+        /*Part firstPart = _floorParts.Find(part => part.Name == "02P 1(Clone)");
         firstPart.PlaceFirstPart(new Vector3(-2.89f, 0.26f, -1.36f), Quaternion.Euler(new Vector3(90, 0, 0)));
         _floorParts.Remove(firstPart);
         _placedFloorParts.Add(firstPart);
         firstPart.Name = $"{firstPart.Name} added {_placedFloorParts.Count} (floor)";
-        CheckPartInBounds(firstPart, _floorBB);
+        CheckPartInBounds(firstPart, _floorBB);*/
+
+        randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z, -extents.y), Quaternion.Euler(new Vector3(90, 0, 0)));
+        _floorParts.Remove(randomPart);
+        _placedFloorParts.Add(randomPart);
+        randomPart.Name = $"{randomPart.Name} added {_placedFloorParts.Count} (floor)";
+        CheckPartInBounds(randomPart, _floorBB);
     }
     #endregion
 
