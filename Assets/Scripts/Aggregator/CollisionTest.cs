@@ -24,6 +24,7 @@ public class CollisionTest : MonoBehaviour
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
     private readonly float _overlapTolerance = 0.03f; // used by compute penetration
     private readonly float _connectionTolerance = 0.2f; // tolerance of matching connections
+    private readonly float _vertexDistanceTolerance = 0.05f; // tolerance used when checking for vertices inside BBs
     private bool _connectionMatchingEnabled = true;
 
     private Collider[] _neighbours; // "ingredient" of compute penetration
@@ -135,7 +136,7 @@ public class CollisionTest : MonoBehaviour
 
 
         randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y + 0.3f, extents.z - size.z) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(0, 0, 0)));
-        bool isInside = CheckPartInBounds(randomPart, _boundingBox);
+        bool isInside = CheckPartInBounds(_boundingBox, randomPart);
         if (isInside)
         {
             _parts.Remove(randomPart);
@@ -145,7 +146,7 @@ public class CollisionTest : MonoBehaviour
         else
         {
             randomPart.ResetPart();
-            Debug.Log($"Part {randomPart.Name} was outside");
+            Debug.Log($"First part {randomPart.Name} was outside");
         }
         
     }
@@ -158,7 +159,7 @@ public class CollisionTest : MonoBehaviour
         var extents = size / 2;
 
         randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z, -extents.y) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(90, 0, 0)));
-        bool isInside = CheckPartInBounds(randomPart, _floorBB);
+        bool isInside = CheckPartInBounds(_floorBB, randomPart);
         if (isInside)
         {
             _floorParts.Remove(randomPart);
@@ -167,8 +168,8 @@ public class CollisionTest : MonoBehaviour
         }
         else
         {
-            //randomPart.ResetPart();
-            Debug.Log($"Part {randomPart.Name} was outside");
+            randomPart.ResetPart();
+            Debug.Log($"First part {randomPart.Name} was outside");
         }
 
     }
@@ -211,7 +212,7 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedParts) || !CheckPartInBounds(unplacedConnection.ThisPart, _boundingBox))
+            if (IsColliding(unplacedConnection.ThisPart, _placedParts) || !CheckPartInBounds(_boundingBox, unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -269,7 +270,7 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInFloor, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedFloorParts) || !CheckPartInBounds(unplacedConnection.ThisPart, _floorBB))
+            if (IsColliding(unplacedConnection.ThisPart, _placedFloorParts) || !CheckPartInBounds(_floorBB, unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -359,7 +360,7 @@ public class CollisionTest : MonoBehaviour
         return false;
     }
 
-    bool CheckPartInBounds(Part part, GameObject boundingMesh)
+    bool CheckPartInBounds(GameObject boundingMesh, Part partToCheck)
     {
         bool isInBounds;
         //float distance;
@@ -375,7 +376,7 @@ public class CollisionTest : MonoBehaviour
         }
         else boundingMeshes.Add(boundingMesh.transform);
 
-        isInBounds = part.CheckInsideBoundingMeshes(boundingMeshes);
+        isInBounds = IsValidPlacement(boundingMeshes, partToCheck);
         //Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
         //var extents = part.Collider.bounds.size / 2;
         //float x = extents.x;
@@ -399,6 +400,35 @@ public class CollisionTest : MonoBehaviour
         //}
 
         return isInBounds;
+    }
+
+    /// <summary>
+    /// Checks if a part has been placed in a valid position (i.e. inside a given bounding box)
+    /// </summary>
+    /// <param name="boxes">List of transforms of bounding boxes (i.e. floor BB or wall BB)</param>
+    /// <param name="partToCheck">Part to check (i.e. the new part we are trying to add into the building)</param>
+    /// <returns></returns>
+    public bool IsValidPlacement(List<Transform> boxes, Part partToCheck)
+    {
+        var partMesh = partToCheck.Collider.sharedMesh;
+        var vertices = partMesh.vertices;
+        foreach (var bb in boxes)
+        {
+            var bbCollider = bb.GetComponent<Collider>();
+            foreach (var vertex in vertices)
+            {
+                var transVertex = partToCheck.GOPart.transform.TransformPoint(vertex);
+                var vertGo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                vertGo.transform.localPosition = transVertex;
+                vertGo.transform.localScale = Vector3.one * 0.05f;
+
+                if ((transVertex - bbCollider.ClosestPoint(transVertex)).magnitude > _vertexDistanceTolerance) return false;
+                //if ((transVertex - bbCollider.ClosestPointOnBounds(transVertex)).magnitude > _vertexDistanceTolerance) return false;
+                //if (!bbCollider.bounds.Contains(transVertex)) return false;
+                //if (!Util.PointInsideCollider(transVertex, bbCollider)) return false;
+            }
+        }
+        return true;
     }
     #endregion
 
