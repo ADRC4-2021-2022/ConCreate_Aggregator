@@ -210,4 +210,35 @@ public static class Util
             .Select(x => x.Select(v => v.Value).ToList())
             .ToList();
     }
+
+    public static T FindComponentInChildren<T>(Transform parent)
+    {
+        var parentComponent = parent.GetComponent<T>();
+        if (parentComponent != null) return parentComponent;
+        else
+        {
+            var childComponent = parent.GetComponentInChildren<T>();
+            if (childComponent == null) Debug.Log("Did not find component in children");
+
+            return childComponent;
+        }
+    }
+
+    public static Mesh ScaleMesh(Mesh original, Vector3 scale)
+    {
+        var originalVertices = original.vertices;
+        var vertices = new Vector3[originalVertices.Length];
+
+        for (var i = 0; i < vertices.Length; i++)
+        {
+            var vertex = originalVertices[i];
+            vertices[i] = vertex;
+            vertices[i].Scale(scale);
+        }
+        Mesh result = new();
+        result.vertices = vertices;
+        result.RecalculateBounds();
+        result.RecalculateNormals();
+        return result;
+    }
 }

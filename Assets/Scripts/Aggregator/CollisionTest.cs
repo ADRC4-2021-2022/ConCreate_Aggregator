@@ -20,7 +20,7 @@ public class CollisionTest : MonoBehaviour
 
     private IEnumerator _autoPlacementCoroutine;
 
-    private readonly float _radius = 25f; // check for penetration within a radius of 50m (radius of a sphere)
+    //private readonly float _radius = 25f; // check for penetration within a radius of 50m (radius of a sphere)
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
     private readonly float _overlapTolerance = 0.03f; // used by compute penetration
     private readonly float _connectionTolerance = 0.2f; // tolerance of matching connections
@@ -40,7 +40,7 @@ public class CollisionTest : MonoBehaviour
 
     public void Start()
     {
-        _boundingBox = GameObject.Find("BoundingBox2");
+        _boundingBox = GameObject.Find("BoundingBox");
         _floorBB = GameObject.Find("FloorBB");
 
         // check if the toggle for matching/non matching connections is on/off
@@ -129,42 +129,48 @@ public class CollisionTest : MonoBehaviour
     {
         int rndPartIndex = Random.Range(0, _parts.Count);
         Part randomPart = _parts[rndPartIndex];
-        var size = randomPart.Collider.size;
+        var size = randomPart.Collider.sharedMesh.bounds.size;
+        Debug.Log(size);
         var extents = size / 2;
 
-        /*Part firstPart = _parts.Find(part => part.Name == "04P 1(Clone)");
-        firstPart.PlaceFirstPart(new Vector3(-0.263f, 1.35f, -0.203f), Quaternion.Euler(new Vector3(0, 0, 0)));
-        _parts.Remove(firstPart);
-        _placedParts.Add(firstPart);
-        firstPart.Name = $"{firstPart.Name} added {_placedParts.Count} (wall)";
-        CheckPartInBounds(firstPart, _boundingBox);*/
 
-        randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y + 0.3f, extents.z - size.z), Quaternion.Euler(new Vector3(0, 0, 0)));
-        _parts.Remove(randomPart);
-        _placedParts.Add(randomPart);
-        randomPart.Name = $"{randomPart.Name} added {_placedParts.Count} (wall)";
-        CheckPartInBounds(randomPart, _boundingBox);
+        randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y + 0.3f, extents.z - size.z) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(0, 0, 0)));
+        bool isInside = CheckPartInBounds(randomPart, _boundingBox);
+        if (isInside)
+        {
+            _parts.Remove(randomPart);
+            _placedParts.Add(randomPart);
+            randomPart.Name = $"{randomPart.Name} added {_placedParts.Count} (wall)";
+        }
+        else
+        {
+            randomPart.ResetPart();
+            Debug.Log($"Part {randomPart.Name} was outside");
+        }
+        
     }
 
     private void PlaceFirstFloorPart()
     {
         int rndPartIndex = Random.Range(0, _floorParts.Count);
         Part randomPart = _floorParts[rndPartIndex];
-        var size = randomPart.Collider.size;
+        var size = randomPart.Collider.sharedMesh.bounds.size;
         var extents = size / 2;
 
-        /*Part firstPart = _floorParts.Find(part => part.Name == "02P 1(Clone)");
-        firstPart.PlaceFirstPart(new Vector3(-2.89f, 0.26f, -1.36f), Quaternion.Euler(new Vector3(90, 0, 0)));
-        _floorParts.Remove(firstPart);
-        _placedFloorParts.Add(firstPart);
-        firstPart.Name = $"{firstPart.Name} added {_placedFloorParts.Count} (floor)";
-        CheckPartInBounds(firstPart, _floorBB);*/
+        randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z, -extents.y) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(90, 0, 0)));
+        bool isInside = CheckPartInBounds(randomPart, _floorBB);
+        if (isInside)
+        {
+            _floorParts.Remove(randomPart);
+            _placedFloorParts.Add(randomPart);
+            randomPart.Name = $"{randomPart.Name} added {_placedFloorParts.Count} (floor)";
+        }
+        else
+        {
+            //randomPart.ResetPart();
+            Debug.Log($"Part {randomPart.Name} was outside");
+        }
 
-        randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z, -extents.y), Quaternion.Euler(new Vector3(90, 0, 0)));
-        _floorParts.Remove(randomPart);
-        _placedFloorParts.Add(randomPart);
-        randomPart.Name = $"{randomPart.Name} added {_placedFloorParts.Count} (floor)";
-        CheckPartInBounds(randomPart, _floorBB);
     }
     #endregion
 
@@ -353,42 +359,46 @@ public class CollisionTest : MonoBehaviour
         return false;
     }
 
-    bool CheckPartInBounds(Part part, GameObject boundingBox)
+    bool CheckPartInBounds(Part part, GameObject boundingMesh)
     {
         bool isInBounds;
-        float distance;
-        Vector3 direction;
-        if (boundingBox.transform.childCount > 0)
+        //float distance;
+        //Vector3 direction;
+
+        List<Transform> boundingMeshes = new();
+        if (boundingMesh.transform.childCount > 0)
         {
-            List<Transform> boundingBoxes = new();
-            for (int j = 0; j < boundingBox.transform.childCount; j++)
+            for (int j = 0; j < boundingMesh.transform.childCount; j++)
             {
-                boundingBoxes.Add(boundingBox.transform.GetChild(j));
+                boundingMeshes.Add(boundingMesh.transform.GetChild(j));
             }
-            isInBounds = part.CheckInsideBoundingBoxWithChildren(boundingBoxes, out distance, out direction);
-            Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
-            var extents = part.Collider.size / 2;
-            float x = extents.x;
-            float y = extents.y;
-            float z = extents.z;
-
-            if (direction.x != 0 && direction.y != 0 && direction.z != 0) return isInBounds && distance > x && distance > y && distance > z;
-            if (direction.x != 0 && direction.z != 0) return isInBounds && distance > x && distance > z;
-            if (direction.x != 0 && direction.y != 0) return isInBounds && distance > x && distance > y;
-            if (direction.y != 0 && direction.z != 0) return isInBounds && distance > y && distance > z;
-            if (direction.x != 0) return isInBounds && distance > x;
-            if (direction.y != 0) return isInBounds && distance > y;
-            if (direction.z != 0) return isInBounds && distance > z;
         }
-        else
-        {
-            isInBounds = part.CheckInsideBoundingBox(boundingBox.transform, out distance, out direction);
-            Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
+        else boundingMeshes.Add(boundingMesh.transform);
 
-            return isInBounds;
-        }
+        isInBounds = part.CheckInsideBoundingMeshes(boundingMeshes);
+        //Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
+        //var extents = part.Collider.bounds.size / 2;
+        //float x = extents.x;
+        //float y = extents.y;
+        //float z = extents.z;
 
-        return false;
+        //if (direction.x != 0 && direction.y != 0 && direction.z != 0) return isInBounds && distance > x && distance > y && distance > z;
+        //if (direction.x != 0 && direction.z != 0) return isInBounds && distance > x && distance > z;
+        //if (direction.x != 0 && direction.y != 0) return isInBounds && distance > x && distance > y;
+        //if (direction.y != 0 && direction.z != 0) return isInBounds && distance > y && distance > z;
+        //if (direction.x != 0) return isInBounds && distance > x;
+        //if (direction.y != 0) return isInBounds && distance > y;
+        //if (direction.z != 0) return isInBounds && distance > z;
+        //}
+        //else
+        //{
+        //    isInBounds = part.CheckInsideBoundingBoxWithChildren(new List<Transform>() { boundingBox.transform });
+        //    Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
+
+        //    return isInBounds;
+        //}
+
+        return isInBounds;
     }
     #endregion
 

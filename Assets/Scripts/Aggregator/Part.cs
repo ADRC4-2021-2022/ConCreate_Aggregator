@@ -14,7 +14,7 @@ public class Part
     public bool Intersecting = false;
     public PartStatus Status;
 
-    public BoxCollider Collider
+    public MeshCollider Collider
     {
         get
         {
@@ -23,9 +23,9 @@ public class Part
                 //Debug.Log($"Searching Collider found for {Name}");
                 var goCollider = Util.GetChildObject(GOPart.transform, "PartCollider").First();
                 if (goCollider != null)
-                    _collider = goCollider.GetComponentInChildren<BoxCollider>();
-                //else
-                //Debug.Log($"No Collider found for {Name}");
+                    _collider = goCollider.GetComponentInChildren<MeshCollider>();
+                else
+                    Debug.Log($"No Collider found for {Name}");
             }
             return _collider;
         }
@@ -46,7 +46,7 @@ public class Part
 
     #region private fields
     private GameObject _prefab;
-    private BoxCollider _collider;
+    private MeshCollider _collider;
     #endregion
 
     #region constructors
@@ -134,31 +134,29 @@ public class Part
         Status = PartStatus.Available;
     }
 
-    public bool CheckInsideBoundingBox(Transform boundingBox, out float distance, out Vector3 direction)
-    {
-        var boxCollider = boundingBox.GetComponent<BoxCollider>();
-        bool intersects = Physics.ComputePenetration(
-            Collider,
-            GOPart.transform.position,
-            GOPart.transform.rotation,
-            boxCollider,
-            boundingBox.position,
-            boundingBox.rotation,
-            out direction,
-            out distance);
-        if (intersects) return true;
+    //public bool CheckInsideBoundingBox(Transform boundingBox, out float distance, out Vector3 direction)
+    //{
+    //    var boxCollider = boundingBox.GetComponent<BoxCollider>();
+    //    bool intersects = Physics.ComputePenetration(
+    //        Collider,
+    //        GOPart.transform.position,
+    //        GOPart.transform.rotation,
+    //        boxCollider,
+    //        boundingBox.position,
+    //        boundingBox.rotation,
+    //        out direction,
+    //        out distance);
+    //    if (intersects) return true;
 
-        return false;
-    }
+    //    return false;
+    //}
 
-    public bool CheckInsideBoundingBoxWithChildren(List<Transform> boxes, out float distance, out Vector3 direction)
+    public bool CheckInsideBoundingMeshes(List<Transform> boxes)
     {
-        distance = 0;
-        direction = Vector3.zero;
+        List<Collider> intersecting = new List<Collider>();
         foreach (var box in boxes)
         {
-            //var boxCollider = box.GetComponent<BoxCollider>();
-            var boxCollider = box.GetChild(0).GetComponent<MeshCollider>();
+            var boxCollider = box.GetComponent<Collider>();
             bool intersects = Physics.ComputePenetration(
                 Collider,
                 GOPart.transform.position,
@@ -166,13 +164,35 @@ public class Part
                 boxCollider,
                 box.position,
                 box.rotation,
-                out direction,
-                out distance);
-            if (intersects) return true;
+                out Vector3 direction,
+                out float distance);
+            if (intersects) intersecting.Add(boxCollider);
         }
 
-        return false;
+        if (intersecting.Count == 0) return false;
+
+        var partMesh = Collider.sharedMesh;
+        var vertices = partMesh.vertices;
+        foreach (var vertex in vertices)
+        {
+            var transVertex = GOPart.transform.TransformPoint(vertex);
+            //var vertGo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //vertGo.transform.localPosition = transVertex;
+            //vertGo.transform.localScale = Vector3.one * 0.05f;
+            bool vertexInside = false;
+            int counter = intersecting.Count - 1;
+            while (!vertexInside && counter >= 0)
+            {
+                var mesh = intersecting[counter];
+                vertexInside = Util.PointInsideCollider(transVertex, mesh);
+                counter--;
+            }
+            if (!vertexInside) return false;
+        }
+
+        return true;
     }
+
     #endregion
 
     #region private functions
