@@ -41,8 +41,8 @@ public class CollisionTest : MonoBehaviour
 
     public void Start()
     {
-        _boundingBox = GameObject.Find("BoundingBox");
-        _floorBB = GameObject.Find("FloorBB");
+        _boundingBox = GameObject.Find("bb_walls_typo2");
+        _floorBB = GameObject.Find("bb_floor_typo2");
 
         // check if the toggle for matching/non matching connections is on/off
         _toggleConnectionMatching.onValueChanged.AddListener(delegate { _connectionMatchingEnabled = !_connectionMatchingEnabled; });
@@ -411,22 +411,26 @@ public class CollisionTest : MonoBehaviour
     public bool IsValidPlacement(List<Transform> boxes, Part partToCheck)
     {
         var partMesh = partToCheck.Collider.sharedMesh;
-        var vertices = partMesh.vertices;
+        var partVertices = partMesh.vertices;
         foreach (var bb in boxes)
         {
             var bbCollider = bb.GetComponent<Collider>();
-            foreach (var vertex in vertices)
+            //if (bbCollider is MeshCollider) bbCollider = bb.GetComponent<MeshCollider>();
+            //else if (bbCollider is BoxCollider) bbCollider = bb.GetComponent<BoxCollider>();
+            int verticesInBounds = 0;
+            foreach (var vertex in partVertices)
             {
-                var transVertex = partToCheck.GOPart.transform.TransformPoint(vertex);
-                var vertGo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                vertGo.transform.localPosition = transVertex;
-                vertGo.transform.localScale = Vector3.one * 0.05f;
+                var vertexToWorldSpace = partToCheck.GOPart.transform.TransformPoint(vertex);
+                //var vertGo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //vertGo.transform.localPosition = vertexToWorldSpace;
+                //vertGo.transform.localScale = Vector3.one * 0.05f;
 
-                if ((transVertex - bbCollider.ClosestPoint(transVertex)).magnitude > _vertexDistanceTolerance) return false;
+                if ((vertexToWorldSpace - bbCollider.ClosestPoint(vertexToWorldSpace)).magnitude > _vertexDistanceTolerance) verticesInBounds++;
                 //if ((transVertex - bbCollider.ClosestPointOnBounds(transVertex)).magnitude > _vertexDistanceTolerance) return false;
                 //if (!bbCollider.bounds.Contains(transVertex)) return false;
                 //if (!Util.PointInsideCollider(transVertex, bbCollider)) return false;
             }
+            if (verticesInBounds > 4 && verticesInBounds < partVertices.Count()) return false;
         }
         return true;
     }
@@ -435,12 +439,14 @@ public class CollisionTest : MonoBehaviour
     #region BUTTONS FOR COROUTINES
     private IEnumerator AutoPlacement()
     {
+        Debug.Log("Auto wall placement started");
         for (int i = 0; i < 250; i++)
         {
             PlaceNextPart();
             LoadPartPrefabs();
             yield return new WaitForSeconds(0.1f);
         }
+        Debug.Log("Auto wall placement finished");
         yield return new WaitForSeconds(1f);
     }
 
@@ -469,6 +475,7 @@ public class CollisionTest : MonoBehaviour
     public void OnStopButtonClicked()
     {
         StopCoroutine(_autoPlacementCoroutine);
+        Debug.Log("Auto wall placement stopped");
     }
 
     public void OnAutoFloorPlacementButtonClicked()
