@@ -24,7 +24,7 @@ public class CollisionTest : MonoBehaviour
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
     private readonly float _overlapTolerance = 0.03f; // used by compute penetration
     private readonly float _connectionTolerance = 0.2f; // tolerance of matching connections
-    private readonly float _vertexDistanceTolerance = 0.05f; // tolerance used when checking for vertices inside BBs
+    private readonly float _vertexDistanceTolerance = 0.1f; // tolerance used when checking for vertices inside BBs
     private bool _connectionMatchingEnabled = true;
 
     private Collider[] _neighbours; // "ingredient" of compute penetration
@@ -128,50 +128,53 @@ public class CollisionTest : MonoBehaviour
     #region PLACING FIRST PARTS (wall/floor)
     private void PlaceFirstPart()
     {
-        int rndPartIndex = Random.Range(0, _parts.Count);
-        Part randomPart = _parts[rndPartIndex];
-        var size = randomPart.Collider.sharedMesh.bounds.size;
-        Debug.Log(size);
-        var extents = size / 2;
-
-
-        randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y + 0.3f, extents.z - size.z) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(0, 0, 0)));
-        bool isInside = CheckPartInBounds(_boundingBox, randomPart);
-        if (isInside)
+        _parts.Shuffle();
+        for (int i = 0; i < _parts.Count; i++)
         {
-            _parts.Remove(randomPart);
-            _placedParts.Add(randomPart);
-            randomPart.Name = $"{randomPart.Name} added {_placedParts.Count} (wall)";
+            Part part = _parts[i];
+            var size = part.Collider.sharedMesh.bounds.size;
+            var extents = size / 2;
+            part.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y, extents.z - size.z) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(0, 0, 0)));
+            bool isInside = CheckPartInBounds(_boundingBox, part);
+            if (isInside)
+            {
+                _parts.Remove(part);
+                _placedParts.Add(part);
+                part.Name = $"{part.Name} added {_placedParts.Count} (wall)";
+                return;
+            }
+            else
+            {
+                part.ResetPart();
+                Debug.Log($"First part {part.Name} was outside");
+            }
         }
-        else
-        {
-            randomPart.ResetPart();
-            Debug.Log($"First part {randomPart.Name} was outside");
-        }
-        
     }
 
     private void PlaceFirstFloorPart()
     {
-        int rndPartIndex = Random.Range(0, _floorParts.Count);
-        Part randomPart = _floorParts[rndPartIndex];
-        var size = randomPart.Collider.sharedMesh.bounds.size;
-        var extents = size / 2;
-
-        randomPart.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z, -extents.y) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(90, 0, 0)));
-        bool isInside = CheckPartInBounds(_floorBB, randomPart);
-        if (isInside)
+        _floorParts.Shuffle();
+        for (int i = 0; i < _floorParts.Count; i++)
         {
-            _floorParts.Remove(randomPart);
-            _placedFloorParts.Add(randomPart);
-            randomPart.Name = $"{randomPart.Name} added {_placedFloorParts.Count} (floor)";
-        }
-        else
-        {
-            randomPart.ResetPart();
-            Debug.Log($"First part {randomPart.Name} was outside");
-        }
+            Part part = _floorParts[i];
+            var size = part.Collider.sharedMesh.bounds.size;
+            var extents = size / 2;
 
+            part.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z - 0.35f, -extents.y) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(90, 0, 0)));
+            bool isInside = CheckPartInBounds(_floorBB, part);
+            if (isInside)
+            {
+                _floorParts.Remove(part);
+                _placedFloorParts.Add(part);
+                part.Name = $"{part.Name} added {_placedFloorParts.Count} (floor)";
+                return;
+            }
+            else
+            {
+                part.ResetPart();
+                Debug.Log($"First part {part.Name} was outside");
+            }
+        }
     }
     #endregion
 
@@ -412,9 +415,11 @@ public class CollisionTest : MonoBehaviour
     {
         var partMesh = partToCheck.Collider.sharedMesh;
         var partVertices = partMesh.vertices;
-        foreach (var bb in boxes)
+        var totalVerticesInPart = partMesh.vertices.Count();
+        var vertexCounts = new int[boxes.Count()];
+        for (int i = 0; i < boxes.Count; i++)
         {
-            var bbCollider = bb.GetComponent<Collider>();
+            var bbCollider = boxes[i].GetComponent<Collider>();
             //if (bbCollider is MeshCollider) bbCollider = bb.GetComponent<MeshCollider>();
             //else if (bbCollider is BoxCollider) bbCollider = bb.GetComponent<BoxCollider>();
             int verticesInBounds = 0;
@@ -425,14 +430,17 @@ public class CollisionTest : MonoBehaviour
                 //vertGo.transform.localPosition = vertexToWorldSpace;
                 //vertGo.transform.localScale = Vector3.one * 0.05f;
 
-                if ((vertexToWorldSpace - bbCollider.ClosestPoint(vertexToWorldSpace)).magnitude > _vertexDistanceTolerance) verticesInBounds++;
+                if ((vertexToWorldSpace - bbCollider.ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance) verticesInBounds++;
                 //if ((transVertex - bbCollider.ClosestPointOnBounds(transVertex)).magnitude > _vertexDistanceTolerance) return false;
                 //if (!bbCollider.bounds.Contains(transVertex)) return false;
                 //if (!Util.PointInsideCollider(transVertex, bbCollider)) return false;
             }
-            if (verticesInBounds > 4 && verticesInBounds < partVertices.Count()) return false;
+            vertexCounts[i] = verticesInBounds;
+            if (verticesInBounds == totalVerticesInPart) return true;
+            //if (verticesInBounds > 4 && verticesInBounds < totalVerticesInPart) return false;
         }
-        return true;
+        // if the total number of vertices for the part can be summed from the number of vertices in any pair of bounding boxes, then that is also okay
+        return false;
     }
     #endregion
 

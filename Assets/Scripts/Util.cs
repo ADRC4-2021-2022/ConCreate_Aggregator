@@ -40,6 +40,17 @@ public static class Util
         }
     }
 
+    public static Color RandomColorWithTransparency
+    {
+        get
+        {
+            float r = Random.Range(0, 255) / 255f;
+            float g = Random.Range(0, 255) / 255f;
+            float b = Random.Range(0, 255) / 255f;
+            return new Color(r, g, b, 0.5f);
+        }
+    }
+
     public static bool TryOrientIndex(Vector3Int localIndex, Vector3Int anchor, Quaternion rotation, Vector3Int gridDimensions, out Vector3Int worldIndex)
     {
         Vector3 rotated = rotation * localIndex;
