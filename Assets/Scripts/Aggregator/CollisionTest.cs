@@ -59,6 +59,11 @@ public class CollisionTest : MonoBehaviour
         _autoPlacementCoroutine = AutoPlacement();
     }
 
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0)) RaycastToMousePosition();
+    }
+
     #region LOADING PREFABS (wall/floor)
     private void LoadPartPrefabs()
     {
@@ -441,6 +446,87 @@ public class CollisionTest : MonoBehaviour
         }
         // if the total number of vertices for the part can be summed from the number of vertices in any pair of bounding boxes, then that is also okay
         return false;
+    }
+    #endregion
+
+    #region Click --> raycast --> try place part where we clicked
+    private void RaycastToMousePosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            var whatWeHit = hit.collider;
+            if (whatWeHit.CompareTag("BoundingBox"))
+            {
+                var hitPoint = hit.point;
+
+                var hitPointGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                hitPointGO.transform.position = hitPoint;
+                hitPointGO.transform.localScale = Vector3.one * 0.5f;
+                hitPointGO.GetComponent<Renderer>().material.color = Color.blue;
+
+                var boundingBoxMinY = whatWeHit.bounds.min.y;
+
+                var hitPointWithMinBBYGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                hitPointWithMinBBYGO.transform.position = new Vector3(hitPoint.x, boundingBoxMinY, hitPoint.z);
+                hitPointWithMinBBYGO.transform.localScale = Vector3.one * 0.5f;
+                hitPointWithMinBBYGO.GetComponent<Renderer>().material.color = Color.red;
+
+                Debug.Log($"Collider Bounds: {whatWeHit.bounds.size}");
+                Debug.Log($"Collider Position: {whatWeHit.bounds.center}");
+
+                var sizeX = whatWeHit.bounds.size.x;
+                var sizeZ = whatWeHit.bounds.size.z;
+                var minSizeAxis = Mathf.Min(sizeX, sizeZ);
+                var centerX = whatWeHit.bounds.center.x;
+                var centerZ = whatWeHit.bounds.center.z;
+
+                Vector3 pos;
+                if (minSizeAxis == sizeX)
+                {
+                    pos = new Vector3(centerX, boundingBoxMinY, hitPoint.z);
+                } 
+                else
+                {
+                    pos = new Vector3(hitPoint.x, boundingBoxMinY, centerZ);
+                }
+
+                Debug.Log($"Raycast hit coords: {hit.point} ; boundingBoxMinY: {boundingBoxMinY}");
+                TryPlacePartAtPosition(pos);
+            }
+            else Debug.Log($"Raycast hit {hit.point} but hit {whatWeHit.transform.name}, instead of a GameObject tagged with 'BoundingBox'");
+        }
+    }
+
+    private void TryPlacePartAtPosition(Vector3 pos)
+    {
+        LoadPartPrefabs();
+        _parts.Shuffle();
+        for (int i = 0; i < _parts.Count; i++)
+        {
+            Part part = _parts[i];
+            var sizeY = part.Collider.sharedMesh.bounds.size.y;
+            var positionWithYOffset = new Vector3(pos.x, pos.y + (sizeY / 2), pos.z);
+            Debug.Log($"positionWithYOffset: {positionWithYOffset}");
+            
+            for (int j = 0; j < 4; j++)
+            {
+                part.PlaceFirstPart(positionWithYOffset, Quaternion.Euler(new Vector3(0, 90 * j, 0)));
+                bool isInside = CheckPartInBounds(_boundingBox, part);
+                if (isInside)
+                {
+                    _parts.Remove(part);
+                    _placedParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedParts.Count} (wall)";
+                    return;
+                }
+                else
+                {
+                    part.ResetPart();
+                    Debug.Log($"First part {part.Name} was outside");
+                }
+            }
+        }
     }
     #endregion
 
