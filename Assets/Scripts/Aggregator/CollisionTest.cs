@@ -74,6 +74,7 @@ public class CollisionTest : MonoBehaviour
 
         //Load all the prefabs
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
+        
 
         //Select the prefabs with tag Part
         _parts = prefabs.Where(g =>
@@ -87,7 +88,9 @@ public class CollisionTest : MonoBehaviour
             }
             return false;
         }).Select(g => new Part(g)).ToList();
-
+        //Add one more arch so that there are more arches into the aggregation
+        GameObject prefab08P_c = Resources.Load<GameObject>("Prefabs/Parts/08P_c");
+        _parts.Add(new Part(prefab08P_c));
         EnableAllConnections();
     }
 
@@ -460,17 +463,17 @@ public class CollisionTest : MonoBehaviour
             {
                 var hitPoint = hit.point;
 
-                var hitPointGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                hitPointGO.transform.position = hitPoint;
-                hitPointGO.transform.localScale = Vector3.one * 0.5f;
-                hitPointGO.GetComponent<Renderer>().material.color = Color.blue;
+                //var hitPointGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //hitPointGO.transform.position = hitPoint;
+                //hitPointGO.transform.localScale = Vector3.one * 0.5f;
+                //hitPointGO.GetComponent<Renderer>().material.color = Color.blue;
 
                 var boundingBoxMinY = whatWeHit.bounds.min.y;
 
-                var hitPointWithMinBBYGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                hitPointWithMinBBYGO.transform.position = new Vector3(hitPoint.x, boundingBoxMinY, hitPoint.z);
-                hitPointWithMinBBYGO.transform.localScale = Vector3.one * 0.5f;
-                hitPointWithMinBBYGO.GetComponent<Renderer>().material.color = Color.red;
+                //var hitPointWithMinBBYGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //hitPointWithMinBBYGO.transform.position = new Vector3(hitPoint.x, boundingBoxMinY, hitPoint.z);
+                //hitPointWithMinBBYGO.transform.localScale = Vector3.one * 0.5f;
+                //hitPointWithMinBBYGO.GetComponent<Renderer>().material.color = Color.red;
 
                 Debug.Log($"Collider Bounds: {whatWeHit.bounds.size}");
                 Debug.Log($"Collider Position: {whatWeHit.bounds.center}");
@@ -512,8 +515,9 @@ public class CollisionTest : MonoBehaviour
             for (int j = 0; j < 4; j++)
             {
                 part.PlaceFirstPart(positionWithYOffset, Quaternion.Euler(new Vector3(0, 90 * j, 0)));
+                bool isColliding = IsColliding(part, _placedParts);
                 bool isInside = CheckPartInBounds(_boundingBox, part);
-                if (isInside)
+                if (isInside && !isColliding)
                 {
                     _parts.Remove(part);
                     _placedParts.Add(part);
