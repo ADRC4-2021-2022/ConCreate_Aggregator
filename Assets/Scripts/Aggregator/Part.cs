@@ -102,7 +102,7 @@ public class Part
         //Enable the part gameobject in the scene
         //anchorConnection.NameGameObject("anchor");
         GOPart.SetActive(true);
-        GOPart.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material.color = Util.RandomColor;
+        //GOPart.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material.color = Util.RandomColor;
         if (availableConnection != null && connectionToPlace != null)
         {
             Util.RotatePositionFromToUsingParent(connectionToPlace, availableConnection);

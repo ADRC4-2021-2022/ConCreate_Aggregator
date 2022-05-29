@@ -7,12 +7,11 @@ using UnityEngine.UI;
 public class CollisionTest : MonoBehaviour
 {
     #region VARIABLES
-    //text with info about collision during play mode (top left game scene)
     [SerializeField]
-    private Text _debugText;
+    public GameObject WallsPrefab;
 
     [SerializeField]
-    private Text _lastPartPlacedText;
+    public GameObject FloorPrefab;
 
     //to decide whether aggregate parts according to length or not
     [SerializeField]
@@ -35,14 +34,21 @@ public class CollisionTest : MonoBehaviour
     private List<Part> _placedParts = new();
     private List<Part> _placedFloorParts = new();
 
-    GameObject _boundingBox;
-    GameObject _floorBB;
+    private GameObject[] _boundingBoxes = new GameObject[10];
+    private GameObject[] _floorBBs = new GameObject[10];
+    private int currentYLayer = 0;
+    private float _floorPlusWallsHeight = 3.05f;
     #endregion
 
     public void Start()
     {
-        _boundingBox = GameObject.Find("bb_walls_typo2");
-        _floorBB = GameObject.Find("bb_floor_typo2");
+        var newBB = Instantiate(WallsPrefab, new Vector3(0, 0.35f, 0), Quaternion.Euler(new Vector3(-90, 0, 0)));
+        newBB.name = "BoundingBox" + currentYLayer;
+        _boundingBoxes[currentYLayer] = newBB;
+
+        var newFloor = Instantiate(FloorPrefab, new Vector3(0, 0.35f, 0), Quaternion.Euler(new Vector3(-90, 0, 0)));
+        newFloor.name = "FloorBB" + currentYLayer;
+        _floorBBs[currentYLayer] = newFloor;
 
         // check if the toggle for matching/non matching connections is on/off
         _toggleConnectionMatching.onValueChanged.AddListener(delegate { _connectionMatchingEnabled = !_connectionMatchingEnabled; });
@@ -142,8 +148,8 @@ public class CollisionTest : MonoBehaviour
             Part part = _parts[i];
             var size = part.Collider.sharedMesh.bounds.size;
             var extents = size / 2;
-            part.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y, extents.z - size.z) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(0, 0, 0)));
-            bool isInside = CheckPartInBounds(_boundingBox, part);
+            part.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y + (currentYLayer * _floorPlusWallsHeight), extents.z - size.z) + new Vector3(-0.02f, 0.35f, -0.02f), Quaternion.Euler(new Vector3(0, 0, 0)));
+            bool isInside = CheckPartInBounds(_boundingBoxes[currentYLayer], part);
             if (isInside)
             {
                 _parts.Remove(part);
@@ -168,8 +174,8 @@ public class CollisionTest : MonoBehaviour
             var size = part.Collider.sharedMesh.bounds.size;
             var extents = size / 2;
 
-            part.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z - 0.35f, -extents.y) + Vector3.one * 0.02f, Quaternion.Euler(new Vector3(90, 0, 0)));
-            bool isInside = CheckPartInBounds(_floorBB, part);
+            part.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z + (currentYLayer * _floorPlusWallsHeight), -extents.y), Quaternion.Euler(new Vector3(90, 0, 0)));
+            bool isInside = CheckPartInBounds(_floorBBs[currentYLayer], part);
             if (isInside)
             {
                 _floorParts.Remove(part);
@@ -223,7 +229,7 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedParts) || !CheckPartInBounds(_boundingBox, unplacedConnection.ThisPart))
+            if (IsColliding(unplacedConnection.ThisPart, _placedParts) || !CheckPartInBounds(_boundingBoxes[currentYLayer], unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -235,7 +241,6 @@ public class CollisionTest : MonoBehaviour
                 randomAvailableConnectionInCurrentBuilding.Available = false;
                 string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedParts.Count + 1} (wall)";
                 Vector3 unplacedPartPos = unplacedConnection.ThisPart.GOPart.transform.position;
-                _lastPartPlacedText.text = $"Last Part Placed:\n{newName}\n\nPosition:\n{unplacedPartPos.x}, {unplacedPartPos.y}, {unplacedPartPos.z}";
                 unplacedConnection.ThisPart.Name = newName;
                 _parts.Remove(unplacedConnection.ThisPart);
                 _placedParts.Add(unplacedConnection.ThisPart);
@@ -281,7 +286,7 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInFloor, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedFloorParts) || !CheckPartInBounds(_floorBB, unplacedConnection.ThisPart))
+            if (IsColliding(unplacedConnection.ThisPart, _placedFloorParts) || !CheckPartInBounds(_floorBBs[currentYLayer], unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -293,7 +298,6 @@ public class CollisionTest : MonoBehaviour
                 randomAvailableConnectionInFloor.Available = false;
                 string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedFloorParts.Count + 1} (floor)";
                 Vector3 unplacedPartPos = unplacedConnection.ThisPart.GOPart.transform.position;
-                _lastPartPlacedText.text = $"Last Part Placed:\n{newName}\n\nPosition:\n{unplacedPartPos.x}, {unplacedPartPos.y}, {unplacedPartPos.z}";
                 unplacedConnection.ThisPart.Name = newName;
                 _floorParts.Remove(unplacedConnection.ThisPart);
                 _placedFloorParts.Add(unplacedConnection.ThisPart);
@@ -358,14 +362,7 @@ public class CollisionTest : MonoBehaviour
                 out Vector3 direction, out float distance);
 
             // overlapping colliders and too big overlap --> IsColliding = true --> not place the part
-            if (isOverlapping && distance > _overlapTolerance)
-            {
-                _debugText.text += $"Part {newPart.Name} collision info:\n" +
-                    $"Colliding with {otherCollider.gameObject.name}:\n" +
-                    $"Direction: {direction.x}, {direction.y}, {direction.z}\n" +
-                    $"Distance: {distance} meters\n\n";
-                return true;
-            }
+            if (isOverlapping && distance > _overlapTolerance) return true;
         }
         // if we reach this point there's no collision --> place part
         return false;
@@ -516,7 +513,7 @@ public class CollisionTest : MonoBehaviour
             {
                 part.PlaceFirstPart(positionWithYOffset, Quaternion.Euler(new Vector3(0, 90 * j, 0)));
                 bool isColliding = IsColliding(part, _placedParts);
-                bool isInside = CheckPartInBounds(_boundingBox, part);
+                bool isInside = CheckPartInBounds(_boundingBoxes[currentYLayer], part);
                 if (isInside && !isColliding)
                 {
                     _parts.Remove(part);
@@ -579,6 +576,21 @@ public class CollisionTest : MonoBehaviour
     public void OnAutoFloorPlacementButtonClicked()
     {
         StartCoroutine(AutoFloorPlacement());
+    }
+
+    public void OnNewLayerOnTopButtonClicked()
+    {
+        var newBB = Instantiate(WallsPrefab, _boundingBoxes[currentYLayer].transform.position + new Vector3(0, _floorPlusWallsHeight, 0), _boundingBoxes[currentYLayer].transform.rotation);
+        newBB.name = "BoundingBox"+currentYLayer;
+
+        var newFloor = Instantiate(FloorPrefab, _floorBBs[currentYLayer].transform.position + new Vector3(0, _floorPlusWallsHeight, 0), _floorBBs[currentYLayer].transform.rotation);
+        newFloor.name = "FloorBB"+currentYLayer;
+
+        currentYLayer++;
+        _boundingBoxes[currentYLayer] = newBB;
+        _floorBBs[currentYLayer] = newFloor;
+        PlaceFirstPart();
+        PlaceFirstFloorPart();
     }
     #endregion
 }
