@@ -13,7 +13,7 @@ public class CollisionTest : MonoBehaviour
     [SerializeField]
     public GameObject FloorPrefab;
 
-    //to decide whether aggregate parts according to length or not
+    //to decide whether to aggregate parts according to length or not
     [SerializeField]
     private Toggle _toggleConnectionMatching;
 
@@ -34,14 +34,15 @@ public class CollisionTest : MonoBehaviour
     private List<Part> _placedParts = new();
     private List<Part> _placedFloorParts = new();
 
-    private GameObject[] _boundingBoxes = new GameObject[10];
-    private GameObject[] _floorBBs = new GameObject[10];
+    private GameObject[] _boundingBoxes = new GameObject[10]; // to give a max of bb on yLayer (walls bb)
+    private GameObject[] _floorBBs = new GameObject[10]; // to give a max of bb on yLayer (floors bb)
     private int currentYLayer = 0;
     private float _floorPlusWallsHeight = 3.05f;
     #endregion
 
     public void Start()
     {
+        // instantiate wall and floor bb on current layer
         var newBB = Instantiate(WallsPrefab, new Vector3(0, 0.35f, 0), Quaternion.Euler(new Vector3(-90, 0, 0)));
         newBB.name = "BoundingBox" + currentYLayer;
         _boundingBoxes[currentYLayer] = newBB;
@@ -67,6 +68,7 @@ public class CollisionTest : MonoBehaviour
 
     private void Update()
     {
+        //raycast to position a part on clicked position
         if (Input.GetMouseButtonDown(0)) RaycastToMousePosition();
     }
 
@@ -411,7 +413,7 @@ public class CollisionTest : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if a part has been placed in a valid position (i.e. inside a given bounding box)
+    /// Checks if a part has been placed in a valid position (i.e. inside a given bounding box) using VERTICES
     /// </summary>
     /// <param name="boxes">List of transforms of bounding boxes (i.e. floor BB or wall BB)</param>
     /// <param name="partToCheck">Part to check (i.e. the new part we are trying to add into the building)</param>
@@ -449,7 +451,10 @@ public class CollisionTest : MonoBehaviour
     }
     #endregion
 
-    #region Click --> raycast --> try place part where we clicked
+    #region CLICK > RAYCAST > TRY TO PLACE PART WHERE CLICKED
+    // if what we hit is a collider > check if the collider has boundingbox tag >
+    // yes > create new vector3 position where to place the part according to the thinnest axis of the wall
+    // no > just debug, don't do anything
     private void RaycastToMousePosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -460,6 +465,7 @@ public class CollisionTest : MonoBehaviour
             {
                 var hitPoint = hit.point;
 
+                //SPHERES ON MIN AND MAX Y OF BB JUST TO TEST
                 //var hitPointGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 //hitPointGO.transform.position = hitPoint;
                 //hitPointGO.transform.localScale = Vector3.one * 0.5f;
@@ -477,7 +483,7 @@ public class CollisionTest : MonoBehaviour
 
                 var sizeX = whatWeHit.bounds.size.x;
                 var sizeZ = whatWeHit.bounds.size.z;
-                var minSizeAxis = Mathf.Min(sizeX, sizeZ);
+                var minSizeAxis = Mathf.Min(sizeX, sizeZ); 
                 var centerX = whatWeHit.bounds.center.x;
                 var centerZ = whatWeHit.bounds.center.z;
 
@@ -498,17 +504,21 @@ public class CollisionTest : MonoBehaviour
         }
     }
 
+    // part placement after raycast
     private void TryPlacePartAtPosition(Vector3 pos)
     {
         LoadPartPrefabs();
         _parts.Shuffle();
         for (int i = 0; i < _parts.Count; i++)
         {
+            //foreach part take the bounds size in y
             Part part = _parts[i];
             var sizeY = part.Collider.sharedMesh.bounds.size.y;
+            // place the part with an offset because the placement happens by center point
             var positionWithYOffset = new Vector3(pos.x, pos.y + (sizeY / 2), pos.z);
             Debug.Log($"positionWithYOffset: {positionWithYOffset}");
             
+            //try to position the part by rotating it in all the directions and checking if it collides and is in bounds
             for (int j = 0; j < 4; j++)
             {
                 part.PlaceFirstPart(positionWithYOffset, Quaternion.Euler(new Vector3(0, 90 * j, 0)));
