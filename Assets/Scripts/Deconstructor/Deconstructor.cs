@@ -12,7 +12,7 @@ public class Deconstructor : MonoBehaviour
     private List<Collider> _colliders = new();
     private Bounds _meshBounds;
     private int _voxelOffset = 2;
-    private float _voxelSize = 0.1f;
+    private float _voxelSize = 0.25f;
 
     private Color _supportsColor;
     private Color _floorsColor;
@@ -53,6 +53,7 @@ public class Deconstructor : MonoBehaviour
         _gridGO = new GameObject("VoxelGrid");
         _matTrans = Resources.Load<Material>("Materials/matTrans");
         _voxelGrid = new VoxelGrid(_gridDimensions, _voxelSize, GetOrigin(_voxelOffset, _voxelSize), _gridGO, _matTrans);
+        StaticBatchingUtility.Combine(_gridGO);
     }
     private Vector3Int GetGridDimensions(int voxelOffset, float voxelSize) =>
         (_meshBounds.size / voxelSize).ToVector3IntRound() + Vector3Int.one * voxelOffset * 2;
@@ -96,7 +97,6 @@ public class Deconstructor : MonoBehaviour
     }
     #endregion
 
-    #region BUTTONS
     public List<Collider> IsInsideCentre(Voxel voxel)
     {
         Physics.queriesHitBackfaces = true;
@@ -128,6 +128,7 @@ public class Deconstructor : MonoBehaviour
         return colliders.ToList();
     }
 
+    #region BUTTONS
     public void KillVoxelsInOutBounds()
     {
         var voxels = _voxelGrid.GetVoxels().ToList();
@@ -152,7 +153,7 @@ public class Deconstructor : MonoBehaviour
             if (!isInside)
                 voxel.Status = VoxelState.Dead;
         }
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.1f);
     }
     public void ShowAliveVoxels()
     {
@@ -173,6 +174,15 @@ public class Deconstructor : MonoBehaviour
     {
         var building = GameObject.Find("DecoBuilding");
         building.SetActive(!building.activeSelf);
+    }
+
+    public void StartAggregator()
+    {
+        var aggregator = GameObject.Find("AggregatorForVoxelisedBuildings").GetComponent<AggregatorForVoxelisedBuildings>();
+        aggregator.Grid = _voxelGrid;
+        aggregator.VoxelisedElements = _voxelisedElements;
+        aggregator.InitialiseAggregator(_voxelSize);
+        aggregator.PlaceFirstFloorPart();
     }
     #endregion
 }

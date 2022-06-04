@@ -4,16 +4,16 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CollisionTest : MonoBehaviour
+public class AggregatorForVoxelisedBuildings : MonoBehaviour
 {
     #region VARIABLES
-    public GameObject WallsPrefab;
+    public VoxelGrid Grid;
 
-    public GameObject FloorPrefab;
-
-    //to decide whether to aggregate parts according to length or not
-    [SerializeField]
-    private Toggle _toggleConnectionMatching;
+    public Dictionary<Voxel, List<Collider>> VoxelisedElements;
+    private Dictionary<Collider, List<Voxel>> _floorVoxelsAndColliders = new();
+    private Dictionary<Collider, List<Voxel>> _wallVoxelsAndColliders = new();
+    private Dictionary<int, List<Voxel>> _voxelisedWalls = new();
+    private Dictionary<int, List<Voxel>> _voxelisedFloors = new();
 
     private IEnumerator _autoPlacementCoroutine;
 
@@ -21,7 +21,7 @@ public class CollisionTest : MonoBehaviour
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
     private readonly float _overlapTolerance = 0.03f; // used by compute penetration
     private readonly float _connectionTolerance = 0.2f; // tolerance of matching connections
-    private readonly float _vertexDistanceTolerance = 0.1f; // tolerance used when checking for vertices inside BBs
+    private float _vertexDistanceTolerance = 0.1f; // tolerance used when checking for vertices inside BBs
     private bool _connectionMatchingEnabled = true;
 
     private Collider[] _neighbours; // "ingredient" of compute penetration
@@ -32,42 +32,14 @@ public class CollisionTest : MonoBehaviour
     private List<Part> _placedParts = new();
     private List<Part> _placedFloorParts = new();
 
-    private GameObject[] _boundingBoxes = new GameObject[10]; // to give a max of bb on yLayer (walls bb)
-    private GameObject[] _floorBBs = new GameObject[10]; // to give a max of bb on yLayer (floors bb)
-    private int currentYLayer = 0;
-    private float _floorPlusWallsHeight = 3.05f;
+    private int _currentFloorLayer = 0;
+    private int _currentWallLayer = 0;
     #endregion
 
     public void Start()
     {
-        // instantiate wall and floor bb on current layer
-        var newBB = Instantiate(WallsPrefab, new Vector3(0, 0.35f, 0), Quaternion.Euler(new Vector3(-90, 0, 0)));
-        newBB.name = "BoundingBox" + currentYLayer;
-        _boundingBoxes[currentYLayer] = newBB;
-
-        var newFloor = Instantiate(FloorPrefab, new Vector3(0, 0.35f, 0), Quaternion.Euler(new Vector3(-90, 0, 0)));
-        newFloor.name = "FloorBB" + currentYLayer;
-        _floorBBs[currentYLayer] = newFloor;
-
-        // check if the toggle for matching/non matching connections is on/off
-        _toggleConnectionMatching.onValueChanged.AddListener(delegate { _connectionMatchingEnabled = !_connectionMatchingEnabled; });
-
-        LoadPartPrefabs();
         _neighbours = new Collider[_maxNeighboursToCheck]; // initialize neighbors' array
-        PlaceFirstPart();
-        EnableAllConnections();
-
-        LoadFloorPartPrefabs();
-        PlaceFirstFloorPart();
-        EnableAllFloorConnections();
-
         _autoPlacementCoroutine = AutoPlacement();
-    }
-
-    private void Update()
-    {
-        //raycast to position a part on clicked position
-        if (Input.GetMouseButtonDown(0)) RaycastToMousePosition();
     }
 
     #region LOADING PREFABS (wall/floor)
@@ -80,7 +52,6 @@ public class CollisionTest : MonoBehaviour
 
         //Load all the prefabs
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
-        
 
         //Select the prefabs with tag Part
         _parts = prefabs.Where(g =>
@@ -140,53 +111,120 @@ public class CollisionTest : MonoBehaviour
     #endregion
 
     #region PLACING FIRST PARTS (wall/floor)
-    private void PlaceFirstPart()
+    public void InitialiseAggregator(float voxelSize)
+    {
+        _vertexDistanceTolerance = voxelSize;
+        LoadPartPrefabs();
+        LoadFloorPartPrefabs();
+        foreach (var kv in VoxelisedElements)
+        {
+            Collider floorOrWallCollider = new();
+            bool isFloorVoxel = false;
+            bool isWallVoxel = false;
+            foreach (var collider in kv.Value)
+            {
+                if (collider.transform.CompareTag("DECO_Floors"))
+                {
+                    isFloorVoxel = true;
+                    floorOrWallCollider = collider;
+                }
+                if (collider.transform.CompareTag("DECO_Walls"))
+                {
+                    if (!isFloorVoxel)
+                    {
+                        isWallVoxel = true;
+                        floorOrWallCollider = collider;
+                    }
+                }
+            }
+
+            if (isFloorVoxel)
+            {
+                if (_floorVoxelsAndColliders.ContainsKey(floorOrWallCollider))
+                    _floorVoxelsAndColliders[floorOrWallCollider].Add(kv.Key);
+                else
+                    _floorVoxelsAndColliders[floorOrWallCollider] = new() { kv.Key };
+            }
+            if (isWallVoxel)
+            {
+                if (_wallVoxelsAndColliders.ContainsKey(floorOrWallCollider))
+                    _wallVoxelsAndColliders[floorOrWallCollider].Add(kv.Key);
+                else
+                    _wallVoxelsAndColliders[floorOrWallCollider] = new() { kv.Key };
+            }
+        }
+        int counter = 0;
+        foreach (var collider in _floorVoxelsAndColliders.Keys)
+        {
+            _voxelisedFloors[counter] = _floorVoxelsAndColliders[collider];
+            counter++;
+        }
+        counter = 0;
+        foreach (var collider in _wallVoxelsAndColliders.Keys)
+        {
+            _voxelisedWalls[counter] = _wallVoxelsAndColliders[collider];
+            counter++;
+        }
+    }
+
+    public void PlaceFirstWallPart()
     {
         _parts.Shuffle();
+        var cornerVoxelCentreX = _voxelisedWalls[_currentWallLayer].Min(v => v.Centre.x);
+        var cornerVoxelCentreY = _voxelisedWalls[_currentWallLayer].Min(v => v.Centre.y);
+        var cornerVoxelCentreZ = _voxelisedWalls[_currentWallLayer].Min(v => v.Centre.z);
         for (int i = 0; i < _parts.Count; i++)
         {
             Part part = _parts[i];
             var size = part.Collider.sharedMesh.bounds.size;
             var extents = size / 2;
-            part.PlaceFirstPart(new Vector3(extents.x - size.x, extents.y + (currentYLayer * _floorPlusWallsHeight), extents.z - size.z) + new Vector3(-0.02f, 0.35f, -0.02f), Quaternion.Euler(new Vector3(0, 0, 0)));
-            bool isInside = CheckPartInBounds(_boundingBoxes[currentYLayer], part);
-            if (isInside)
+            for (int j = 0; j < 4; j++)
             {
-                _parts.Remove(part);
-                _placedParts.Add(part);
-                part.Name = $"{part.Name} added {_placedParts.Count} (wall)";
-                return;
-            }
-            else
-            {
-                part.ResetPart();
-                Debug.Log($"First part {part.Name} was outside");
+                part.PlaceFirstPart(new Vector3(cornerVoxelCentreX + extents.x, cornerVoxelCentreY + extents.y, cornerVoxelCentreZ + extents.z), Quaternion.Euler(new Vector3(0, 90 * j, 0)));
+                bool isInside = IsInsideWallVoxels(part);
+                if (isInside)
+                {
+                    _parts.Remove(part);
+                    _placedParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedParts.Count} (wall)";
+                    return;
+                }
+                else
+                {
+                    part.ResetPart();
+                    Debug.Log($"First part {part.Name} was outside");
+                }
             }
         }
     }
 
-    private void PlaceFirstFloorPart()
+    public void PlaceFirstFloorPart()
     {
         _floorParts.Shuffle();
+        var cornerVoxelCentreX = _voxelisedFloors[_currentFloorLayer].Min(v => v.Centre.x);
+        var cornerVoxelCentreY = _voxelisedFloors[_currentFloorLayer].Min(v => v.Centre.y);
+        var cornerVoxelCentreZ = _voxelisedFloors[_currentFloorLayer].Min(v => v.Centre.z);
         for (int i = 0; i < _floorParts.Count; i++)
         {
             Part part = _floorParts[i];
             var size = part.Collider.sharedMesh.bounds.size;
             var extents = size / 2;
-
-            part.PlaceFirstPart(new Vector3(extents.x - size.x, extents.z + (currentYLayer * _floorPlusWallsHeight), -extents.y), Quaternion.Euler(new Vector3(90, 0, 0)));
-            bool isInside = CheckPartInBounds(_floorBBs[currentYLayer], part);
-            if (isInside)
+            for (int j = 0; j < 4; j++)
             {
-                _floorParts.Remove(part);
-                _placedFloorParts.Add(part);
-                part.Name = $"{part.Name} added {_placedFloorParts.Count} (floor)";
-                return;
-            }
-            else
-            {
-                part.ResetPart();
-                Debug.Log($"First part {part.Name} was outside");
+                part.PlaceFirstPart(new Vector3(cornerVoxelCentreX + extents.x, cornerVoxelCentreY, cornerVoxelCentreZ + extents.y), Quaternion.Euler(new Vector3(90, 90 * j, 0)));
+                bool isInside = IsInsideFloorVoxels(part);
+                if (isInside)
+                {
+                    _floorParts.Remove(part);
+                    _placedFloorParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedFloorParts.Count} (floor)";
+                    return;
+                }
+                else
+                {
+                    part.ResetPart();
+                    Debug.Log($"First part {part.Name} was outside");
+                }
             }
         }
     }
@@ -229,7 +267,7 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedParts) || !CheckPartInBounds(_boundingBoxes[currentYLayer], unplacedConnection.ThisPart))
+            if (IsColliding(unplacedConnection.ThisPart, _placedParts) || !IsInsideWallVoxels(unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -286,7 +324,7 @@ public class CollisionTest : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInFloor, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedFloorParts) || !CheckPartInBounds(_floorBBs[currentYLayer], unplacedConnection.ThisPart))
+            if (IsColliding(unplacedConnection.ThisPart, _placedFloorParts) || !IsInsideFloorVoxels(unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -326,6 +364,56 @@ public class CollisionTest : MonoBehaviour
         return connectionToPlace.Properties.ConnectionWidth > minWidth && connectionToPlace.Properties.ConnectionWidth < maxWidth;
     }
 
+    private bool IsInsideWallVoxels(Part part)
+    {
+        var vertices = part.Collider.sharedMesh.vertices;
+        // check if part (points/vertices??) are all within the voxels of current floor's voxels list
+        foreach (var vertex in vertices)
+        {
+            bool foundNearbyVoxelForVertex = false;
+            foreach (var voxel in _voxelisedWalls[_currentWallLayer])
+            {
+                var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex);
+                //var distance = (part.Collider.ClosestPoint(voxel.Centre) - voxel.Centre).magnitude;
+                //if (distance < partSize.x / 1.25f || distance < partSize.z / 1.25f)
+                //{
+                if ((vertexToWorldSpace - voxel.Centre).magnitude < _vertexDistanceTolerance)
+                {
+                    foundNearbyVoxelForVertex = true;
+                    break;
+                }
+                //}
+            }
+            if (!foundNearbyVoxelForVertex) return false;
+        }
+        return true;
+    }
+    
+    private bool IsInsideFloorVoxels(Part part)
+    {
+        var vertices = part.Collider.sharedMesh.vertices;
+        // check if part (points/vertices??) are all within the voxels of current floor's voxels list
+        foreach (var vertex in vertices)
+        {
+            bool foundNearbyVoxelForVertex = false;
+            foreach (var voxel in _voxelisedFloors[_currentFloorLayer])
+            {
+                var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex);
+                //var distance = (part.Collider.ClosestPoint(voxel.Centre) - voxel.Centre).magnitude;
+                //if (distance < partSize.x / 1.25f || distance < partSize.z / 1.25f)
+                //{
+                    if ((vertexToWorldSpace - voxel.Centre).magnitude < _vertexDistanceTolerance)
+                    {
+                        foundNearbyVoxelForVertex = true;
+                        break;
+                    }
+                //}
+            }
+            if (!foundNearbyVoxelForVertex) return false;
+        }
+        return true;
+    }
+
     /// <summary>
     /// ComputePenetration method: tells direction and distance in order to avoid collision between 2 objects
     /// </summary>
@@ -355,11 +443,10 @@ public class CollisionTest : MonoBehaviour
 
             Vector3 otherPosition = otherCollider.gameObject.transform.position;
             Quaternion otherRotation = otherCollider.gameObject.transform.rotation;
-
             bool isOverlapping = Physics.ComputePenetration(
                 thisCollider, thisCollider.gameObject.transform.position, thisCollider.gameObject.transform.rotation,
                 otherCollider, otherPosition, otherRotation,
-                out Vector3 direction, out float distance);
+                out _, out float distance);
 
             // overlapping colliders and too big overlap --> IsColliding = true --> not place the part
             if (isOverlapping && distance > _overlapTolerance) return true;
@@ -453,7 +540,7 @@ public class CollisionTest : MonoBehaviour
     // if what we hit is a collider > check if the collider has boundingbox tag >
     // yes > create new vector3 position where to place the part according to the thinnest axis of the wall
     // no > just debug, don't do anything
-    private void RaycastToMousePosition()
+    /*private void RaycastToMousePosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit))
@@ -481,7 +568,7 @@ public class CollisionTest : MonoBehaviour
 
                 var sizeX = whatWeHit.bounds.size.x;
                 var sizeZ = whatWeHit.bounds.size.z;
-                var minSizeAxis = Mathf.Min(sizeX, sizeZ); 
+                var minSizeAxis = Mathf.Min(sizeX, sizeZ);
                 var centerX = whatWeHit.bounds.center.x;
                 var centerZ = whatWeHit.bounds.center.z;
 
@@ -489,7 +576,7 @@ public class CollisionTest : MonoBehaviour
                 if (minSizeAxis == sizeX)
                 {
                     pos = new Vector3(centerX, boundingBoxMinY, hitPoint.z);
-                } 
+                }
                 else
                 {
                     pos = new Vector3(hitPoint.x, boundingBoxMinY, centerZ);
@@ -500,10 +587,10 @@ public class CollisionTest : MonoBehaviour
             }
             else Debug.Log($"Raycast hit {hit.point} but hit {whatWeHit.transform.name}, instead of a GameObject tagged with 'BoundingBox'");
         }
-    }
+    }*/
 
     // part placement after raycast
-    private void TryPlacePartAtPosition(Vector3 pos)
+    /*private void TryPlacePartAtPosition(Vector3 pos)
     {
         LoadPartPrefabs();
         _parts.Shuffle();
@@ -515,13 +602,13 @@ public class CollisionTest : MonoBehaviour
             // place the part with an offset because the placement happens by center point
             var positionWithYOffset = new Vector3(pos.x, pos.y + (sizeY / 2), pos.z);
             Debug.Log($"positionWithYOffset: {positionWithYOffset}");
-            
+
             //try to position the part by rotating it in all the directions and checking if it collides and is in bounds
             for (int j = 0; j < 4; j++)
             {
                 part.PlaceFirstPart(positionWithYOffset, Quaternion.Euler(new Vector3(0, 90 * j, 0)));
                 bool isColliding = IsColliding(part, _placedParts);
-                bool isInside = CheckPartInBounds(_boundingBoxes[currentYLayer], part);
+                bool isInside = CheckPartInBounds(_boundingBoxes[_currentFloorLayer], part);
                 if (isInside && !isColliding)
                 {
                     _parts.Remove(part);
@@ -536,7 +623,7 @@ public class CollisionTest : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
     #endregion
 
     #region BUTTONS FOR COROUTINES
@@ -564,41 +651,15 @@ public class CollisionTest : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    public void OnPlaceNextPartButtonClicked()
-    {
-        PlaceNextPart();
-    }
-
-    public void OnAutoPlacementButtonClicked()
+    public void OnAutoWallPlacementButtonClicked()
     {
         _autoPlacementCoroutine = AutoPlacement();
         StartCoroutine(_autoPlacementCoroutine);
     }
 
-    public void OnStopButtonClicked()
-    {
-        StopCoroutine(_autoPlacementCoroutine);
-        Debug.Log("Auto wall placement stopped");
-    }
-
     public void OnAutoFloorPlacementButtonClicked()
     {
         StartCoroutine(AutoFloorPlacement());
-    }
-
-    public void OnNewLayerOnTopButtonClicked()
-    {
-        var newBB = Instantiate(WallsPrefab, _boundingBoxes[currentYLayer].transform.position + new Vector3(0, _floorPlusWallsHeight, 0), _boundingBoxes[currentYLayer].transform.rotation);
-        newBB.name = "BoundingBox"+currentYLayer;
-
-        var newFloor = Instantiate(FloorPrefab, _floorBBs[currentYLayer].transform.position + new Vector3(0, _floorPlusWallsHeight, 0), _floorBBs[currentYLayer].transform.rotation);
-        newFloor.name = "FloorBB"+currentYLayer;
-
-        currentYLayer++;
-        _boundingBoxes[currentYLayer] = newBB;
-        _floorBBs[currentYLayer] = newFloor;
-        PlaceFirstPart();
-        PlaceFirstFloorPart();
     }
     #endregion
 }

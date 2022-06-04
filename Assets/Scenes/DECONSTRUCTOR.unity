@@ -258,6 +258,276 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 36249799}
   m_CullTransparentMesh: 1
+--- !u!1 &168634560
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 168634561}
+  - component: {fileID: 168634563}
+  - component: {fileID: 168634562}
+  m_Layer: 5
+  m_Name: Text (TMP)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &168634561
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168634560}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1383956800}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &168634562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168634560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Auto Walls
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4281479730
+  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 24
+  m_fontSizeBase: 24
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &168634563
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 168634560}
+  m_CullTransparentMesh: 1
+--- !u!1 &270262814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 270262815}
+  - component: {fileID: 270262817}
+  - component: {fileID: 270262816}
+  m_Layer: 5
+  m_Name: Text (TMP)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &270262815
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 270262814}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1108282288}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &270262816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 270262814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Initialise Aggregator
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4281479730
+  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 24
+  m_fontSizeBase: 24
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &270262817
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 270262814}
+  m_CullTransparentMesh: 1
 --- !u!1 &282672663
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,6 +624,9 @@ RectTransform:
   - {fileID: 2053137491}
   - {fileID: 1961017182}
   - {fileID: 2132133030}
+  - {fileID: 1108282288}
+  - {fileID: 547265750}
+  - {fileID: 1383956800}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -362,6 +635,141 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &421096137
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 421096138}
+  - component: {fileID: 421096140}
+  - component: {fileID: 421096139}
+  m_Layer: 5
+  m_Name: Text (TMP)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &421096138
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421096137}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 547265750}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &421096139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421096137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Auto Floors
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4281479730
+  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 24
+  m_fontSizeBase: 24
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &421096140
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421096137}
+  m_CullTransparentMesh: 1
 --- !u!1 &514785533
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,6 +972,140 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 546198768}
   m_CullTransparentMesh: 1
+--- !u!1 &547265749
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 547265750}
+  - component: {fileID: 547265753}
+  - component: {fileID: 547265752}
+  - component: {fileID: 547265751}
+  m_Layer: 5
+  m_Name: AggregateFloorsButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &547265750
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547265749}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 421096138}
+  m_Father: {fileID: 282672667}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -90, y: -290.4}
+  m_SizeDelta: {x: 177.63, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &547265751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547265749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 0, b: 0.98039216, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 547265752}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1266955851}
+        m_TargetAssemblyTypeName: AggregatorForVoxelisedBuildings, Assembly-CSharp
+        m_MethodName: OnAutoFloorPlacementButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &547265752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547265749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &547265753
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547265749}
+  m_CullTransparentMesh: 1
 --- !u!1 &742706810
 GameObject:
   m_ObjectHideFlags: 0
@@ -574,7 +1116,6 @@ GameObject:
   m_Component:
   - component: {fileID: 742706813}
   - component: {fileID: 742706812}
-  - component: {fileID: 742706811}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -582,14 +1123,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &742706811
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 742706810}
-  m_Enabled: 1
 --- !u!20 &742706812
 Camera:
   m_ObjectHideFlags: 0
@@ -626,8 +1159,8 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
+  m_HDR: 0
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -962,6 +1495,140 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 872869040}
   m_CullTransparentMesh: 1
+--- !u!1 &1108282287
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1108282288}
+  - component: {fileID: 1108282291}
+  - component: {fileID: 1108282290}
+  - component: {fileID: 1108282289}
+  m_Layer: 5
+  m_Name: StartAggregatorButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1108282288
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108282287}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 270262815}
+  m_Father: {fileID: 282672667}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -90, y: -234.4}
+  m_SizeDelta: {x: 177.63, y: 60}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1108282289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108282287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 0, b: 0.98039216, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1108282290}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 792722395}
+        m_TargetAssemblyTypeName: Deconstructor, Assembly-CSharp
+        m_MethodName: StartAggregator
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1108282290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108282287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1108282291
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108282287}
+  m_CullTransparentMesh: 1
 --- !u!1 &1210171473
 GameObject:
   m_ObjectHideFlags: 0
@@ -1096,6 +1763,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1210171473}
   m_CullTransparentMesh: 1
+--- !u!1 &1266955850
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1266955852}
+  - component: {fileID: 1266955851}
+  m_Layer: 0
+  m_Name: AggregatorForVoxelisedBuildings
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1266955851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266955850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b4b6d21f2b8a054d9201c6f5df5566a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1266955852
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266955850}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.8942761, y: 4.755238, z: 4.538165}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1378335174
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1115,6 +1826,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -9183101219857562416, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -9151499315605916331, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1131,6 +1846,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -9051018889741916205, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -9045154062812594594, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1139,9 +1858,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8969699372877562964, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8954504194775096371, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -8954504194775096371, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -8947187822934840934, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1155,13 +1882,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8861362466692019129, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8817301648644803998, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8817301648644803998, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8762585330648666914, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -8762585330648666914, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -8752685022092370422, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1181,15 +1920,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1243,6 +1982,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8652036737280191280, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8620471395316397140, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1255,17 +1998,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8577193982067266983, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8558346829808120238, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -8558346829808120238, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -8554379517823358152, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8554379517823358152, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8478994783263162293, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -8478994783263162293, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -8465035461997399485, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1283,9 +2042,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8321931830931713071, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8303706760554856372, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -8303706760554856372, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -8269218987289168914, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1295,9 +2062,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -8262103388057433522, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8247636752375324578, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -8247636752375324578, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -8242984024880886566, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1307,6 +2082,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8175611908359164335, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8164907366808251107, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1314,6 +2093,10 @@ PrefabInstance:
     - target: {fileID: -8135101462463372593, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -8135101462463372593, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -8093160127992190484, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1331,9 +2114,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -8002414297194995112, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -7969863199179197906, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -7969863199179197906, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -7961705292769357640, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1354,6 +2145,10 @@ PrefabInstance:
     - target: {fileID: -7822196134349876051, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -7822196134349876051, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -7806981375325665218, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1383,17 +2178,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -7589894408846874142, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -7587361485334088485, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -7587361485334088485, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -7577578146585407289, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -7577578146585407289, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -7503683343345230390, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -7503683343345230390, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -7480315403613186150, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1411,6 +2222,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -7349272328348787203, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -7309031865888592939, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1418,6 +2233,10 @@ PrefabInstance:
     - target: {fileID: -7255260301927055013, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -7255260301927055013, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -7181723481559712540, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1439,13 +2258,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -7076124689687535056, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -7065566805190558829, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -7065566805190558829, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -7045294200545733945, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -7045294200545733945, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -7044160166065610223, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1459,9 +2290,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -7004579686403870626, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6994369710223285027, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Floors
+      objectReference: {fileID: 0}
+    - target: {fileID: -6994369710223285027, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -6974655524150619562, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1471,17 +2310,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -6954913783703285288, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6948683761944257392, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -6948683761944257392, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -6848447309068171066, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -6848447309068171066, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6793698902910946696, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -6793698902910946696, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -6787782499814438020, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1494,6 +2349,10 @@ PrefabInstance:
     - target: {fileID: -6602503312213304710, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -6602503312213304710, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -6600682054010282280, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1511,6 +2370,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -6506828987628795105, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6469424330396982277, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1519,21 +2382,41 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: -6430422882331754413, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6391706297768208761, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -6391706297768208761, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -6390736651783345134, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -6390736651783345134, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6378760052354159409, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -6378760052354159409, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6363855272490990227, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -6363855272490990227, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -6357280575878232511, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1543,6 +2426,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: -6329933423508320777, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6272733874742261090, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1551,6 +2438,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -6269525754606211461, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6253127772981056294, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1558,6 +2449,10 @@ PrefabInstance:
     - target: {fileID: -6248854541894568392, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -6248854541894568392, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -6157701246636357573, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1571,9 +2466,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -6134478134411931512, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -6111602086049870384, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -6111602086049870384, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -6068124096560843955, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1591,6 +2494,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -6010290868328238256, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5973989224806335813, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1598,6 +2505,10 @@ PrefabInstance:
     - target: {fileID: -5920340896853461749, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -5920340896853461749, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5914359668228604808, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1611,6 +2522,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -5844621523652016639, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5813231970348537707, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1623,9 +2538,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -5750943870084108260, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5747355103786248710, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -5747355103786248710, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5740114984414922451, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1651,6 +2574,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -5653857444997543692, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5641195236042635498, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1658,6 +2585,10 @@ PrefabInstance:
     - target: {fileID: -5637337468531930388, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -5637337468531930388, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5627673387490577759, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1671,6 +2602,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -5602947212059567347, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5601257756961200477, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1678,6 +2613,10 @@ PrefabInstance:
     - target: {fileID: -5530684982619929878, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -5530684982619929878, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5500140290075829341, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1691,13 +2630,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -5369691111531386028, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5327752805944696442, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Floors
       objectReference: {fileID: 0}
+    - target: {fileID: -5327752805944696442, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5266272881020761941, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -5266272881020761941, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5255630848465220691, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1719,9 +2670,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -5238475874087547838, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5234829259537992850, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -5234829259537992850, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5225431019995952779, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1735,13 +2694,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -5147081320979921541, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5137378142473542569, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -5137378142473542569, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -5107997882845591308, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -5107997882845591308, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5102327898227791591, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1750,6 +2721,10 @@ PrefabInstance:
     - target: {fileID: -5101078118626549096, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -5101078118626549096, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5054184162407984154, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1771,21 +2746,41 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -4991976951061069508, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4977289756735104566, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -4977289756735104566, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4973155347448713377, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -4973155347448713377, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4898875976288282533, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -4898875976288282533, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4851708674167563924, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -4851708674167563924, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4850906705732637013, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1803,13 +2798,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -4819651926511520014, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4797268592587016295, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -4797268592587016295, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4787319495295546668, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -4787319495295546668, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4679294018677613251, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1819,6 +2826,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -4646354537094069405, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4593242486419893608, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1827,9 +2838,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -4576057299386978758, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4527393833942991634, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -4527393833942991634, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4511166421695719515, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1847,21 +2866,41 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -4468715759205755785, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4456494156913703284, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -4456494156913703284, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4444158665432494878, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -4444158665432494878, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4411662237625542380, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -4411662237625542380, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4407845699923505092, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -4407845699923505092, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4369879237815794666, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1871,9 +2910,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -4310312898711492886, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4284910971163429337, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -4284910971163429337, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4273021445933356035, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1891,9 +2938,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -4179895576238906232, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4142871094252169292, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Walls
+      objectReference: {fileID: 0}
+    - target: {fileID: -4142871094252169292, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4132238116242064594, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1919,6 +2974,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -4044194940519847515, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -4025055513549674568, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1926,6 +2985,10 @@ PrefabInstance:
     - target: {fileID: -4017346061542586663, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -4017346061542586663, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -4006532279681435174, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1939,6 +3002,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -3824650738993765692, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -3738434439339463359, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1946,6 +3013,10 @@ PrefabInstance:
     - target: {fileID: -3728103344635303282, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -3728103344635303282, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -3698546184530825091, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1958,6 +3029,10 @@ PrefabInstance:
     - target: {fileID: -3611860726479338959, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -3611860726479338959, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -3560145744863187176, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1983,9 +3058,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -3431694398971002006, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -3419003091603458333, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: BoundingMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: -3419003091603458333, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -3359362419737519983, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2003,6 +3086,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -3268428537934145221, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -3262980882170756305, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2010,6 +3097,10 @@ PrefabInstance:
     - target: {fileID: -3250962128956544525, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -3250962128956544525, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -3240023893483132499, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2019,6 +3110,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -3215578525989149971, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -3180542550818386637, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2027,9 +3122,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -3143983186765896244, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -3132022033088683886, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -3132022033088683886, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -3071860087194183711, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2047,6 +3150,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -2990823390148701460, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2889335994028808897, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2055,9 +3162,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -2777374413936885417, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2771193949958634763, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Floors
+      objectReference: {fileID: 0}
+    - target: {fileID: -2771193949958634763, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -2757754003206901772, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2067,6 +3182,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -2753195626312098376, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2713464620901640317, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2075,9 +3194,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -2705929378105475577, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2701988647393808017, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -2701988647393808017, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -2690482141759639518, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2087,9 +3214,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -2647450782722273229, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2616979862873257661, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -2616979862873257661, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -2579902514233685537, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2103,17 +3238,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -2531395876235618305, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2420623747247011412, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -2420623747247011412, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -2327124810284233262, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -2327124810284233262, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2281248533806495021, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -2281248533806495021, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -2258546022616019133, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2123,6 +3274,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -2251723866978776638, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2249454248006350759, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2131,21 +3286,41 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -2246301738173577891, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2226591840824389510, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -2226591840824389510, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -2203519227257272251, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -2203519227257272251, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2186584230251022489, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -2186584230251022489, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -2059615069368158930, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -2059615069368158930, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -2050822138155718868, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2154,6 +3329,10 @@ PrefabInstance:
     - target: {fileID: -2050664925001821745, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -2050664925001821745, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -2032014457159226319, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2167,13 +3346,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -1911006536011675359, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -1889165285726782395, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -1889165285726782395, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -1872286103210071515, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Walls
+      objectReference: {fileID: 0}
+    - target: {fileID: -1872286103210071515, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -1827126984262096170, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2182,6 +3373,10 @@ PrefabInstance:
     - target: {fileID: -1764247888282429737, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -1764247888282429737, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -1684259946630873742, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2195,9 +3390,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -1604943408760250380, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -1595162073947160339, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -1595162073947160339, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -1567642248388446437, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2207,9 +3410,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -1554408704797148711, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -1539844100631965312, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: -1539844100631965312, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -1476189188105627028, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2219,9 +3430,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Walls
       objectReference: {fileID: 0}
+    - target: {fileID: -1460530293480889816, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -1451320001878249105, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -1451320001878249105, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -1422831527375320432, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2230,6 +3449,10 @@ PrefabInstance:
     - target: {fileID: -1341075853397321849, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -1341075853397321849, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -1282237447755146030, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2243,13 +3466,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -1254039521195411265, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -1234401866371935581, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: -1234401866371935581, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -1165810570769713014, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -1165810570769713014, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -1115189044569480867, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2259,6 +3494,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -1093999056542665059, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -974214041912864962, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2267,9 +3506,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -966018417792527757, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -931750692590980162, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -931750692590980162, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -895419943101574694, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2283,9 +3530,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -848995150875713676, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -839129426408847947, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -839129426408847947, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -802886702573882351, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2295,21 +3550,41 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: -668438143977866058, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -646300204567204937, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -646300204567204937, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -645237399368293044, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -645237399368293044, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -612743817257136768, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -612743817257136768, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -543935545066270859, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: BoundingMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: -543935545066270859, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -506436503419749187, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2319,9 +3594,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -487184707512585260, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -477357363342551310, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -477357363342551310, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -467397608970707063, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2343,17 +3626,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -393356371252147051, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -282839803041278129, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: -282839803041278129, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -274097597187130845, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: -274097597187130845, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -273584235125759317, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -273584235125759317, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -226529413339011815, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2363,9 +3662,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: -197715202652059558, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -176170167922030540, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -176170167922030540, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -158070514301959710, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2374,6 +3681,10 @@ PrefabInstance:
     - target: {fileID: -144959435540570603, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: -144959435540570603, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -133053824866803835, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2391,9 +3702,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: -17811232249109822, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 41522704329580372, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: BoundingMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 41522704329580372, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 48175359479979241, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2403,29 +3722,57 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 140826220485072865, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 185429529683130562, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 185429529683130562, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 191029314974303543, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 191029314974303543, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 211738129691816643, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 211738129691816643, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 221724827302512965, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 221724827302512965, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 281556543224187778, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 281556543224187778, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 295889632957689791, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 295889632957689791, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 302966127467947788, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2443,13 +3790,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 344046816723752374, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 497933539684309052, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: BoundingMesh
       objectReference: {fileID: 0}
+    - target: {fileID: 497933539684309052, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 549630842920154985, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: 549630842920154985, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 586020571971232516, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2463,6 +3822,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: 635366661243710147, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 650494719634743220, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2471,9 +3834,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 673500157011365110, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 903520256860164349, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 903520256860164349, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 908964926226445130, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2487,6 +3858,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 975664538721320971, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2494,6 +3869,10 @@ PrefabInstance:
     - target: {fileID: 977934797367663594, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 977934797367663594, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1063002266285633902, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2507,9 +3886,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 1131681825412300252, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1162765087212855658, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 1162765087212855658, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1169988554625667499, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2519,17 +3906,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 1170402247068920830, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1178821295772025350, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: 1178821295772025350, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1244797063984809764, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 1244797063984809764, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1276353933158969960, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 1276353933158969960, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1283533394449729545, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2543,6 +3946,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 1349889159997294813, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1457815012008978460, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2550,6 +3957,10 @@ PrefabInstance:
     - target: {fileID: 1537761704633884261, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 1537761704633884261, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1572868809974242906, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2559,6 +3970,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 1579808831893142682, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1597920314975655021, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2567,9 +3982,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 1602718846393221136, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1647251295172206437, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 1647251295172206437, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1672038597015924896, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2591,6 +4014,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 1804884753304374155, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1896312519288730290, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2599,9 +4026,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 1907219944862401727, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1944877996728393416, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 1944877996728393416, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1982085729852749103, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2611,6 +4046,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 1989943730765450832, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 2007470017739981801, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2619,6 +4058,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 2087297370745920294, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 2158120576981982678, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2626,6 +4069,10 @@ PrefabInstance:
     - target: {fileID: 2199457110196704141, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 2199457110196704141, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 2235041028436462644, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2643,9 +4090,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 2292431828339241750, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 2294776009080500358, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 2294776009080500358, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 2301297264724351684, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2654,6 +4109,10 @@ PrefabInstance:
     - target: {fileID: 2329449370802957406, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 2329449370802957406, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 2330661570719220012, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2671,13 +4130,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 2479620833438196227, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 2484225547484935777, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 2484225547484935777, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 2548808977481395132, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 2548808977481395132, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 2553853620053983072, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2687,9 +4158,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 2583151703577742611, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 2587931214372811253, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 2587931214372811253, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 2692632405149680529, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2698,6 +4177,10 @@ PrefabInstance:
     - target: {fileID: 2706438024907456108, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 2706438024907456108, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 2710946096953980521, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2723,6 +4206,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: 2861160491853733588, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 2875428987250729742, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2735,6 +4222,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 3021180011651720248, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3032846069048774202, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2742,6 +4233,10 @@ PrefabInstance:
     - target: {fileID: 3054552840884824910, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 3054552840884824910, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3070981142171558561, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2751,9 +4246,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 3104612949433904871, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3111106864888906348, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 3111106864888906348, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3124966895157759874, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2763,17 +4266,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 3137407197949695958, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3352276336198345490, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352276336198345490, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3390567129960505759, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 3390567129960505759, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3405926838634756218, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 3405926838634756218, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3451342239138989892, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2787,13 +4306,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 3480128353761332519, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3486011916409966412, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 3486011916409966412, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3504940743343894583, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 3504940743343894583, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3531067725326074921, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2806,6 +4337,10 @@ PrefabInstance:
     - target: {fileID: 3544411378192257837, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 3544411378192257837, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3566362341083086067, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2831,6 +4366,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 3739028574262491289, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3746555830880672373, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2847,6 +4386,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: 3844602049123675076, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3856928559621417360, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2855,9 +4398,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 3893458208443559401, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3907389561028535066, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907389561028535066, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3917321155545894054, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2875,6 +4426,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 3946845532854632829, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3967253392354689224, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2891,9 +4446,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 4078085898692517131, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4078421384843514351, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 4078421384843514351, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4117063431138965091, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2902,6 +4465,10 @@ PrefabInstance:
     - target: {fileID: 4157309011607963910, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157309011607963910, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4161488470398789532, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2915,13 +4482,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 4259905671938759674, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4282596084679962288, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 4282596084679962288, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4405719696652432519, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: BoundingMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 4405719696652432519, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4428652411466350773, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2930,6 +4509,10 @@ PrefabInstance:
     - target: {fileID: 4480522058589831607, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 4480522058589831607, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4501032952605676102, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2943,9 +4526,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 4640790870324127316, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4660147635299590245, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 4660147635299590245, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4676219212411595396, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2955,9 +4546,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 4693455089046408971, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4727176957588144146, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: 4727176957588144146, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4779610635527567930, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2979,6 +4578,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 4912779156425433322, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4928023128625157716, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2987,9 +4590,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 4938434883022634211, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 4959841921840189651, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 4959841921840189651, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4962058887772889262, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2998,6 +4609,10 @@ PrefabInstance:
     - target: {fileID: 4977757814695092921, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 4977757814695092921, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4987811699500197333, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3011,6 +4626,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5099914916310661296, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5103128425180097710, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3023,6 +4642,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5148476235794418691, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5173107164570692615, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3031,17 +4654,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5173261834785904758, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5192453203347775158, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 5192453203347775158, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5212196198675230239, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5212196198675230239, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5217583541806126145, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 5217583541806126145, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5249058609667310083, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3051,9 +4690,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5253321531816440339, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5282835038884544168, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 5282835038884544168, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5315486077101474377, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3063,13 +4710,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5392943106031087101, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5410978955172864392, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5410978955172864392, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5478054298464462872, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 5478054298464462872, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5483035761727226861, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3079,9 +4738,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 5502385124364171722, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5512176283053169901, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 5512176283053169901, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5522254767487902730, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3090,6 +4757,10 @@ PrefabInstance:
     - target: {fileID: 5566439368364930897, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 5566439368364930897, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5566897610537364132, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3107,6 +4778,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Walls
       objectReference: {fileID: 0}
+    - target: {fileID: 5644792522152956347, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5667795250418212684, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3115,29 +4790,57 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5671404009940112245, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5718505384056797100, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Others
+      objectReference: {fileID: 0}
+    - target: {fileID: 5718505384056797100, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5720982983700626066, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5720982983700626066, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5731614372771859847, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: 5731614372771859847, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5740623823192671926, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: 5740623823192671926, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5744241411643571046, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5744241411643571046, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5753911259239329502, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 5753911259239329502, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5830934224352250938, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3147,9 +4850,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5850342285728798598, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5850985941576490298, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 5850985941576490298, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5862592558709602932, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3163,17 +4874,33 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 5912441166116292253, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5931838371490993903, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: 5931838371490993903, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5977438637807503771, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 5977438637807503771, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5990172190538559556, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 5990172190538559556, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5998590179588910878, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3199,6 +4926,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 6168526870641772288, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6172865358831017666, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3215,6 +4946,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: 6260612662971156364, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6270636751367647055, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3223,6 +4958,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: 6300947806613252605, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6336135645709203931, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3230,6 +4969,10 @@ PrefabInstance:
     - target: {fileID: 6368564884865425268, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368564884865425268, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 6441396396684642265, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3243,9 +4986,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: 6495566030048975940, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6512442448511265649, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 6512442448511265649, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 6574396418764103956, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3255,6 +5006,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 6589702796043189595, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6607955042600853779, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3263,6 +5018,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Walls
       objectReference: {fileID: 0}
+    - target: {fileID: 6666070892312291791, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6720026085257273271, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3270,6 +5029,10 @@ PrefabInstance:
     - target: {fileID: 6877645213577356489, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 6877645213577356489, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 6893196757348709478, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3287,6 +5050,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: 7029608602732134972, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7118944921918655368, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3299,6 +5066,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 7173120551450106946, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7178019695760046422, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3307,9 +5078,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 7257815407731999692, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7301366032430079326, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 7301366032430079326, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7311036153636193334, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3319,6 +5098,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 7318489373621569359, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7359978330976438750, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3326,6 +5109,10 @@ PrefabInstance:
     - target: {fileID: 7431058509944412373, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 7431058509944412373, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7461659296940474391, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3335,6 +5122,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 7537842087403217783, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7611822036891284617, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3343,13 +5134,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 7621926032551149475, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7631013538624571034, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 7631013538624571034, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7682283300465077471, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682283300465077471, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7832909200110507087, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3359,29 +5162,57 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 7873987284516294911, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7875453119674201801, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 7875453119674201801, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7899784021903851662, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 7899784021903851662, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 7907644431348555559, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: 7907644431348555559, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7923986684144878854, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: 7923986684144878854, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8052325779859929413, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 8052325779859929413, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8059334125028392863, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
+      objectReference: {fileID: 0}
+    - target: {fileID: 8059334125028392863, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8071501021616020445, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3391,9 +5222,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 8084086444940719474, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8119807305039005812, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119807305039005812, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8122702960551880504, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3403,6 +5242,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 8147590728235157492, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8162101990638375333, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3411,21 +5254,41 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: 8229126309219972590, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8231072362751707998, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: BoundingMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 8231072362751707998, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8232769715220541490, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 8232769715220541490, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8238236592354738266, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 8238236592354738266, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8278405809435797456, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 8278405809435797456, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8278742978256616834, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3443,6 +5306,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 8317217530512672352, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8320131472635544557, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3455,9 +5322,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 8433193363107983972, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8437278461990408486, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Lifts
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437278461990408486, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8516246291280715971, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3467,6 +5342,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 8620406427574956528, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8634612630492773554, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3475,6 +5354,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Others
       objectReference: {fileID: 0}
+    - target: {fileID: 8637992532826752311, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8658977172594441512, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3482,6 +5365,10 @@ PrefabInstance:
     - target: {fileID: 8673561404259705876, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Floors
+      objectReference: {fileID: 0}
+    - target: {fileID: 8673561404259705876, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8673712926392183848, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3495,6 +5382,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 8693992716647283539, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8734878019787505520, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -3503,13 +5394,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Lifts
       objectReference: {fileID: 0}
+    - target: {fileID: 8810108882299033889, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8818178467206870802, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Supports
       objectReference: {fileID: 0}
+    - target: {fileID: 8818178467206870802, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8856290230801146032, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Columns
+      objectReference: {fileID: 0}
+    - target: {fileID: 8856290230801146032, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8895855422656567092, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3523,9 +5426,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 8942040428092898698, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 8974405520011442045, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_TagString
       value: DECO_Floors
+      objectReference: {fileID: 0}
+    - target: {fileID: 8974405520011442045, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8979768211102238630, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3543,12 +5454,150 @@ PrefabInstance:
       propertyPath: m_TagString
       value: DECO_Columns
       objectReference: {fileID: 0}
+    - target: {fileID: 9063675970040315159, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 9161104723709626486, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: b815479c58851a34e84b7cf615637fca, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b15e9f7bf797d624591c077f08219dae, type: 3}
+--- !u!1 &1383956799
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1383956800}
+  - component: {fileID: 1383956803}
+  - component: {fileID: 1383956802}
+  - component: {fileID: 1383956801}
+  m_Layer: 5
+  m_Name: AggregateWallsButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1383956800
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383956799}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 168634561}
+  m_Father: {fileID: 282672667}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -90, y: -327.3}
+  m_SizeDelta: {x: 177.63, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1383956801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383956799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 0, b: 0.98039216, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1383956802}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1266955851}
+        m_TargetAssemblyTypeName: AggregatorForVoxelisedBuildings, Assembly-CSharp
+        m_MethodName: OnAutoPlacementButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1383956802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383956799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1383956803
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383956799}
+  m_CullTransparentMesh: 1
 --- !u!1 &1596310214
 GameObject:
   m_ObjectHideFlags: 0
