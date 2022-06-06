@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Deconstructor : MonoBehaviour
 {
+    public GameObject BuildingGO;
+
     private VoxelGrid _voxelGrid;
     private Vector3Int _gridDimensions;
     private GameObject _gridGO;
@@ -12,7 +14,7 @@ public class Deconstructor : MonoBehaviour
     private List<Collider> _colliders = new();
     private Bounds _meshBounds;
     private int _voxelOffset = 2;
-    private float _voxelSize = 0.25f;
+    private float _voxelSize = 0.2f;
 
     private Color _supportsColor;
     private Color _floorsColor;
@@ -21,6 +23,7 @@ public class Deconstructor : MonoBehaviour
     private Color _wallsColor;
     private Color _columnsColor;
 
+    // Storing voxels according to the colliders they belong to
     private Dictionary<Voxel, List<Collider>> _voxelisedElements = new();
 
     // Start is called before the first frame update
@@ -68,10 +71,6 @@ public class Deconstructor : MonoBehaviour
         {
             foreach (var collider in kv.Value)
             {
-                if (collider.transform.CompareTag("DECO_Supports"))
-                {
-                    kv.Key.SetColor(_supportsColor);
-                }
                 if (collider.transform.CompareTag("DECO_Floors"))
                 {
                     kv.Key.SetColor(_floorsColor);
@@ -79,10 +78,6 @@ public class Deconstructor : MonoBehaviour
                 if (collider.transform.CompareTag("DECO_Lifts"))
                 {
                     kv.Key.SetColor(_liftsColor);
-                }
-                if (collider.transform.CompareTag("DECO_Others"))
-                {
-                    kv.Key.SetColor(_othersColor);
                 }
                 if (collider.transform.CompareTag("DECO_Walls"))
                 {
@@ -172,16 +167,19 @@ public class Deconstructor : MonoBehaviour
 
     public void ToggleMesh()
     {
-        var building = GameObject.Find("DecoBuilding");
-        building.SetActive(!building.activeSelf);
+        BuildingGO.SetActive(!BuildingGO.activeSelf);
     }
 
-    public void StartAggregator()
+    /// <summary>
+    /// Find GO with script, set variables to make available in the other class
+    /// </summary>
+    public void InitializeAggregator()
     {
         var aggregator = GameObject.Find("AggregatorForVoxelisedBuildings").GetComponent<AggregatorForVoxelisedBuildings>();
         aggregator.Grid = _voxelGrid;
         aggregator.VoxelisedElements = _voxelisedElements;
-        aggregator.InitialiseAggregator(_voxelSize);
+        aggregator.Initialise(_voxelSize);
+        aggregator.PlaceFirstWallPart();
         aggregator.PlaceFirstFloorPart();
     }
     #endregion

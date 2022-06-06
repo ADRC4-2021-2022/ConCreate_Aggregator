@@ -21,7 +21,7 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
     private readonly float _overlapTolerance = 0.03f; // used by compute penetration
     private readonly float _connectionTolerance = 0.2f; // tolerance of matching connections
-    private float _vertexDistanceTolerance = 0.1f; // tolerance used when checking for vertices inside BBs
+    private float _vertexDistanceTolerance = 0.5f; // tolerance used when checking for vertices inside BBs
     private bool _connectionMatchingEnabled = true;
 
     private Collider[] _neighbours; // "ingredient" of compute penetration
@@ -111,17 +111,20 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
     #endregion
 
     #region PLACING FIRST PARTS (wall/floor)
-    public void InitialiseAggregator(float voxelSize)
+    /// <summary>
+    /// Loading parts and get a useful dictionary format
+    /// </summary>
+    public void Initialise(float voxelSize)
     {
-        _vertexDistanceTolerance = voxelSize;
+        _vertexDistanceTolerance = voxelSize; // how far a vertex can be from the center of a voxel to be considered inside
         LoadPartPrefabs();
         LoadFloorPartPrefabs();
-        foreach (var kv in VoxelisedElements)
+        foreach (var kv in VoxelisedElements) 
         {
-            Collider floorOrWallCollider = new();
+            Collider floorOrWallCollider = new(); // collider that could be floor or wall
             bool isFloorVoxel = false;
             bool isWallVoxel = false;
-            foreach (var collider in kv.Value)
+            foreach (var collider in kv.Value) // foreach collider check which element they belong to, and exclude anything but wall and floor
             {
                 if (collider.transform.CompareTag("DECO_Floors"))
                 {
@@ -136,14 +139,15 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
                         floorOrWallCollider = collider;
                     }
                 }
+                if (collider.transform.CompareTag("DECO_Columns")) break;
             }
 
             if (isFloorVoxel)
             {
-                if (_floorVoxelsAndColliders.ContainsKey(floorOrWallCollider))
-                    _floorVoxelsAndColliders[floorOrWallCollider].Add(kv.Key);
+                if (_floorVoxelsAndColliders.ContainsKey(floorOrWallCollider)) // if this collider is in the dictionary >
+                    _floorVoxelsAndColliders[floorOrWallCollider].Add(kv.Key); // add the voxel to the list of voxels inside the dictionary
                 else
-                    _floorVoxelsAndColliders[floorOrWallCollider] = new() { kv.Key };
+                    _floorVoxelsAndColliders[floorOrWallCollider] = new() { kv.Key }; // if not > add the collider to the dictionary
             }
             if (isWallVoxel)
             {
@@ -153,20 +157,30 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
                     _wallVoxelsAndColliders[floorOrWallCollider] = new() { kv.Key };
             }
         }
-        int counter = 0;
+
+        
+        // setting the voxels for each Ylayer for floors
+        int yLayer = 0;
         foreach (var collider in _floorVoxelsAndColliders.Keys)
         {
-            _voxelisedFloors[counter] = _floorVoxelsAndColliders[collider];
-            counter++;
+            // just swap the order of the keyvalues inside the dictionary: BECAUSE WE WANT TO RECOGNIZE VOXELS BY LAYER AND NOT COLLIDER ANYMORE (compared to aggregator before deco)
+            _voxelisedFloors[yLayer] = _floorVoxelsAndColliders[collider];
+            // go to the next layer
+            yLayer++;
         }
-        counter = 0;
+        // setting the voxels for each Ylayer for walls
+        yLayer = 0;
         foreach (var collider in _wallVoxelsAndColliders.Keys)
         {
-            _voxelisedWalls[counter] = _wallVoxelsAndColliders[collider];
-            counter++;
+            // just swap the order of the keyvalues inside the dictionary
+            _voxelisedWalls[yLayer] = _wallVoxelsAndColliders[collider];
+            yLayer++;
         }
     }
 
+    /// <summary>
+    /// Place first wall part to the min corner voxel on a specific layer
+    /// </summary>
     public void PlaceFirstWallPart()
     {
         _parts.Shuffle();
@@ -198,6 +212,9 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Place first floor part to the min corner voxel on a specific layer
+    /// </summary>
     public void PlaceFirstFloorPart()
     {
         _floorParts.Shuffle();
@@ -231,7 +248,7 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
     #endregion
 
     #region PLACING NEXT PARTS (wall/floor)
-    private void PlaceNextPart()
+    private void PlaceNextWallPart()
     {
         // find all the available connections in the entire building made up of placed parts
         List<Connection> availableConnectionsInCurrentBuilding = new();
@@ -364,50 +381,47 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
         return connectionToPlace.Properties.ConnectionWidth > minWidth && connectionToPlace.Properties.ConnectionWidth < maxWidth;
     }
 
+/// <summary>
+/// Check if a WALL part's vertices are within a certain tolerance in order to be considered inside voxelgrid
+/// </summary>
     private bool IsInsideWallVoxels(Part part)
     {
         var vertices = part.Collider.sharedMesh.vertices;
-        // check if part (points/vertices??) are all within the voxels of current floor's voxels list
+        // check if part (vertices) are all within the voxels of current floor
         foreach (var vertex in vertices)
         {
-            bool foundNearbyVoxelForVertex = false;
+            bool foundNearbyVoxelForVertex = false; // check in all voxels of a specific voxelised WALL element and Y-LAYER
             foreach (var voxel in _voxelisedWalls[_currentWallLayer])
             {
-                var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex);
-                //var distance = (part.Collider.ClosestPoint(voxel.Centre) - voxel.Centre).magnitude;
-                //if (distance < partSize.x / 1.25f || distance < partSize.z / 1.25f)
-                //{
+                var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
                 if ((vertexToWorldSpace - voxel.Centre).magnitude < _vertexDistanceTolerance)
                 {
                     foundNearbyVoxelForVertex = true;
-                    break;
+                    break; // go to next vertex
                 }
-                //}
             }
             if (!foundNearbyVoxelForVertex) return false;
         }
         return true;
     }
-    
+
+    /// <summary>
+    /// Check if a FLOOR part's vertices are within a certain tolerance in order to be considered inside voxelgrid
+    /// </summary>
     private bool IsInsideFloorVoxels(Part part)
     {
         var vertices = part.Collider.sharedMesh.vertices;
-        // check if part (points/vertices??) are all within the voxels of current floor's voxels list
         foreach (var vertex in vertices)
         {
-            bool foundNearbyVoxelForVertex = false;
+            bool foundNearbyVoxelForVertex = false; // check in all voxels of a specific voxelised FLOOR element and Y-LAYER
             foreach (var voxel in _voxelisedFloors[_currentFloorLayer])
             {
-                var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex);
-                //var distance = (part.Collider.ClosestPoint(voxel.Centre) - voxel.Centre).magnitude;
-                //if (distance < partSize.x / 1.25f || distance < partSize.z / 1.25f)
-                //{
-                    if ((vertexToWorldSpace - voxel.Centre).magnitude < _vertexDistanceTolerance)
+                var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
+                if ((vertexToWorldSpace - voxel.Centre).magnitude < _vertexDistanceTolerance)
                     {
                         foundNearbyVoxelForVertex = true;
-                        break;
-                    }
-                //}
+                        break; // go to next vertex
+                }
             }
             if (!foundNearbyVoxelForVertex) return false;
         }
@@ -427,9 +441,6 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
             Debug.Log($"{newPart.Name} has no collider attached!");
             return false; // nothing to do without a collider attached
         }
-
-        //create the sphere with the features created on top
-        //int count = Physics.OverlapSphereNonAlloc(_collisionTestSpherePosition, _radius, _neighbours, 6);
 
         // Iterate through the neighbours' colliders and check if their collider is colliding with the part's one
         foreach (Part nextPart in parts)
@@ -452,86 +463,6 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
             if (isOverlapping && distance > _overlapTolerance) return true;
         }
         // if we reach this point there's no collision --> place part
-        return false;
-    }
-
-    bool CheckPartInBounds(GameObject boundingMesh, Part partToCheck)
-    {
-        bool isInBounds;
-        //float distance;
-        //Vector3 direction;
-
-        List<Transform> boundingMeshes = new();
-        if (boundingMesh.transform.childCount > 0)
-        {
-            for (int j = 0; j < boundingMesh.transform.childCount; j++)
-            {
-                boundingMeshes.Add(boundingMesh.transform.GetChild(j));
-            }
-        }
-        else boundingMeshes.Add(boundingMesh.transform);
-
-        isInBounds = IsValidPlacement(boundingMeshes, partToCheck);
-        //Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
-        //var extents = part.Collider.bounds.size / 2;
-        //float x = extents.x;
-        //float y = extents.y;
-        //float z = extents.z;
-
-        //if (direction.x != 0 && direction.y != 0 && direction.z != 0) return isInBounds && distance > x && distance > y && distance > z;
-        //if (direction.x != 0 && direction.z != 0) return isInBounds && distance > x && distance > z;
-        //if (direction.x != 0 && direction.y != 0) return isInBounds && distance > x && distance > y;
-        //if (direction.y != 0 && direction.z != 0) return isInBounds && distance > y && distance > z;
-        //if (direction.x != 0) return isInBounds && distance > x;
-        //if (direction.y != 0) return isInBounds && distance > y;
-        //if (direction.z != 0) return isInBounds && distance > z;
-        //}
-        //else
-        //{
-        //    isInBounds = part.CheckInsideBoundingBoxWithChildren(new List<Transform>() { boundingBox.transform });
-        //    Debug.Log($"{isInBounds}, dist {distance}, direction {direction}");
-
-        //    return isInBounds;
-        //}
-
-        return isInBounds;
-    }
-
-    /// <summary>
-    /// Checks if a part has been placed in a valid position (i.e. inside a given bounding box) using VERTICES
-    /// </summary>
-    /// <param name="boxes">List of transforms of bounding boxes (i.e. floor BB or wall BB)</param>
-    /// <param name="partToCheck">Part to check (i.e. the new part we are trying to add into the building)</param>
-    /// <returns></returns>
-    public bool IsValidPlacement(List<Transform> boxes, Part partToCheck)
-    {
-        var partMesh = partToCheck.Collider.sharedMesh;
-        var partVertices = partMesh.vertices;
-        var totalVerticesInPart = partMesh.vertices.Count();
-        var vertexCounts = new int[boxes.Count()];
-        for (int i = 0; i < boxes.Count; i++)
-        {
-            var bbCollider = boxes[i].GetComponent<Collider>();
-            //if (bbCollider is MeshCollider) bbCollider = bb.GetComponent<MeshCollider>();
-            //else if (bbCollider is BoxCollider) bbCollider = bb.GetComponent<BoxCollider>();
-            int verticesInBounds = 0;
-            foreach (var vertex in partVertices)
-            {
-                var vertexToWorldSpace = partToCheck.GOPart.transform.TransformPoint(vertex);
-                //var vertGo = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                //vertGo.transform.localPosition = vertexToWorldSpace;
-                //vertGo.transform.localScale = Vector3.one * 0.05f;
-
-                if ((vertexToWorldSpace - bbCollider.ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance) verticesInBounds++;
-                //if ((transVertex - bbCollider.ClosestPointOnBounds(transVertex)).magnitude > _vertexDistanceTolerance) return false;
-                //if (!bbCollider.bounds.Contains(transVertex)) return false;
-                //if (!Util.PointInsideCollider(transVertex, bbCollider)) return false;
-            }
-            vertexCounts[i] = verticesInBounds;
-            if (verticesInBounds == totalVerticesInPart) return true;
-            //if (verticesInBounds > 4 && verticesInBounds < totalVerticesInPart) return false;
-        }
-        // if the total number of vertices for the part can be summed from the number of vertices in any pair of bounding boxes, then that is also okay
         return false;
     }
     #endregion
@@ -632,7 +563,7 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
         Debug.Log("Auto wall placement started");
         for (int i = 0; i < 250; i++)
         {
-            PlaceNextPart();
+            PlaceNextWallPart();
             LoadPartPrefabs();
             yield return new WaitForSeconds(0.1f);
         }

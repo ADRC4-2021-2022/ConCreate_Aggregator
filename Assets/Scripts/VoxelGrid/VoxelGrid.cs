@@ -121,8 +121,8 @@ public class VoxelGrid
             }
         }
 
-        ShowAvailableVoxels = true;
-        ShowAliveVoxels = true;
+        ShowAvailableVoxels = false;
+        ShowAliveVoxels = false;
     }
 
     #endregion
