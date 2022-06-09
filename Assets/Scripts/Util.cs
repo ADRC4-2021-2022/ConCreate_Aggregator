@@ -26,10 +26,20 @@ public static class Util
         new Vector3Int(0,0,1)// plus z
     };
 
-    /// <summary>
-    /// Generate a random color
-    /// </summary>
-    public static Color RandomColor
+    public static Dictionary<int, int> InversedDirections = new Dictionary<int, int>()
+    {
+        { 2, 3 },
+        { 3, 2 },
+        { 1, 0 },
+        { 0, 1 },
+        { 4, 5 },
+        { 5, 4 }
+    };
+
+/// <summary>
+/// Generate a random color
+/// </summary>
+public static Color RandomColor
     {
         get
         {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 //using Eppy; //ADDED ??DO WE NEED THIS??
 
 public class ConstraintSolver : MonoBehaviour
@@ -20,6 +21,7 @@ public class ConstraintSolver : MonoBehaviour
     Tile[,,] _tileGrid;
     List<TilePattern> _patternLibrary; //prefabs
     List<TileConnection> _connections;
+    readonly int _maxSteps = 5000;
     #endregion
 
     #region constructors
@@ -44,7 +46,11 @@ public class ConstraintSolver : MonoBehaviour
         }
 
         MakeTiles();
-        FillGridRandom();
+        //FillGridRandom();
+        for (int i = 0; i < _maxSteps; i++)
+        {
+            WaveFunctionCollapseStep();
+        }
     }
     #endregion
 
@@ -124,20 +130,47 @@ public class ConstraintSolver : MonoBehaviour
         //Loop over all cartesian directions (list is in Util)
         ////Get the neighbour of the set tile in the direction
         ////Get the connection of the set tile in the direction
-        ////Get all the tiles with the same connection in opposite direction
-        ////Remove all the possiblePatterns in the neighbour tile that are not in the connection list. 
+        ////Get all the tilepatterns with the same connection in opposite direction
+        ////Remove all the possiblePatterns from neighbour tile that are not in the connection list. 
         ////Run the CrossreferenceConnectionPatterns() on the neighbour tile
         ////If a tile has only one possiblePattern
         //////Set the tile
         //////PropogateGrid for this tile
+        ///
 
+        for (int i = 0; i < Util.Directions.Count; i++)
+        {
+            var neighbour = GetNeighbour(setTile, Util.Directions[i]);
+            if (neighbour == null) Debug.Log($"No neighbour for {setTile} in direction {Util.Directions[i]}");
+
+            var connection = setTile.PossiblePatterns.First().Connections[i];
+            var oppositeDirectionIndex = Util.InversedDirections[i];
+            List<TilePattern> sameConnectionTiles = neighbour.PossiblePatterns.Where(p => p.Connections[oppositeDirectionIndex] == connection).ToList();
+            neighbour.CrossreferenceConnectionPatterns(sameConnectionTiles);
+            if (neighbour.IsSet)
+            {
+                neighbour.AssignPattern(neighbour.PossiblePatterns.First());
+            }
+        }
     }
 
     private Tile GetNeighbour(Tile tile, Vector3Int direction)
     {
         //Get the neighbour of a tile in a certain direction
-        return null;
+        Vector3Int neighbourIndex = tile.Index + direction;
+        return GetTileByIndex(neighbourIndex);
     }
+
+    private Tile GetTileByIndex(Vector3Int index)
+    {
+        if (!Util.CheckInBounds(_gridDimensions, index) || _tileGrid[index.x, index.y, index.z] == null)
+        {
+            Debug.Log($"A tile at {index} doesn't exist");
+            return null;
+        }
+        return _tileGrid[index.x, index.y, index.z];
+    }
+
     private List<Tile> GetUnsetTiles()
     {
         List<Tile> unsetTiles = new List<Tile>();

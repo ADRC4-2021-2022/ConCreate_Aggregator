@@ -14,12 +14,12 @@ public class TilePattern
 
     /*public Vector3Int[] Axes = new Vector3Int[6]
     {
-        new Vector3Int(-1,0,0), //-x  
-        new Vector3Int(1,0,0),  //x   
-        new Vector3Int(0,1,0),  //y      
-        new Vector3Int(0,-1,0), //-y      
-        new Vector3Int(0,0,-1), //-z       
-        new Vector3Int(0,0,1),  //z     
+        new Vector3Int(-1,0,0), //-x  0
+        new Vector3Int(1,0,0),  //x   1
+        new Vector3Int(0,1,0),  //y      3
+        new Vector3Int(0,-1,0), //-y    2
+        new Vector3Int(0,0,-1), //-z      4
+        new Vector3Int(0,0,1),  //z     5
     };
 
      Dictionary<string, ConnectionType> ConnectionTypes = new Dictionary<string, ConnectionType>
@@ -97,11 +97,11 @@ public class TilePattern
                 //we know it is a vertical connection
                 if (rotation.x == 90)
                 {
-                    Connections[3] = connection;
+                    Connections[2] = connection;
                 }
                 else
                 {
-                    Connections[2] = connection;
+                    Connections[3] = connection;
                 }
             }
             //else
@@ -110,22 +110,22 @@ public class TilePattern
             else if (rotation.y == 90)                              
             //we know it is a connection in the positive x axis  
             {
-                Connections[1] = connection;                       
+                Connections[1] = connection;
             }
             else if (rotation.y == 180)                          
             //we know it is a connection in the negative z axis   
             {
-                Connections[4] = connection;                        
+                Connections[4] = connection;
             }
-            else if (rotation.y == 270) //ADDED
+            else if (rotation.y == 270)
             //we know it is a connection in the negative x axis     
             {
-                Connections[0] = connection;                       
+                Connections[0] = connection;
             }
             else                                                   
             //we know it is a connection in the positive z axis    
             {
-                Connections[5] = connection;                      
+                Connections[5] = connection;
             }
         }
     }

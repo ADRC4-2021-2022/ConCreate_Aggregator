@@ -7,6 +7,7 @@ public class Tile
     #region public fields
     public List<TilePattern> PossiblePatterns;
     public Vector3Int Index;
+    private GameObject _GOSelectedPattern;
 
     //A tile is set if there is only one possible pattern
     public bool IsSet
@@ -49,7 +50,7 @@ public class Tile
     public void AssignPattern(TilePattern selectedPattern)
     {
         //Create a gameobject based on the prefab of the selected pattern using the index and the tilesize as position
-        GameObject GOSelectedPattern = GameObject.Instantiate(selectedPattern.GOTilePrefab, GetWorldPosition(), Quaternion.identity);
+        _GOSelectedPattern = GameObject.Instantiate(selectedPattern.GOTilePrefab, GetWorldPosition(), Quaternion.identity);
         //Remove all possible patterns out of the list
 
         //You could add some weighted randomness in here
