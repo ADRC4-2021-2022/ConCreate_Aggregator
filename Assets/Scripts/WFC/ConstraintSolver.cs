@@ -22,6 +22,8 @@ public class ConstraintSolver : MonoBehaviour
     List<TilePattern> _patternLibrary; //prefabs
     List<TileConnection> _connections;
     readonly int _maxSteps = 5000;
+
+    public Vector3Int Index { get; private set; }
     #endregion
 
     #region constructors
@@ -30,13 +32,11 @@ public class ConstraintSolver : MonoBehaviour
         //Add all connections
         _connections = new List<TileConnection>();
 
-        _connections.Add(new TileConnection("conPink"));
-        _connections.Add(new TileConnection("conYellow"));
-        _connections.Add(new TileConnection("conBlue"));
-        _connections.Add(new TileConnection("conOrange"));
-        _connections.Add(new TileConnection("conCyan"));    
-        _connections.Add(new TileConnection("conGreen"));    
-        _connections.Add(new TileConnection("conBlack"));    
+        _connections.Add(new TileConnection("WFC_conn0"));
+        _connections.Add(new TileConnection("WFC_connYellow"));
+        _connections.Add(new TileConnection("WFC_connBlue"));  
+        _connections.Add(new TileConnection("WFC_connGreen"));    
+        _connections.Add(new TileConnection("WFC_connTopBottom"));    
 
         //Add all patterns
         _patternLibrary = new List<TilePattern>();
@@ -108,10 +108,16 @@ public class ConstraintSolver : MonoBehaviour
 
                 leastTile = tile.NumberOfPossiblePatterns;
             }
-            if (tile.NumberOfPossiblePatterns == leastTile)
+            else if (tile.NumberOfPossiblePatterns == leastTile)
             {
                 leastTiles.Add(tile);
             }
+            else if (tile.NumberOfPossiblePatterns != leastTile)
+            {
+                tile.AssignRandomPossiblePattern();
+            }
+
+            Debug.Log("Propagating Grid");
         }
 
         //Select a random tile out of the list
