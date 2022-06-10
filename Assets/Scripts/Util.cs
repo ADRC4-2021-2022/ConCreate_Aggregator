@@ -262,4 +262,52 @@ public static Color RandomColor
         result.RecalculateNormals();
         return result;
     }
+
+    public static List<GameObject> GetChildObjectByTag(Transform parent, string tag) //?? WHERE DO WE DO THIS??
+    {
+        List<GameObject> taggedChildren = new List<GameObject>();
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.tag == tag)
+            {
+                taggedChildren.Add(child.gameObject);
+            }
+            if (child.childCount > 0)
+            {
+                taggedChildren.AddRange(GetChildObjectByTag(child, tag));
+            }
+        }
+
+        return taggedChildren;
+    }
+
+    //Put this function into a UTIl class, you can use it in your entire project
+    public static List<GameObject> GetChildObjectByLayer(Transform parent, int layer)
+    {
+        List<GameObject> layerChildren = new List<GameObject>();
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.gameObject.layer == layer)
+            {
+                layerChildren.Add(child.gameObject);
+            }
+            if (child.childCount > 0)
+            {
+                GetChildObjectByLayer(child, layer);
+            }
+        }
+
+        return layerChildren;
+    }
+
+    public static bool ValidateIndex(this Vector3Int index, Vector3Int gridSize)
+    {
+        return index.x >= 0 && index.x < gridSize.x &&
+               index.y >= 0 && index.y < gridSize.y &&
+               index.z >= 0 && index.z < gridSize.z;
+    }
 }

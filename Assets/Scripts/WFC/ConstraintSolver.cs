@@ -3,116 +3,161 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
-//using Eppy; //ADDED ??DO WE NEED THIS??
+using UnityEngine.UI;
+using Unity.VisualScripting;
+
 
 public class ConstraintSolver : MonoBehaviour
 {
+
     #region Serialized fields
     [SerializeField]
-    //Prefabs linked to the manager through the inspector
-    private List<GameObject> _goPatterns;
+    public Vector3Int GridDimensions;
     [SerializeField]
-    private Vector3Int _gridDimensions;
-    [SerializeField]
-    public float TileSize;
+    public Vector3 TileSize = new Vector3(4, 3, 4);
+
+
+    #endregion
+
+    #region public fields
+
+    public GameObject[] GOPatternPrefabs;
+
     #endregion
 
     #region private fields
-    Tile[,,] _tileGrid;
-    List<TilePattern> _patternLibrary; //prefabs
+    public Tile[,,] TileGrid { private set; get; }
+    List<TilePattern> _patternLibrary;
     List<TileConnection> _connections;
-    readonly int _maxSteps = 5000;
 
     public Vector3Int Index { get; private set; }
+
+
+    private TilePattern _mat_ConPink;    //00
+    private TilePattern _mat_ConYellow;  //01
+    private TilePattern _mat_ConBlue;    //02
+    private TilePattern _mat_Orange;     //03
+    private TilePattern _mat_Cyan;       //04
+    private TilePattern _mat_Green;      //05
+
+    private IEnumerator _propogateStep;
+    private bool _isCollapsing = false;
+
+
     #endregion
 
-    #region constructors
+    #region Unity Standard Methods
+
     void Start()
     {
         //Add all connections
         _connections = new List<TileConnection>();
 
-        _connections.Add(new TileConnection("WFC_conn0"));
-        _connections.Add(new TileConnection("WFC_connYellow"));
-        _connections.Add(new TileConnection("WFC_connBlue"));  
-        _connections.Add(new TileConnection("WFC_connGreen"));    
-        _connections.Add(new TileConnection("WFC_connTopBottom"));    
+        _connections.Add(new TileConnection(ConnectionType.con0, "WFC_conn0"));
+        _connections.Add(new TileConnection(ConnectionType.conYellow, "WFC_connYellow"));
+        _connections.Add(new TileConnection(ConnectionType.conBlue, "WFC_connBlue"));
+        _connections.Add(new TileConnection(ConnectionType.conGreen, "WFC_connGreen"));
+        _connections.Add(new TileConnection(ConnectionType.conTopBottom, "WFC_connTopBottom"));
 
         //Add all patterns
         _patternLibrary = new List<TilePattern>();
-        foreach (var goPattern in _goPatterns)
+        for (int i = 0; i < GOPatternPrefabs.Length; i++)
         {
-            _patternLibrary.Add(new TilePattern(_patternLibrary.Count, goPattern, _connections));
+            var goPattern = GOPatternPrefabs[i];
+            _patternLibrary.Add(new TilePattern(i, goPattern, _connections));
         }
 
+        //Set up the tile grid
         MakeTiles();
-        //FillGridRandom();
-        for (int i = 0; i < _maxSteps; i++)
-        {
-            WaveFunctionCollapseStep();
-        }
+        // add a random tile to a random position
+        TileGrid[2, 0, 2].AssignPattern(_patternLibrary[1]);
+
+        GetNextTile();
+
+        //look into making this into a bounding box
+        _propogateStep = PropogateStep();
     }
+
+
+    //public void GetPlan()
+    //{
+
+    //    PlanCreation.CreatePlanFromTiles(GetTilesFlattened());
+    //}
+
+    //Buttons, Unity Buttons on Canvas are not compadible with script
     #endregion
 
     #region private functions
-    /// <summary>
-    /// Create the tile grid
-    /// </summary>
+
+    //Create the tile grid
     private void MakeTiles()
     {
-        _tileGrid = new Tile[_gridDimensions.x, _gridDimensions.y, _gridDimensions.z];
-        for (int x = 0; x < _gridDimensions.x; x++)
+        TileGrid = new Tile[GridDimensions.x, GridDimensions.y, GridDimensions.z];
+        for (int x = 0; x < GridDimensions.x; x++)
         {
-            for (int y = 0; y < _gridDimensions.y; y++)
+            for (int y = 0; y < GridDimensions.y; y++)
             {
-                for (int z = 0; z < _gridDimensions.z; z++)
+                for (int z = 0; z < GridDimensions.z; z++)
                 {
-                    _tileGrid[x, y, z] = new Tile(new Vector3Int(x, y, z), _patternLibrary, this);
+                    TileGrid[x, y, z] = new Tile(new Vector3Int(x, y, z), _patternLibrary, this, TileSize);
                 }
             }
         }
     }
 
-    private void FillGridRandom()
+
+    private IEnumerator PropogateStep()
     {
-        //Loop over all the tiles
-        ////Assign a random pattern per tile
-        GetTilesFlattened().ForEach(t => t.AssignRandomPossiblePattern());
+        while (true)
+        {
+            _isCollapsing = true;
+            GetNextTile();
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
-    /// <summary>
-    /// Run one step of the WaveFunctionCollapse. Put this in a loop to solve the entire grid.
-    /// </summary>
-    private void WaveFunctionCollapseStep()
+    private void GetNextTile()
     {
-        List<Tile> unsetTiles = GetUnsetTiles();
-        //Return if there are no tiles left
-        if (unsetTiles.Count == 0)
+        // <summary>
+        // get all unset tiles -> tiles that have no tile pattern assinged (tile.CurrentPattern)
+        // for each of the unset, get the PossibleConnections
+        // sort your unset tiles by the length of possible connection -> 0 == smallest lenght
+        // get index 0 from the unset
+        // do tile.AssingPattern() and assign a random tile pattern from its PossibleConnections
+        // OUTSIDE THIS METHOD: Reapeat until no more tiles are left unset
+        // <summary>
+
+        List<Tile> UnsetTiles = GetUnsetTiles();
+
+        //Check if there still are tiles to set
+
+        if (UnsetTiles.Count == 0)
         {
             Debug.Log("all tiles are set");
             return;
         }
 
-        //Count how many possible patterns there are
-        //Find all the tiles with the least amount of possible patterns
-        //Select a random tile out of this list
-        //Get the tiles with the least amount of possible patterns
-        List<Tile> leastTiles = new List<Tile>();
-        int leastTile = int.MaxValue;
+        //this is currently not going to give you the lowest tile
+        List<Tile> lowestTiles = new List<Tile>();
+        int lowestTile = int.MaxValue;
 
-        foreach (Tile tile in unsetTiles)
+        //PropogateGrid on the set tile                     
+
+        foreach (Tile tile in UnsetTiles)
         {
-            if (tile.NumberOfPossiblePatterns < leastTile)
+            if (tile.NumberOfPossiblePatterns < lowestTile)
             {
-                leastTiles = new List<Tile>();
+                lowestTiles = new List<Tile>() { tile };
 
-                leastTile = tile.NumberOfPossiblePatterns;
+                lowestTile = tile.NumberOfPossiblePatterns;
+
             }
-            else if (tile.NumberOfPossiblePatterns == leastTile)
+            else if (tile.NumberOfPossiblePatterns == lowestTile)
             {
-                leastTiles.Add(tile);
+                lowestTiles.Add(tile);
             }
-            else if (tile.NumberOfPossiblePatterns != leastTile)
+            else if (tile.NumberOfPossiblePatterns != lowestTile)
             {
                 tile.AssignRandomPossiblePattern();
             }
@@ -121,107 +166,93 @@ public class ConstraintSolver : MonoBehaviour
         }
 
         //Select a random tile out of the list
-        int rndIndex = Random.Range(0, leastTiles.Count);
-        Tile tileToSet = leastTiles[rndIndex];
+        int rndIndex = Random.Range(0, lowestTiles.Count);
+        Tile tileToSet = lowestTiles[rndIndex];
+
+        Debug.Log(" Random Index " + lowestTiles.Count);
+
 
         //Assign one of the possible patterns to the tile
         tileToSet.AssignRandomPossiblePattern();
-
-        //PropogateGrid on the set tile
-        PropagateGrid(tileToSet);
     }
 
-    public void PropagateGrid(Tile setTile)
+    //Cardinal Directions Establishment 
+    public List<Vector3Int> GetTileDirectionList()
     {
-        //Loop over all cartesian directions (list is in Util)
-        ////Get the neighbour of the set tile in the direction
-        ////Get the connection of the set tile in the direction
-        ////Get all the tilepatterns with the same connection in opposite direction
-        ////Remove all the possiblePatterns from neighbour tile that are not in the connection list. 
-        ////Run the CrossreferenceConnectionPatterns() on the neighbour tile
-        ////If a tile has only one possiblePattern
-        //////Set the tile
-        //////PropogateGrid for this tile
-        ///
-
-        for (int i = 0; i < Util.Directions.Count; i++)
+        List<Vector3Int> tileDirections = new List<Vector3Int>();
+        foreach (Vector3Int tileDirection in Util.Directions)
         {
-            var neighbour = GetNeighbour(setTile, Util.Directions[i]);
-            if (neighbour == null) Debug.Log($"No neighbour for {setTile} in direction {Util.Directions[i]}");
-
-            var connection = setTile.PossiblePatterns.First().Connections[i];
-            var oppositeDirectionIndex = Util.InversedDirections[i];
-            List<TilePattern> sameConnectionTiles = neighbour.PossiblePatterns.Where(p => p.Connections[oppositeDirectionIndex] == connection).ToList();
-            neighbour.CrossreferenceConnectionPatterns(sameConnectionTiles);
-            if (neighbour.IsSet)
+            if (Util.CheckInBounds(GridDimensions, Index))
             {
-                neighbour.AssignPattern(neighbour.PossiblePatterns.First());
+                tileDirections.Add((Vector3Int)tileDirection);
             }
         }
+        return tileDirections;
+
     }
 
-    private Tile GetNeighbour(Tile tile, Vector3Int direction)
+    //tile to unsetTile, added possibleNeighbours, List<Tile> newPossiblePatterns
+    public List<Tile> GetNeighbour(List<TilePattern> newPossiblePatterns)
     {
-        //Get the neighbour of a tile in a certain direction
-        Vector3Int neighbourIndex = tile.Index + direction;
-        return GetTileByIndex(neighbourIndex);
-    }
-
-    private Tile GetTileByIndex(Vector3Int index)
-    {
-        if (!Util.CheckInBounds(_gridDimensions, index) || _tileGrid[index.x, index.y, index.z] == null)
+        List<Tile> possibleNeighbours = new List<Tile>();
+        IEnumerable<object> tileDirections = null;
+        foreach (var unsetTiles in tileDirections)
         {
-            Debug.Log($"A tile at {index} doesn't exist");
-            return null;
+            if (unsetTiles == newPossiblePatterns)
+            {
+                possibleNeighbours.Add((Tile)unsetTiles);
+            }
         }
-        return _tileGrid[index.x, index.y, index.z];
+
+        return possibleNeighbours;
     }
 
-    private List<Tile> GetUnsetTiles()
+    public List<Tile> GetUnsetTiles()
     {
         List<Tile> unsetTiles = new List<Tile>();
 
         //Loop over all the tiles and check which ones are not set
         foreach (var tile in GetTilesFlattened())
         {
-            if (!tile.IsSet) unsetTiles.Add(tile);
+            if (!tile.Set) unsetTiles.Add(tile);
+
+            Debug.Log(tile.PossiblePatterns.Count);
         }
+        Debug.Log(unsetTiles.Count);
         return unsetTiles;
     }
 
-    /// <summary>
-    /// Get a flattened list of tiles
-    /// </summary>
-    /// <returns>list of tiles</returns>
     private List<Tile> GetTilesFlattened()
     {
         List<Tile> tiles = new List<Tile>();
-        for (int x = 0; x < _gridDimensions.x; x++)
+        for (int x = 0; x < GridDimensions.x; x++)
         {
-            for (int y = 0; y < _gridDimensions.y; y++)
+            for (int y = 0; y < GridDimensions.y; y++)
             {
-                for (int z = 0; z < _gridDimensions.z; z++)
+                for (int z = 0; z < GridDimensions.z; z++)
                 {
-                    tiles.Add(_tileGrid[x, y, z]);
+                    tiles.Add(TileGrid[x, y, z]);
                 }
             }
         }
         return tiles;
     }
+
+    //this function removes the colored sides used for connections
+    public void ToggleConnectionVisibility()
+    {
+        foreach (var tile in TileGrid)
+        {
+            if (tile.Set)
+            {
+                tile.VisibilitySwitch();
+            }
+        }
+
+    }
+
+    #endregion
 }
 
 
-//private void PropogateGrid(Tile changedTile)            //ADDED
-//{
-//    //Loop over the connections of the changedTile
-//    //Per connection: go to the neighbour tile in the connection direction
-//    //Crossreference the list of possible connections in the neighbour tile with the list of possible patterns in the connection
-
-//    //If one or multiple of the neighbours has no more possible tilepattern, solving failed, start over
-//    //you could assign a possible tile of the previous propogation, this will cause impurities but might make it easier to solve
-
-//    //If one or multiple of the neighbours has only one possible tilepattern, set the tile pattern
-//    //propogate the grid for the new set tile
-//}
-#endregion
 
