@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 //Add all connection types here
-public enum ConnectionType { con0 = 0, conYellow = 1, conBlue = 2, conGreen = 3, conTopBottom = 4 }
+public enum ConnectionType { WFC_conn0 = 0, WFC_connYellow = 1, WFC_connBlue = 2, WFC_connGreen = 3, WFC_connTopBottom = 4 }
 public class TileConnection
 {
 

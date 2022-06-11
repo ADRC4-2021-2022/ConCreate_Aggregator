@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class Tile
 {
-    #region public fields
+    #region Variables
     public List<TilePattern> PossiblePatterns;
     public Vector3Int Index;
     public TilePattern CurrentTile;
+    public GameObject CurrentGo;
 
     private Dictionary<int, GameObject> _goTilePatternPrefabs;
-    private GameObject _currentGo;
     private bool _emptySet = false;
     private bool _showconnections = true;
     private Vector3 _tileSize;
+    private ConstraintSolver _solver;
 
     //A tile is set if there is only one possible pattern
     public bool Set
@@ -36,16 +37,12 @@ public class Tile
     {
         get
         {
-            if (_currentGo == null)
+            if (CurrentGo == null)
                 return null;
             else
-                return _currentGo.GetComponentInChildren<MeshCollider>();
+                return CurrentGo.GetComponentInChildren<MeshCollider>();
         }
     }
-    #endregion
-
-    #region private fields
-    private ConstraintSolver _solver;
     #endregion
 
     #region constructors
@@ -80,14 +77,14 @@ public class Tile
 
     public void AssignPattern(TilePattern pattern)
     {
-        if (_currentGo != null)
+        if (CurrentGo != null)
         {
-            GameObject.Destroy(_currentGo);
+            GameObject.Destroy(CurrentGo);
         }
 
-        _currentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[pattern.Index]);
-        _currentGo.transform.position = Util.IndexToRealPosition(Index, _tileSize);
-        _solver.TileGOs.Add(_currentGo);
+        CurrentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[pattern.Index]);
+        CurrentGo.transform.position = Util.IndexToRealPosition(Index, _tileSize);
+        _solver.TileGOs.Add(CurrentGo);
         CurrentTile = pattern;
         var neighbours = GetNeighbours();
 
@@ -164,10 +161,10 @@ public class Tile
     public void ToggleVisibility()
     {
         _showconnections = !_showconnections;
-        if (_currentGo == null) return;
-        for (int i = 0; i < _currentGo.transform.childCount; i++)
+        if (CurrentGo == null) return;
+        for (int i = 0; i < CurrentGo.transform.childCount; i++)
         {
-            var child = _currentGo.transform.GetChild(i);
+            var child = CurrentGo.transform.GetChild(i);
             if (child.gameObject.layer == 3)
             {
                 child.GetComponentInChildren<MeshRenderer>().enabled = _showconnections;
@@ -177,11 +174,11 @@ public class Tile
 
     public Transform GetComponentCollider()
     {
-        if (_currentGo != null)
+        if (CurrentGo != null)
         {
-            for (int i = 0; i < _currentGo.transform.childCount; i++)
+            for (int i = 0; i < CurrentGo.transform.childCount; i++)
             {
-                var child = _currentGo.transform.GetChild(i);
+                var child = CurrentGo.transform.GetChild(i);
                 if (child.CompareTag("Component"))
                 {
 
@@ -192,8 +189,5 @@ public class Tile
 
         return null;
     }
-
     #endregion
-
-
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,11 +41,11 @@ public class ConstraintSolver : MonoBehaviour
         //Add all connections
         _connections = new List<TileConnection>();
 
-        _connections.Add(new TileConnection(ConnectionType.con0, "WFC_conn0"));
-        _connections.Add(new TileConnection(ConnectionType.conYellow, "WFC_connYellow"));
-        _connections.Add(new TileConnection(ConnectionType.conBlue, "WFC_connBlue"));
-        _connections.Add(new TileConnection(ConnectionType.conGreen, "WFC_connGreen"));
-        _connections.Add(new TileConnection(ConnectionType.conTopBottom, "WFC_connTopBottom"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_conn0, "WFC_conn0"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connYellow, "WFC_connYellow"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connBlue, "WFC_connBlue"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connGreen, "WFC_connGreen"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connTopBottom, "WFC_connTopBottom"));
 
         //Add all patterns
         _patternLibrary = new List<TilePattern>();
@@ -165,7 +166,7 @@ public class ConstraintSolver : MonoBehaviour
         }
 
         //Select a random tile out of the list
-        int rndIndex = Random.Range(0, lowestTiles.Count);
+        int rndIndex = UnityEngine.Random.Range(0, lowestTiles.Count);
         Tile tileToSet = lowestTiles[rndIndex];
 
         Debug.Log("Random Index " + lowestTiles.Count);
@@ -208,7 +209,7 @@ public class ConstraintSolver : MonoBehaviour
         DisableTilesNotInSite(validIndices);
 
         // add a random tile to a random position
-        var randomIndex = validIndices[Random.Range(0, validIndices.Count)];
+        var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
         TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignPattern(_patternLibrary[1]);
 
         GetNextTile();
@@ -268,6 +269,18 @@ public class ConstraintSolver : MonoBehaviour
             if (tile.Set)
             {
                 tile.ToggleVisibility();
+            }
+        }
+    }
+
+    public void DeleteConnectionsForExporting()
+    {
+        foreach (var connectionType in (ConnectionType[])Enum.GetValues(typeof(ConnectionType)))
+        {
+            var connectionsWithTag = GameObject.FindGameObjectsWithTag(connectionType.ToString());
+            foreach (var connection in connectionsWithTag)
+            {
+                Destroy(connection);
             }
         }
     }
