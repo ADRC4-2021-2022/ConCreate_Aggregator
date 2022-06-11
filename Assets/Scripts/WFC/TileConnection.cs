@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 //Add all connection types here
-public enum ConnectionType { con0 = 0, conYellow = 1, conBlue = 2, conGreen= 3, conTopBottom = 4 }
+public enum ConnectionType { con0 = 0, conYellow = 1, conBlue = 2, conGreen = 3, conTopBottom = 4 }
 public class TileConnection
 {
 

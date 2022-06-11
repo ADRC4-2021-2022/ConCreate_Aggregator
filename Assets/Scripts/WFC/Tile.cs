@@ -1,13 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
-using TMPro;
-using UnityEngine.UI;
+using UnityEngine;
 
 public class Tile
 {
-
     #region public fields
     public List<TilePattern> PossiblePatterns;
     public Vector3Int Index;
@@ -27,8 +23,6 @@ public class Tile
             return (PossiblePatterns.Count == 1) || _emptySet;
         }
     }
-
-
 
     public int NumberOfPossiblePatterns
     {
@@ -62,7 +56,6 @@ public class Tile
         _solver = solver;
         _tileSize = tileSize;
     }
-
     #endregion
 
     #region public functions
@@ -83,8 +76,6 @@ public class Tile
 
             PossiblePatterns = new List<TilePattern>() { PossiblePatterns[rndPatternIndex] };
         }
-
-
     }
 
     public void AssignPattern(TilePattern pattern)
@@ -95,9 +86,8 @@ public class Tile
         }
 
         _currentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[pattern.Index]);
-        Vector3 pos = _tileSize;
-        pos.Scale((Vector3)Index);
-        _currentGo.transform.position = pos;
+        _currentGo.transform.position = Util.IndexToRealPosition(Index, _tileSize);
+        _solver.TileGOs.Add(_currentGo);
         CurrentTile = pattern;
         var neighbours = GetNeighbours();
 
@@ -120,7 +110,6 @@ public class Tile
                 Debug.Log("Possible Neighbors: " + opposite);
 
             }
-            //nPossible.Where()
         }
 
 
@@ -172,7 +161,7 @@ public class Tile
         PossiblePatterns = newPossiblePatterns;
     }
 
-    public void VisibilitySwitch()
+    public void ToggleVisibility()
     {
         _showconnections = !_showconnections;
         if (_currentGo == null) return;
@@ -184,8 +173,6 @@ public class Tile
                 child.GetComponentInChildren<MeshRenderer>().enabled = _showconnections;
             }
         }
-
-
     }
 
     public Transform GetComponentCollider()

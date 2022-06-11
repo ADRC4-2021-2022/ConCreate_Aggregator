@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class AggregatorForVoxelisedBuildings : MonoBehaviour
 {
@@ -119,7 +118,7 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
         _vertexDistanceTolerance = voxelSize; // how far a vertex can be from the center of a voxel to be considered inside
         LoadPartPrefabs();
         LoadFloorPartPrefabs();
-        foreach (var kv in VoxelisedElements) 
+        foreach (var kv in VoxelisedElements)
         {
             Collider floorOrWallCollider = new(); // collider that could be floor or wall
             bool isFloorVoxel = false;
@@ -158,7 +157,7 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
             }
         }
 
-        
+
         // setting the voxels for each Ylayer for floors
         int yLayer = 0;
         foreach (var collider in _floorVoxelsAndColliders.Keys)
@@ -381,9 +380,9 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
         return connectionToPlace.Properties.ConnectionWidth > minWidth && connectionToPlace.Properties.ConnectionWidth < maxWidth;
     }
 
-/// <summary>
-/// Check if a WALL part's vertices are within a certain tolerance in order to be considered inside voxelgrid
-/// </summary>
+    /// <summary>
+    /// Check if a WALL part's vertices are within a certain tolerance in order to be considered inside voxelgrid
+    /// </summary>
     private bool IsInsideWallVoxels(Part part)
     {
         var vertices = part.Collider.sharedMesh.vertices;
@@ -418,9 +417,9 @@ public class AggregatorForVoxelisedBuildings : MonoBehaviour
             {
                 var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
                 if ((vertexToWorldSpace - voxel.Centre).magnitude < _vertexDistanceTolerance)
-                    {
-                        foundNearbyVoxelForVertex = true;
-                        break; // go to next vertex
+                {
+                    foundNearbyVoxelForVertex = true;
+                    break; // go to next vertex
                 }
             }
             if (!foundNearbyVoxelForVertex) return false;

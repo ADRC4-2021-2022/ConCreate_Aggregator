@@ -1,55 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-using System.Linq;
-using UnityEngine.UI;
-using Unity.VisualScripting;
 
 
 public class ConstraintSolver : MonoBehaviour
 {
 
     #region Serialized fields
-    [SerializeField]
     public Vector3Int GridDimensions;
     [SerializeField]
     public Vector3 TileSize = new Vector3(4, 3, 4);
-
-
     #endregion
 
     #region public fields
-
-    public GameObject[] GOPatternPrefabs;
-
-    #endregion
-
-    #region private fields
     public Tile[,,] TileGrid { private set; get; }
     List<TilePattern> _patternLibrary;
     List<TileConnection> _connections;
 
+    public GameObject[] GOPatternPrefabs;
+    public GameObject GroundFloor;
+    public GameObject FirstFloor;
+    public GameObject SecondFloor;
+    public GameObject ThirdFloor;
+
     public Vector3Int Index { get; private set; }
 
-
-    private TilePattern _mat_ConPink;    //00
-    private TilePattern _mat_ConYellow;  //01
-    private TilePattern _mat_ConBlue;    //02
-    private TilePattern _mat_Orange;     //03
-    private TilePattern _mat_Cyan;       //04
-    private TilePattern _mat_Green;      //05
-
-    private IEnumerator _propogateStep;
-    private bool _isCollapsing = false;
-
-
+    public List<GameObject> TileGOs;
     #endregion
 
-    #region Unity Standard Methods
+    #region private fields
+    private IEnumerator _propagateStep;
+    private bool _isCollapsing = false;
+    #endregion
 
     void Start()
     {
+        GridDimensions = new Vector3Int(19, 4, 10);
+
         //Add all connections
         _connections = new List<TileConnection>();
 
@@ -67,28 +54,52 @@ public class ConstraintSolver : MonoBehaviour
             _patternLibrary.Add(new TilePattern(i, goPattern, _connections));
         }
 
-        //Set up the tile grid
-        MakeTiles();
-        // add a random tile to a random position
-        TileGrid[2, 0, 2].AssignPattern(_patternLibrary[1]);
-
-        GetNextTile();
+        RunWFC();
 
         //look into making this into a bounding box
-        _propogateStep = PropogateStep();
+        _propagateStep = PropagateStep();
     }
 
-
-    //public void GetPlan()
-    //{
-
-    //    PlanCreation.CreatePlanFromTiles(GetTilesFlattened());
-    //}
-
-    //Buttons, Unity Buttons on Canvas are not compadible with script
-    #endregion
-
     #region private functions
+    /// <summary>
+    /// Get list of tileIndices within the geometry of the site
+    /// </summary>
+    private List<Vector3Int> GetValidIndices()
+    {
+        var layerMeshesGF = GroundFloor.transform;
+        var layerMeshes1F = FirstFloor.transform;
+        var layerMeshes2F = SecondFloor.transform;
+        var layerMeshes3F = ThirdFloor.transform;
+
+        var validIndices = new List<Vector3Int>();
+        validIndices.AddRange(GetValidIndicesInYLayer(layerMeshesGF));
+        validIndices.AddRange(GetValidIndicesInYLayer(layerMeshes1F));
+        validIndices.AddRange(GetValidIndicesInYLayer(layerMeshes2F));
+        validIndices.AddRange(GetValidIndicesInYLayer(layerMeshes3F));
+
+        return validIndices;
+    }
+
+    private void DisableTilesNotInSite(List<Vector3Int> validIndices)
+    {
+        foreach (var tile in TileGrid)
+        {
+            if (!validIndices.Contains(tile.Index))
+            {
+                tile.PossiblePatterns = new List<TilePattern>();
+            }
+        }
+    }
+
+    private List<Vector3Int> GetValidIndicesInYLayer(Transform layerMeshes)
+    {
+        var validIndicesCurrentLayer = new List<Vector3Int>();
+        foreach (Transform child in layerMeshes)
+        {
+            validIndicesCurrentLayer.Add(Util.RealPositionToIndex(child.GetComponent<MeshCollider>().bounds.center, TileSize));
+        }
+        return validIndicesCurrentLayer;
+    }
 
     //Create the tile grid
     private void MakeTiles()
@@ -106,8 +117,7 @@ public class ConstraintSolver : MonoBehaviour
         }
     }
 
-
-    private IEnumerator PropogateStep()
+    private IEnumerator PropagateStep()
     {
         while (true)
         {
@@ -119,22 +129,12 @@ public class ConstraintSolver : MonoBehaviour
 
     private void GetNextTile()
     {
-        // <summary>
-        // get all unset tiles -> tiles that have no tile pattern assinged (tile.CurrentPattern)
-        // for each of the unset, get the PossibleConnections
-        // sort your unset tiles by the length of possible connection -> 0 == smallest lenght
-        // get index 0 from the unset
-        // do tile.AssingPattern() and assign a random tile pattern from its PossibleConnections
-        // OUTSIDE THIS METHOD: Reapeat until no more tiles are left unset
-        // <summary>
-
         List<Tile> UnsetTiles = GetUnsetTiles();
 
         //Check if there still are tiles to set
-
         if (UnsetTiles.Count == 0)
         {
-            Debug.Log("all tiles are set");
+            Debug.Log("All tiles are set");
             return;
         }
 
@@ -142,8 +142,7 @@ public class ConstraintSolver : MonoBehaviour
         List<Tile> lowestTiles = new List<Tile>();
         int lowestTile = int.MaxValue;
 
-        //PropogateGrid on the set tile                     
-
+        //PropagateGrid on the set tile                     
         foreach (Tile tile in UnsetTiles)
         {
             if (tile.NumberOfPossiblePatterns < lowestTile)
@@ -169,57 +168,10 @@ public class ConstraintSolver : MonoBehaviour
         int rndIndex = Random.Range(0, lowestTiles.Count);
         Tile tileToSet = lowestTiles[rndIndex];
 
-        Debug.Log(" Random Index " + lowestTiles.Count);
-
+        Debug.Log("Random Index " + lowestTiles.Count);
 
         //Assign one of the possible patterns to the tile
         tileToSet.AssignRandomPossiblePattern();
-    }
-
-    //Cardinal Directions Establishment 
-    public List<Vector3Int> GetTileDirectionList()
-    {
-        List<Vector3Int> tileDirections = new List<Vector3Int>();
-        foreach (Vector3Int tileDirection in Util.Directions)
-        {
-            if (Util.CheckInBounds(GridDimensions, Index))
-            {
-                tileDirections.Add((Vector3Int)tileDirection);
-            }
-        }
-        return tileDirections;
-
-    }
-
-    //tile to unsetTile, added possibleNeighbours, List<Tile> newPossiblePatterns
-    public List<Tile> GetNeighbour(List<TilePattern> newPossiblePatterns)
-    {
-        List<Tile> possibleNeighbours = new List<Tile>();
-        IEnumerable<object> tileDirections = null;
-        foreach (var unsetTiles in tileDirections)
-        {
-            if (unsetTiles == newPossiblePatterns)
-            {
-                possibleNeighbours.Add((Tile)unsetTiles);
-            }
-        }
-
-        return possibleNeighbours;
-    }
-
-    public List<Tile> GetUnsetTiles()
-    {
-        List<Tile> unsetTiles = new List<Tile>();
-
-        //Loop over all the tiles and check which ones are not set
-        foreach (var tile in GetTilesFlattened())
-        {
-            if (!tile.Set) unsetTiles.Add(tile);
-
-            Debug.Log(tile.PossiblePatterns.Count);
-        }
-        Debug.Log(unsetTiles.Count);
-        return unsetTiles;
     }
 
     private List<Tile> GetTilesFlattened()
@@ -237,7 +189,77 @@ public class ConstraintSolver : MonoBehaviour
         }
         return tiles;
     }
+    #endregion
 
+    #region public functions
+    public void RunWFC()
+    {
+        // destroy old tiles everytime we run WFC
+        foreach (var GO in TileGOs)
+        {
+            GameObject.Destroy(GO);
+        }
+
+        //Set up the tile grid
+        MakeTiles();
+
+        // build tiles according to the site geometry
+        var validIndices = GetValidIndices();
+        DisableTilesNotInSite(validIndices);
+
+        // add a random tile to a random position
+        var randomIndex = validIndices[Random.Range(0, validIndices.Count)];
+        TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignPattern(_patternLibrary[1]);
+
+        GetNextTile();
+    }
+
+    //Cardinal Directions Establishment 
+    public List<Vector3Int> GetTileDirectionList()
+    {
+        List<Vector3Int> tileDirections = new List<Vector3Int>();
+        foreach (Vector3Int tileDirection in Util.Directions)
+        {
+            if (Util.CheckInBounds(GridDimensions, Index))
+            {
+                tileDirections.Add((Vector3Int)tileDirection);
+            }
+        }
+        return tileDirections;
+    }
+
+    //tile to unsetTile, added possibleNeighbours, List<Tile> newPossiblePatterns
+    public List<Tile> GetNeighbour(List<TilePattern> newPossiblePatterns)
+    {
+        List<Tile> possibleNeighbours = new List<Tile>();
+        IEnumerable<object> tileDirections = null;
+        foreach (var unsetTiles in tileDirections)
+        {
+            if (unsetTiles == newPossiblePatterns)
+            {
+                possibleNeighbours.Add((Tile)unsetTiles);
+            }
+        }
+        return possibleNeighbours;
+    }
+
+    public List<Tile> GetUnsetTiles()
+    {
+        List<Tile> unsetTiles = new List<Tile>();
+
+        //Loop over all the tiles and check which ones are not set
+        foreach (var tile in GetTilesFlattened())
+        {
+            if (!tile.Set) unsetTiles.Add(tile);
+
+            Debug.Log(tile.PossiblePatterns.Count);
+        }
+        Debug.Log(unsetTiles.Count);
+        return unsetTiles;
+    }
+    #endregion
+
+    #region Buttons
     //this function removes the colored sides used for connections
     public void ToggleConnectionVisibility()
     {
@@ -245,12 +267,33 @@ public class ConstraintSolver : MonoBehaviour
         {
             if (tile.Set)
             {
-                tile.VisibilitySwitch();
+                tile.ToggleVisibility();
             }
         }
-
     }
 
+    public void ToggleSiteVisibility()
+    {
+        foreach (var renderer in GroundFloor.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.enabled = !renderer.enabled;
+        }
+
+        foreach (var renderer in FirstFloor.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.enabled = !renderer.enabled;
+        }
+
+        foreach (var renderer in SecondFloor.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.enabled = !renderer.enabled;
+        }
+
+        foreach (var renderer in ThirdFloor.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.enabled = !renderer.enabled;
+        }
+    }
     #endregion
 }
 

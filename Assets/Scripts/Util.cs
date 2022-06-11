@@ -36,10 +36,10 @@ public static class Util
         { 5, 4 }
     };
 
-/// <summary>
-/// Generate a random color
-/// </summary>
-public static Color RandomColor
+    /// <summary>
+    /// Generate a random color
+    /// </summary>
+    public static Color RandomColor
     {
         get
         {
@@ -309,5 +309,21 @@ public static Color RandomColor
         return index.x >= 0 && index.x < gridSize.x &&
                index.y >= 0 && index.y < gridSize.y &&
                index.z >= 0 && index.z < gridSize.z;
+    }
+
+    public static Vector3 IndexToRealPosition(Vector3Int index, Vector3 tileSize)
+    {
+        var posX = index.x * tileSize.x + 0.5f * tileSize.x;
+        var posY = index.y * tileSize.y + 0.5f * tileSize.y;
+        var posZ = index.z * tileSize.z + 0.5f * tileSize.z;
+        return new Vector3(posX, posY, posZ);
+    }
+
+    public static Vector3Int RealPositionToIndex(Vector3 position, Vector3 tileSize)
+    {
+        var indexX = (position.x - 0.5f * tileSize.x) / tileSize.x;
+        var indexY = (position.y - 0.5f * tileSize.y) / tileSize.y;
+        var indexZ = (position.z - 0.5f * tileSize.z) / tileSize.z;
+        return new Vector3Int((int)indexX, (int)indexY, (int)indexZ);
     }
 }

@@ -80,7 +80,7 @@ public class CollisionTest : MonoBehaviour
 
         //Load all the prefabs
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
-        
+
 
         //Select the prefabs with tag Part
         _parts = prefabs.Where(g =>
@@ -481,7 +481,7 @@ public class CollisionTest : MonoBehaviour
 
                 var sizeX = whatWeHit.bounds.size.x;
                 var sizeZ = whatWeHit.bounds.size.z;
-                var minSizeAxis = Mathf.Min(sizeX, sizeZ); 
+                var minSizeAxis = Mathf.Min(sizeX, sizeZ);
                 var centerX = whatWeHit.bounds.center.x;
                 var centerZ = whatWeHit.bounds.center.z;
 
@@ -489,7 +489,7 @@ public class CollisionTest : MonoBehaviour
                 if (minSizeAxis == sizeX)
                 {
                     pos = new Vector3(centerX, boundingBoxMinY, hitPoint.z);
-                } 
+                }
                 else
                 {
                     pos = new Vector3(hitPoint.x, boundingBoxMinY, centerZ);
@@ -515,7 +515,7 @@ public class CollisionTest : MonoBehaviour
             // place the part with an offset because the placement happens by center point
             var positionWithYOffset = new Vector3(pos.x, pos.y + (sizeY / 2), pos.z);
             Debug.Log($"positionWithYOffset: {positionWithYOffset}");
-            
+
             //try to position the part by rotating it in all the directions and checking if it collides and is in bounds
             for (int j = 0; j < 4; j++)
             {
@@ -589,10 +589,10 @@ public class CollisionTest : MonoBehaviour
     public void OnNewLayerOnTopButtonClicked()
     {
         var newBB = Instantiate(WallsPrefab, _boundingBoxes[currentYLayer].transform.position + new Vector3(0, _floorPlusWallsHeight, 0), _boundingBoxes[currentYLayer].transform.rotation);
-        newBB.name = "BoundingBox"+currentYLayer;
+        newBB.name = "BoundingBox" + currentYLayer;
 
         var newFloor = Instantiate(FloorPrefab, _floorBBs[currentYLayer].transform.position + new Vector3(0, _floorPlusWallsHeight, 0), _floorBBs[currentYLayer].transform.rotation);
-        newFloor.name = "FloorBB"+currentYLayer;
+        newFloor.name = "FloorBB" + currentYLayer;
 
         currentYLayer++;
         _boundingBoxes[currentYLayer] = newBB;

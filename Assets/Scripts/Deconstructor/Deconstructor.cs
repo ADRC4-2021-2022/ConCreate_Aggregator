@@ -29,10 +29,10 @@ public class Deconstructor : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _supportsColor = new Color(248 / 255f, 223/ 255f, 129/255f, 0.3f);
-        _othersColor = new Color(160/255f, 206/255f, 217/255f, 0.3f);
-        _wallsColor = new Color(255/255f, 16/255f, 255/255f, 0.3f);
-        _columnsColor = new Color(213/255f, 182 / 255f, 213 / 255f, 0.3f);
+        _supportsColor = new Color(248 / 255f, 223 / 255f, 129 / 255f, 0.3f);
+        _othersColor = new Color(160 / 255f, 206 / 255f, 217 / 255f, 0.3f);
+        _wallsColor = new Color(255 / 255f, 16 / 255f, 255 / 255f, 0.3f);
+        _columnsColor = new Color(213 / 255f, 182 / 255f, 213 / 255f, 0.3f);
         _liftsColor = new Color(186 / 255f, 223 / 255f, 218 / 255f, 0.3f);
         _floorsColor = new Color(155 / 255f, 208 / 255f, 183 / 255f, 0.3f);
 
