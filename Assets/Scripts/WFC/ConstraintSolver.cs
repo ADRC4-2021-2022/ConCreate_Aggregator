@@ -9,6 +9,7 @@ public class ConstraintSolver : MonoBehaviour
 
     #region Serialized fields
     public Vector3Int GridDimensions;
+    public GameObject WFCAggregator;
     [SerializeField]
     public Vector3 TileSize = new Vector3(4, 3, 4);
     #endregion
@@ -190,6 +191,19 @@ public class ConstraintSolver : MonoBehaviour
         }
         return tiles;
     }
+
+    public List<Tile> GetSetTilesByYLayer(int yLayer)
+    {
+        List<Tile> tiles = new List<Tile>();
+        for (int x = 0; x < GridDimensions.x; x++)
+        {
+            for (int z = 0; z < GridDimensions.z; z++)
+            {
+                if (TileGrid[x, yLayer, z].Set) tiles.Add(TileGrid[x, yLayer, z]);
+            }
+        }
+        return tiles;
+    }
     #endregion
 
     #region public functions
@@ -223,7 +237,7 @@ public class ConstraintSolver : MonoBehaviour
         {
             if (Util.CheckInBounds(GridDimensions, Index))
             {
-                tileDirections.Add((Vector3Int)tileDirection);
+                tileDirections.Add(tileDirection);
             }
         }
         return tileDirections;
@@ -307,8 +321,21 @@ public class ConstraintSolver : MonoBehaviour
             renderer.enabled = !renderer.enabled;
         }
     }
+
+    public void AggregateWallParts()
+    {
+        var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
+        aggregator.Initialise(TileSize, this);
+        aggregator.PlaceFirstWallPart();
+        aggregator.OnAutoWallPlacementButtonClicked();
+    }
+
+    public void AggregateFloorParts()
+    {
+        var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
+        aggregator.Initialise(TileSize, this);
+        aggregator.PlaceFirstFloorPart();
+        aggregator.OnAutoFloorPlacementButtonClicked();
+    }
     #endregion
 }
-
-
-

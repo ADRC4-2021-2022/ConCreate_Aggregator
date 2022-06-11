@@ -12,7 +12,6 @@ public class TileConnection
 
     #endregion
 
-
     #region constructors
     public TileConnection(ConnectionType type, string name)
     {
