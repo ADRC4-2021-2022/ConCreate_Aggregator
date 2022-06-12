@@ -6,8 +6,8 @@ using UnityEngine;
 public class WFC_Aggregator : MonoBehaviour
 {
     #region VARIABLES
-    private IEnumerator _autoWallPlacementCoroutine;
-    private IEnumerator _autoFloorPlacementCoroutine;
+    public IEnumerator AutoWallPlacementCoroutine;
+    public IEnumerator AutoFloorPlacementCoroutine;
 
     public Vector3 _tileSize;
     private ConstraintSolver _solver;
@@ -28,13 +28,14 @@ public class WFC_Aggregator : MonoBehaviour
 
     private int _currentFloorLayer = 0;
     private int _currentWallLayer = 0;
+    private int _floorFailureCounter = 0;
+    private int _wallFailureCounter = 0;
+    private readonly int _failureTolerance = 500;
     #endregion
 
     public void Start()
     {
         _neighbours = new Collider[_maxNeighboursToCheck]; // initialize neighbors' array
-        _autoWallPlacementCoroutine = AutoWallPlacement();
-        _autoFloorPlacementCoroutine = AutoFloorPlacement();
     }
 
     #region LOADING PREFABS (wall/floor)
@@ -115,32 +116,33 @@ public class WFC_Aggregator : MonoBehaviour
             _solver = constraintSolver;
             LoadWallPartPrefabs();
             LoadFloorPartPrefabs();
-            PlaceFirstWallPart();
-            PlaceFirstFloorPart();
+            PlaceWallPartRandomPosition();
+            PlaceFloorPartRandomPosition();
         }
     }
 
-    public void PlaceFirstWallPart()
+    public void PlaceWallPartRandomPosition()
     {
         _wallParts.Shuffle();
-        var firstTile = _solver.GetSetTilesByYLayer(_currentWallLayer).First();
+        var setTilesInCurrentLayer = _solver.GetSetTilesByYLayer(_currentWallLayer);
+        var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _wallParts.Count; i++)
         {
             Part part = _wallParts[i];
             var size = part.Collider.sharedMesh.bounds.size;
             var extents = size / 2;
             GameObject wallGO = null;
-            for (int j = 0; j < firstTile.CurrentGo.transform.childCount; j++)
+            for (int j = 0; j < randomTile.CurrentGo.transform.childCount; j++)
             {
-                var child = firstTile.CurrentGo.transform.GetChild(j);
+                var child = randomTile.CurrentGo.transform.GetChild(j);
                 if (child.name.Equals("Wall")) wallGO = child.GetChild(0).gameObject;
             }
-            if (wallGO == null) Debug.Log($"Failed to find wall GO for tile {firstTile}");
+            if (wallGO == null) Debug.Log($"Failed to find wall GO for tile {randomTile}");
             var minPoint = wallGO.GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
             for (int k = 0; k < 4; k++)
             {
                 part.PlaceFirstPart(minPoint + extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithPositiveExtents = IsInsideWalls(part);
+                bool isInsideWithPositiveExtents = !IsColliding(part, _placedWallParts) && IsInsideWalls(part);
                 if (isInsideWithPositiveExtents)
                 {
                     _wallParts.Remove(part);
@@ -154,7 +156,7 @@ public class WFC_Aggregator : MonoBehaviour
                     Debug.Log($"First part {part.Name} was outside");
                 }
                 part.PlaceFirstPart(minPoint - extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithNegativeExtents = IsInsideWalls(part);
+                bool isInsideWithNegativeExtents = !IsColliding(part, _placedWallParts) && IsInsideWalls(part);
                 if (isInsideWithNegativeExtents)
                 {
                     _wallParts.Remove(part);
@@ -169,29 +171,31 @@ public class WFC_Aggregator : MonoBehaviour
                 }
             }
         }
+        Debug.Log("Failed to place new part in random position");
     }
 
-    public void PlaceFirstFloorPart()
+    public void PlaceFloorPartRandomPosition()
     {
         _floorParts.Shuffle();
-        var firstTile = _solver.GetSetTilesByYLayer(_currentFloorLayer).First();
+        var setTilesInCurrentLayer = _solver.GetSetTilesByYLayer(_currentFloorLayer);
+        var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _floorParts.Count; i++)
         {
             Part part = _floorParts[i];
             var size = part.Collider.sharedMesh.bounds.size;
             var extents = size / 2;
             GameObject floorGO = null;
-            for (int j = 0; j < firstTile.CurrentGo.transform.childCount; j++)
+            for (int j = 0; j < randomTile.CurrentGo.transform.childCount; j++)
             {
-                var child = firstTile.CurrentGo.transform.GetChild(j);
+                var child = randomTile.CurrentGo.transform.GetChild(j);
                 if (child.name.Equals("Floor")) floorGO = child.GetChild(0).gameObject;
             }
-            if (floorGO == null) Debug.Log($"Failed to find floor GO for tile {firstTile}");
+            if (floorGO == null) Debug.Log($"Failed to find floor GO for tile {randomTile}");
             var minPoint = floorGO.GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
             for (int k = 0; k < 4; k++)
             {
                 part.PlaceFirstPart(new Vector3(minPoint.x + extents.x, extents.z, minPoint.z + extents.y), Quaternion.Euler(new Vector3(90, 90 * k, 0)));
-                bool isInsideWithPositiveExtents = IsInsideFloors(part);
+                bool isInsideWithPositiveExtents = !IsColliding(part, _placedFloorParts) && IsInsideFloors(part);
                 if (isInsideWithPositiveExtents)
                 {
                     _floorParts.Remove(part);
@@ -204,14 +208,14 @@ public class WFC_Aggregator : MonoBehaviour
                     part.ResetPart();
                     Debug.Log($"First part {part.Name} was outside");
                 }
-                
             }
         }
+        Debug.Log("Failed to place new part in random position");
     }
     #endregion
 
     #region PLACING NEXT PARTS (wall/floor)
-    private void PlaceNextWallPart()
+    private bool PlaceNextWallPart()
     {
         // find all the available connections in the entire building made up of placed parts
         List<Connection> availableConnectionsInCurrentBuilding = new();
@@ -258,16 +262,16 @@ public class WFC_Aggregator : MonoBehaviour
                 unplacedConnection.ThisPart.PlacePart(unplacedConnection);
                 randomAvailableConnectionInCurrentBuilding.Available = false;
                 string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedWallParts.Count + 1} (wall)";
-                Vector3 unplacedPartPos = unplacedConnection.ThisPart.GOPart.transform.position;
                 unplacedConnection.ThisPart.Name = newName;
                 _wallParts.Remove(unplacedConnection.ThisPart);
                 _placedWallParts.Add(unplacedConnection.ThisPart);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
-    private void PlaceNextFloorPart()
+    private bool PlaceNextFloorPart()
     {
         // find all the available connections in the entire building made up of placed parts
         List<Connection> availableConnectionsInFloor = new();
@@ -315,13 +319,13 @@ public class WFC_Aggregator : MonoBehaviour
                 unplacedConnection.ThisPart.PlacePart(unplacedConnection);
                 randomAvailableConnectionInFloor.Available = false;
                 string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedFloorParts.Count + 1} (floor)";
-                Vector3 unplacedPartPos = unplacedConnection.ThisPart.GOPart.transform.position;
                 unplacedConnection.ThisPart.Name = newName;
                 _floorParts.Remove(unplacedConnection.ThisPart);
                 _placedFloorParts.Add(unplacedConnection.ThisPart);
-                return;
+                return true;
             }
         }
+        return false;
     }
     #endregion
 
@@ -430,6 +434,8 @@ public class WFC_Aggregator : MonoBehaviour
     /// <returns>True if collision is found, false if not</returns>
     private bool IsColliding(Part newPart, List<Part> parts)
     {
+        if (parts.Count == 0) return false;
+
         var thisCollider = newPart.Collider;
         if (!thisCollider)
         {
@@ -556,39 +562,59 @@ public class WFC_Aggregator : MonoBehaviour
     private IEnumerator AutoWallPlacement()
     {
         Debug.Log("Auto wall placement started");
-        for (int i = 0; i < 250; i++)
+        while(true)
         {
-            PlaceNextWallPart();
             LoadWallPartPrefabs();
+            if (PlaceNextWallPart()) _wallFailureCounter++;
+            if (_wallFailureCounter > _failureTolerance)
+            {
+                PlaceWallPartRandomPosition();
+                _wallFailureCounter = 0;
+            }
             yield return new WaitForSeconds(0.1f);
         }
-        Debug.Log("Auto wall placement finished");
-        yield return new WaitForSeconds(1f);
     }
 
     private IEnumerator AutoFloorPlacement()
     {
         Debug.Log("Auto floor placement started");
-        for (int i = 0; i < 250; i++)
+        while(true)
         {
-            PlaceNextFloorPart();
             LoadFloorPartPrefabs();
+            if (PlaceNextFloorPart()) _floorFailureCounter++;
+            if (_floorFailureCounter > _failureTolerance)
+            {
+                PlaceFloorPartRandomPosition();
+                _floorFailureCounter = 0;
+            }
             yield return new WaitForSeconds(0.1f);
         }
-        Debug.Log("Auto floor placement finished");
-        yield return new WaitForSeconds(1f);
     }
 
     public void OnAutoWallPlacementButtonClicked()
     {
-        _autoWallPlacementCoroutine = AutoWallPlacement();
-        StartCoroutine(_autoWallPlacementCoroutine);
+        AutoWallPlacementCoroutine = AutoWallPlacement();
+        StartCoroutine(AutoWallPlacementCoroutine);
     }
 
     public void OnAutoFloorPlacementButtonClicked()
     {
-        _autoFloorPlacementCoroutine = AutoFloorPlacement();
-        StartCoroutine(_autoFloorPlacementCoroutine);
+        AutoFloorPlacementCoroutine = AutoFloorPlacement();
+        StartCoroutine(AutoFloorPlacementCoroutine);
+    }
+
+    public void StopAutoWallPlacement()
+    {
+        StopCoroutine(AutoWallPlacementCoroutine);
+        Debug.Log("Auto wall placement stopped by user");
+        AutoWallPlacementCoroutine = null;
+    }
+
+    public void StopAutoFloorPlacement()
+    {
+        StopCoroutine(AutoFloorPlacementCoroutine);
+        Debug.Log("Auto floor placement stopped by user");
+        AutoFloorPlacementCoroutine = null;
     }
     #endregion
 }

@@ -336,16 +336,30 @@ public class ConstraintSolver : MonoBehaviour
     {
         var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
         aggregator.Initialise(TileSize, this);
-        aggregator.PlaceFirstWallPart();
-        aggregator.OnAutoWallPlacementButtonClicked();
+        aggregator.PlaceWallPartRandomPosition();
+        if (aggregator.AutoWallPlacementCoroutine == null)
+        {
+            aggregator.OnAutoWallPlacementButtonClicked();
+        }
+        else
+        {
+            aggregator.StopAutoWallPlacement();
+        }
     }
 
     public void AggregateFloorParts()
     {
         var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
         aggregator.Initialise(TileSize, this);
-        aggregator.PlaceFirstFloorPart();
-        aggregator.OnAutoFloorPlacementButtonClicked();
+        aggregator.PlaceFloorPartRandomPosition();
+        if (aggregator.AutoFloorPlacementCoroutine == null)
+        {
+            aggregator.OnAutoFloorPlacementButtonClicked();
+        }
+        else
+        {
+            aggregator.StopAutoFloorPlacement();
+        }
     }
     #endregion
 }
