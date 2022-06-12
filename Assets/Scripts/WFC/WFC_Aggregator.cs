@@ -353,17 +353,30 @@ public class WFC_Aggregator : MonoBehaviour
             foreach (var tile in _solver.GetSetTilesByYLayer(_currentWallLayer))
             {
                 var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
-                GameObject wallGO = null;
+                List <GameObject> wallGOs = new();
                 for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
                 {
                     var child = tile.CurrentGo.transform.GetChild(i);
-                    if (child.name.Equals("Wall")) wallGO = child.GetChild(0).gameObject;
+                    if (child.name.Equals("Wall"))
+                    {
+                        for (int j = 0; j < child.transform.childCount; j++)
+                        {
+                            wallGOs.Add(child.GetChild(j).gameObject);
+                        }
+                    }
                 }
-                if (wallGO == null) return false;
-                if ((vertexToWorldSpace - wallGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                if (wallGOs.Count == 0) return false;
+                foreach (var wallGO in wallGOs)
                 {
-                    foundNearbyTileForVertex = true;
-                    break; // go to next vertex
+                    if ((vertexToWorldSpace - wallGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                    {
+                        foundNearbyTileForVertex = true;
+                        break; // go to next vertex
+                    }
+                }
+                if (foundNearbyTileForVertex)
+                {
+                    break;
                 }
             }
             if (!foundNearbyTileForVertex) return false;
@@ -380,17 +393,30 @@ public class WFC_Aggregator : MonoBehaviour
             foreach (var tile in _solver.GetSetTilesByYLayer(_currentFloorLayer))
             {
                 var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
-                GameObject floorGO = null;
+                List<GameObject> floorGOs = new();
                 for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
                 {
                     var child = tile.CurrentGo.transform.GetChild(i);
-                    if (child.name.Equals("Floor")) floorGO = child.GetChild(0).gameObject;
+                    if (child.name.Equals("Floor"))
+                    {
+                        for (int j = 0; j < child.transform.childCount; j++)
+                        {
+                            floorGOs.Add(child.GetChild(j).gameObject);
+                        }
+                    }
                 }
-                if (floorGO == null) return false;
-                if ((vertexToWorldSpace - floorGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                if (floorGOs.Count == 0) return false;
+                foreach (var floorGO in floorGOs)
                 {
-                    foundNearbyTileForVertex = true;
-                    break; // go to next vertex
+                    if ((vertexToWorldSpace - floorGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                    {
+                        foundNearbyTileForVertex = true;
+                        break; // go to next vertex
+                    }
+                }
+                if (foundNearbyTileForVertex)
+                {
+                    break;
                 }
             }
             if (!foundNearbyTileForVertex) return false;

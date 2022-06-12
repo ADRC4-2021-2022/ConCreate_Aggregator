@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -317,6 +318,15 @@ public class ConstraintSolver : MonoBehaviour
         }
 
         foreach (var renderer in ThirdFloor.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.enabled = !renderer.enabled;
+        }
+    }
+
+    public void ToggleTilesVisibility()
+    {
+        var tileRenderers = GetTilesFlattened().Where(t => t.CurrentGo != null).SelectMany(t => t.CurrentGo.GetComponentsInChildren<MeshRenderer>());
+        foreach (var renderer in tileRenderers)
         {
             renderer.enabled = !renderer.enabled;
         }
