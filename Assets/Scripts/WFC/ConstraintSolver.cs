@@ -193,7 +193,12 @@ public class ConstraintSolver : MonoBehaviour
         return tiles;
     }
 
-    public List<Tile> GetSetTilesByYLayer(int yLayer)
+    /// <summary>
+    /// Set tiles floor by floor according to the current layer
+    /// </summary>
+    /// <param name="yLayer">The current layer</param>
+    /// <returns>list of tiles for the current layer</returns>
+    public List<Tile> GetTilesByYLayer(int yLayer)
     {
         List<Tile> tiles = new List<Tile>();
         for (int x = 0; x < GridDimensions.x; x++)

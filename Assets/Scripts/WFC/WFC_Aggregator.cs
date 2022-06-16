@@ -15,6 +15,7 @@ public class WFC_Aggregator : MonoBehaviour
     private readonly float _overlapTolerance = 0.03f; // used by compute penetration
     private readonly float _connectionTolerance = 0.2f; // tolerance of matching connections
     private readonly float _vertexDistanceTolerance = 0.1f;
+    private readonly float _tileToPartMaxDistance = 4f;
     private bool _connectionMatchingEnabled = true;
     private bool _hasBeenInitialised = false;
 
@@ -30,7 +31,7 @@ public class WFC_Aggregator : MonoBehaviour
     private int _currentWallLayer = 0;
     private int _floorFailureCounter = 0;
     private int _wallFailureCounter = 0;
-    private readonly int _failureTolerance = 500;
+    private readonly int _failureTolerance = 3;
     #endregion
 
     public void Start()
@@ -124,7 +125,7 @@ public class WFC_Aggregator : MonoBehaviour
     public void PlaceWallPartRandomPosition()
     {
         _wallParts.Shuffle();
-        var setTilesInCurrentLayer = _solver.GetSetTilesByYLayer(_currentWallLayer);
+        var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentWallLayer);
         var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _wallParts.Count; i++)
         {
@@ -177,7 +178,7 @@ public class WFC_Aggregator : MonoBehaviour
     public void PlaceFloorPartRandomPosition()
     {
         _floorParts.Shuffle();
-        var setTilesInCurrentLayer = _solver.GetSetTilesByYLayer(_currentFloorLayer);
+        var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentFloorLayer);
         var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _floorParts.Count; i++)
         {
@@ -260,6 +261,9 @@ public class WFC_Aggregator : MonoBehaviour
             {
                 //Set the part as placed
                 unplacedConnection.ThisPart.PlacePart(unplacedConnection);
+                Debug.Log($"{_wallFailureCounter} wall failures");
+                _wallFailureCounter = 0;
+
                 randomAvailableConnectionInCurrentBuilding.Available = false;
                 string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedWallParts.Count + 1} (wall)";
                 unplacedConnection.ThisPart.Name = newName;
@@ -317,6 +321,9 @@ public class WFC_Aggregator : MonoBehaviour
             {
                 //Set the part as placed
                 unplacedConnection.ThisPart.PlacePart(unplacedConnection);
+                Debug.Log($"{_floorFailureCounter} floor failures");
+                _floorFailureCounter = 0;
+
                 randomAvailableConnectionInFloor.Available = false;
                 string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedFloorParts.Count + 1} (floor)";
                 unplacedConnection.ThisPart.Name = newName;
@@ -354,33 +361,93 @@ public class WFC_Aggregator : MonoBehaviour
         foreach (var vertex in vertices)
         {
             bool foundNearbyTileForVertex = false;
-            foreach (var tile in _solver.GetSetTilesByYLayer(_currentWallLayer))
+            foreach (var tile in _solver.GetTilesByYLayer(_currentWallLayer))
             {
-                var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
-                List <GameObject> wallGOs = new();
-                for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
+                //check if the part is within an accaptable distance to be able to collide
+                Vector3 tilePosition = tile.CurrentGo.transform.position;
+                Vector3 partPosition = part.GOPart.transform.position;
+                if (Vector3.Distance(tilePosition, partPosition) < _tileToPartMaxDistance)
                 {
-                    var child = tile.CurrentGo.transform.GetChild(i);
-                    if (child.name.Equals("Wall"))
+
+                    var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
+                    List<GameObject> wallGOs = new();
+                    for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
                     {
-                        for (int j = 0; j < child.transform.childCount; j++)
+                        var child = tile.CurrentGo.transform.GetChild(i);
+                        if (child.gameObject.layer == 7)
                         {
-                            wallGOs.Add(child.GetChild(j).gameObject);
+                            for (int j = 0; j < child.transform.childCount; j++)
+                            {
+                                wallGOs.Add(child.GetChild(j).gameObject);
+                            }
                         }
                     }
-                }
-                if (wallGOs.Count == 0) return false;
-                foreach (var wallGO in wallGOs)
-                {
-                    if ((vertexToWorldSpace - wallGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                    if (wallGOs.Count == 0) 
+                        return false;
+                    foreach (var wallGO in wallGOs)
                     {
-                        foundNearbyTileForVertex = true;
-                        break; // go to next vertex
+                        if ((vertexToWorldSpace - wallGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                        {
+                            foundNearbyTileForVertex = true;
+                            break; // go to next vertex
+                        }
+                    }
+                    if (foundNearbyTileForVertex)
+                    {
+                        break;
                     }
                 }
-                if (foundNearbyTileForVertex)
+            }
+            if (!foundNearbyTileForVertex)
+            {
+                return false;
+            }
+                
+        }
+        return true;
+    }
+
+    private bool IsInsideFloors(Part part)
+    {
+
+        var vertices = part.Collider.sharedMesh.vertices;
+        foreach (var vertex in vertices)
+        {
+            bool foundNearbyTileForVertex = false;
+            var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
+
+            foreach (Tile tile in _solver.GetTilesByYLayer(_currentFloorLayer))
+            {
+                Vector3 tilePosition = tile.CurrentGo.transform.position;
+                Vector3 partPosition = part.GOPart.transform.position;
+                if (Vector3.Distance(tilePosition, partPosition) < _tileToPartMaxDistance)
                 {
-                    break;
+
+                    List<GameObject> floorGOs = new();
+                    for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
+                    {
+                        var child = tile.CurrentGo.transform.GetChild(i);
+                        if (child.gameObject.layer == 8)
+                        {
+                            for (int j = 0; j < child.transform.childCount; j++)
+                            {
+                                floorGOs.Add(child.GetChild(j).gameObject);
+                            }
+                        }
+                    }
+                    //if (floorGOs.Count == 0) return false;
+                    foreach (var floorGO in floorGOs)
+                    {
+                        if ((vertexToWorldSpace - floorGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                        {
+                            foundNearbyTileForVertex = true;
+                            break; // go to next vertex
+                        }
+                    }
+                    if (foundNearbyTileForVertex)
+                    {
+                        break;
+                    }
                 }
             }
             if (!foundNearbyTileForVertex) return false;
@@ -388,44 +455,70 @@ public class WFC_Aggregator : MonoBehaviour
         return true;
     }
 
-    private bool IsInsideFloors(Part part)
+    private List<GameObject> GetChildrenByLayer(GameObject parent, int layer)
     {
-        var vertices = part.Collider.sharedMesh.vertices;
-        foreach (var vertex in vertices)
+        List<GameObject> childrenGO = new List<GameObject>();
+        for (int i = 0; i < parent.transform.childCount; i++)
         {
-            bool foundNearbyTileForVertex = false;
-            foreach (var tile in _solver.GetSetTilesByYLayer(_currentFloorLayer))
+            var child = parent.transform.GetChild(i);
+            if (child.gameObject.layer == layer)
             {
-                var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
-                List<GameObject> floorGOs = new();
-                for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
+                for (int j = 0; j < child.transform.childCount; j++)
                 {
-                    var child = tile.CurrentGo.transform.GetChild(i);
-                    if (child.name.Equals("Floor"))
-                    {
-                        for (int j = 0; j < child.transform.childCount; j++)
-                        {
-                            floorGOs.Add(child.GetChild(j).gameObject);
-                        }
-                    }
+                    childrenGO.Add(child.GetChild(j).gameObject);
                 }
-                if (floorGOs.Count == 0) return false;
+            }
+        }
+        return childrenGO;
+    }
+    /// <summary>
+    /// Refactored version of the isInsideFloor and isInsideWall functions. Doesn't work at the moment.
+    /// </summary>
+    /// <param name="part"></param>
+    /// <param name="floorWallLayer"></param>
+    /// <returns></returns>
+    private bool IsInsideTiles(Part part, int floorWallLayer)
+    {
+        var tiles = _solver.GetTilesByYLayer(_currentFloorLayer);
+
+        // take the world positions of the vertices
+        Vector3[] vertexPositions = part.Collider.sharedMesh.vertices.Select(v => part.GOPart.transform.TransformPoint(v)).ToArray();
+        BitArray vertexInside = new BitArray(vertexPositions.Length, false);
+
+
+        //run over all the tiles
+        foreach (var tile in tiles)
+        {
+            //Check if the part is within a certain distance of the tile
+            Vector3 tilePosition = tile.CurrentGo.transform.position;
+            Vector3 partPosition = part.GOPart.transform.position;
+            if (Vector3.Distance(tilePosition, partPosition) > _tileToPartMaxDistance)
+                break;
+
+            //check if the centrepoint of the part is in a tile
+            bool centrePointInside = true;
+            if (!centrePointInside)
+                break;
+
+
+            //check if all the vertices are inside a tile
+            for (int i = 0; i < vertexPositions.Length; i++)
+            {
+                List<GameObject> floorGOs = GetChildrenByLayer(tile.CurrentGo, 8);
                 foreach (var floorGO in floorGOs)
                 {
-                    if ((vertexToWorldSpace - floorGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                    if ((vertexPositions[i] - floorGO.GetComponent<MeshCollider>().ClosestPoint(vertexPositions[i])).magnitude < _vertexDistanceTolerance)
                     {
-                        foundNearbyTileForVertex = true;
+                        vertexInside[i] = true;
                         break; // go to next vertex
                     }
                 }
-                if (foundNearbyTileForVertex)
-                {
-                    break;
-                }
             }
-            if (!foundNearbyTileForVertex) return false;
         }
-        return true;
+
+
+        return !vertexInside.Cast<bool>().Contains(false);
+
     }
 
     /// <summary>
@@ -562,32 +655,32 @@ public class WFC_Aggregator : MonoBehaviour
     private IEnumerator AutoWallPlacement()
     {
         Debug.Log("Auto wall placement started");
-        while(true)
+        while (true)
         {
             LoadWallPartPrefabs();
-            if (PlaceNextWallPart()) _wallFailureCounter++;
+            if (!PlaceNextWallPart()) _wallFailureCounter++;
             if (_wallFailureCounter > _failureTolerance)
             {
                 PlaceWallPartRandomPosition();
                 _wallFailureCounter = 0;
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
     }
 
     private IEnumerator AutoFloorPlacement()
     {
         Debug.Log("Auto floor placement started");
-        while(true)
+        while (true)
         {
             LoadFloorPartPrefabs();
-            if (PlaceNextFloorPart()) _floorFailureCounter++;
+            if (!PlaceNextFloorPart()) _floorFailureCounter++;
             if (_floorFailureCounter > _failureTolerance)
             {
                 PlaceFloorPartRandomPosition();
                 _floorFailureCounter = 0;
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
     }
 

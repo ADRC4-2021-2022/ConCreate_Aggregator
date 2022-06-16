@@ -418,6 +418,18 @@ public class CollisionTest : MonoBehaviour
     /// <returns></returns>
     public bool IsValidPlacement(List<Transform> boxes, Part partToCheck)
     {
+        ////Check if the centre of the mesh is inside the boxes
+        //Vector3 centre = partToCheck.Collider.gameObject.GetComponent<Renderer>().bounds.center;
+        //bool isInBounds = false;
+        //for (int i = 0; i < boxes.Count; i++)
+        //{
+        //    if (boxes[i].GetComponent<Renderer>().bounds.Contains(centre))
+        //    {
+        //        isInBounds = true;
+        //    }
+        //}
+        //if (!isInBounds) return false;
+
         var partMesh = partToCheck.Collider.sharedMesh;
         var partVertices = partMesh.vertices;
         var totalVerticesInPart = partMesh.vertices.Count();
