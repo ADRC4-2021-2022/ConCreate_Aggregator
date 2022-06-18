@@ -7,7 +7,7 @@ using UnityEngine;
 public class ConstraintSolver : MonoBehaviour
 {
     #region public fields
-    public Vector3Int GridDimensions = new Vector3Int(19, 4, 10);
+    public Vector3Int GridDimensions = new Vector3Int(30, 4, 30);
     public GameObject WFCAggregator;
     public Vector3 TileSize = new Vector3(4, 3, 4);
     public Tile[,,] TileGrid { private set; get; }
@@ -15,10 +15,7 @@ public class ConstraintSolver : MonoBehaviour
     List<TileConnection> _connections;
 
     public GameObject[] GOPatternPrefabs;
-    public GameObject GroundFloor;
-    public GameObject FirstFloor;
-    public GameObject SecondFloor;
-    public GameObject ThirdFloor;
+    public GameObject[] GOFloorLayers;
     public List<GameObject> TileGOs;
     #endregion
 
@@ -57,17 +54,11 @@ public class ConstraintSolver : MonoBehaviour
     /// </summary>
     private List<Vector3Int> GetValidIndices()
     {
-        var layerMeshesGF = GroundFloor.transform;
-        var layerMeshes1F = FirstFloor.transform;
-        var layerMeshes2F = SecondFloor.transform;
-        var layerMeshes3F = ThirdFloor.transform;
-
         var validIndices = new List<Vector3Int>();
-        validIndices.AddRange(GetValidIndicesInYLayer(layerMeshesGF));
-        validIndices.AddRange(GetValidIndicesInYLayer(layerMeshes1F));
-        validIndices.AddRange(GetValidIndicesInYLayer(layerMeshes2F));
-        validIndices.AddRange(GetValidIndicesInYLayer(layerMeshes3F));
-
+        foreach (var floorLayer in GOFloorLayers)
+        {
+           validIndices.AddRange(GetValidIndicesInYLayer(floorLayer.transform));
+        }
         return validIndices;
     }
 
@@ -230,24 +221,12 @@ public class ConstraintSolver : MonoBehaviour
 
     public void ToggleSiteVisibility()
     {
-        foreach (var renderer in GroundFloor.GetComponentsInChildren<MeshRenderer>())
+        foreach (var floorLayer in GOFloorLayers)
         {
-            renderer.enabled = !renderer.enabled;
-        }
-
-        foreach (var renderer in FirstFloor.GetComponentsInChildren<MeshRenderer>())
-        {
-            renderer.enabled = !renderer.enabled;
-        }
-
-        foreach (var renderer in SecondFloor.GetComponentsInChildren<MeshRenderer>())
-        {
-            renderer.enabled = !renderer.enabled;
-        }
-
-        foreach (var renderer in ThirdFloor.GetComponentsInChildren<MeshRenderer>())
-        {
-            renderer.enabled = !renderer.enabled;
+            foreach (var renderer in floorLayer.GetComponentsInChildren<MeshRenderer>())
+            {
+                renderer.enabled = !renderer.enabled;
+            }
         }
     }
 

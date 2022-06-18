@@ -2490,10 +2490,11 @@ MonoBehaviour:
   - {fileID: 5645770400015679629, guid: 64ab8e2a578d8da4ebd13d59b273f76b, type: 3}
   - {fileID: 508205460014308611, guid: f9197abe4c3cca54ea88ab1f2cfb55e2, type: 3}
   - {fileID: 391160918004455032, guid: 8dbd86f3ea8977d46b932aa1bd70780d, type: 3}
-  GroundFloor: {fileID: 1508846154}
-  FirstFloor: {fileID: 221793684}
-  SecondFloor: {fileID: 47225392}
-  ThirdFloor: {fileID: 1283933718}
+  GOFloorLayers:
+  - {fileID: 1508846154}
+  - {fileID: 221793684}
+  - {fileID: 47225392}
+  - {fileID: 1283933718}
   TileGOs: []
 --- !u!4 &2067900747
 Transform:
