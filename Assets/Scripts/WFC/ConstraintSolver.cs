@@ -7,9 +7,9 @@ using UnityEngine;
 public class ConstraintSolver : MonoBehaviour
 {
     #region public fields
-    public Vector3Int GridDimensions = new Vector3Int(30, 4, 30);
+    public Vector3Int GridDimensions;
     public GameObject WFCAggregator;
-    public Vector3 TileSize = new Vector3(4, 3, 4);
+    public Vector3 TileSize;
     public Tile[,,] TileGrid { private set; get; }
     List<TilePattern> _patternLibrary;
     List<TileConnection> _connections;
@@ -25,6 +25,9 @@ public class ConstraintSolver : MonoBehaviour
 
     void Start()
     {
+        GridDimensions = new Vector3Int(30, 4, 30);
+        TileSize = new Vector3(4, 3, 4);
+
         //Add all connections
         _connections = new List<TileConnection>();
 
@@ -104,7 +107,7 @@ public class ConstraintSolver : MonoBehaviour
         while (true)
         {
             GetNextTile();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
         }
     }
 
@@ -142,7 +145,7 @@ public class ConstraintSolver : MonoBehaviour
     }
 
     /// <summary>
-    /// Set tiles floor by floor according to the current layer
+    /// Get a list of "set" tiles for a particular floor, according to the current layer
     /// </summary>
     /// <param name="yLayer">The current layer</param>
     /// <returns>list of tiles for the current layer</returns>

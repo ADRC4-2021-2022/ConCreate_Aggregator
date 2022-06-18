@@ -125,7 +125,7 @@ public class WFC_Aggregator : MonoBehaviour
     public void PlaceWallPartRandomPosition()
     {
         _wallParts.Shuffle();
-        var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentWallLayer);
+        var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentWallLayer).Where(t => t.CurrentGo != null).ToList();
         var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _wallParts.Count; i++)
         {
@@ -178,7 +178,7 @@ public class WFC_Aggregator : MonoBehaviour
     public void PlaceFloorPartRandomPosition()
     {
         _floorParts.Shuffle();
-        var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentFloorLayer);
+        var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentFloorLayer).Where(t => t.CurrentGo != null).ToList();
         var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _floorParts.Count; i++)
         {
@@ -361,14 +361,13 @@ public class WFC_Aggregator : MonoBehaviour
         foreach (var vertex in vertices)
         {
             bool foundNearbyTileForVertex = false;
-            foreach (var tile in _solver.GetTilesByYLayer(_currentWallLayer))
+            foreach (var tile in _solver.GetTilesByYLayer(_currentWallLayer).Where(t => t.CurrentGo != null))
             {
-                //check if the part is within an accaptable distance to be able to collide
+                //check if the part is within an acceptable distance to be able to collide
                 Vector3 tilePosition = tile.CurrentGo.transform.position;
                 Vector3 partPosition = part.GOPart.transform.position;
-                if (Vector3.Distance(tilePosition, partPosition) < _tileToPartMaxDistance)
+                if ((tilePosition - partPosition).magnitude < _tileToPartMaxDistance)
                 {
-
                     var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
                     List<GameObject> wallGOs = new();
                     for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
@@ -382,8 +381,7 @@ public class WFC_Aggregator : MonoBehaviour
                             }
                         }
                     }
-                    if (wallGOs.Count == 0)
-                        return false;
+                    if (wallGOs.Count == 0) return false;
                     foreach (var wallGO in wallGOs)
                     {
                         if ((vertexToWorldSpace - wallGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
@@ -416,13 +414,12 @@ public class WFC_Aggregator : MonoBehaviour
             bool foundNearbyTileForVertex = false;
             var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
 
-            foreach (Tile tile in _solver.GetTilesByYLayer(_currentFloorLayer))
+            foreach (Tile tile in _solver.GetTilesByYLayer(_currentFloorLayer).Where(t => t.CurrentGo != null))
             {
                 Vector3 tilePosition = tile.CurrentGo.transform.position;
                 Vector3 partPosition = part.GOPart.transform.position;
-                if (Vector3.Distance(tilePosition, partPosition) < _tileToPartMaxDistance)
+                if ((tilePosition - partPosition).magnitude < _tileToPartMaxDistance)
                 {
-
                     List<GameObject> floorGOs = new();
                     for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
                     {
@@ -435,7 +432,7 @@ public class WFC_Aggregator : MonoBehaviour
                             }
                         }
                     }
-                    //if (floorGOs.Count == 0) return false;
+                    if (floorGOs.Count == 0) return false;
                     foreach (var floorGO in floorGOs)
                     {
                         if ((vertexToWorldSpace - floorGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
