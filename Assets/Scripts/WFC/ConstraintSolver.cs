@@ -4,18 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 public class ConstraintSolver : MonoBehaviour
 {
-
-    #region Serialized fields
-    public Vector3Int GridDimensions;
-    public GameObject WFCAggregator;
-    [SerializeField]
-    public Vector3 TileSize = new Vector3(4, 3, 4);
-    #endregion
-
     #region public fields
+    public Vector3Int GridDimensions = new Vector3Int(19, 4, 10);
+    public GameObject WFCAggregator;
+    public Vector3 TileSize = new Vector3(4, 3, 4);
     public Tile[,,] TileGrid { private set; get; }
     List<TilePattern> _patternLibrary;
     List<TileConnection> _connections;
@@ -25,21 +19,15 @@ public class ConstraintSolver : MonoBehaviour
     public GameObject FirstFloor;
     public GameObject SecondFloor;
     public GameObject ThirdFloor;
-
-    public Vector3Int Index { get; private set; }
-
     public List<GameObject> TileGOs;
     #endregion
 
     #region private fields
     private IEnumerator _propagateStep;
-    private bool _isCollapsing = false;
     #endregion
 
     void Start()
     {
-        GridDimensions = new Vector3Int(19, 4, 10);
-
         //Add all connections
         _connections = new List<TileConnection>();
 
@@ -89,7 +77,7 @@ public class ConstraintSolver : MonoBehaviour
         {
             if (!validIndices.Contains(tile.Index))
             {
-                tile.PossiblePatterns = new List<TilePattern>();
+                tile.PossiblePatterns = new List<TilePattern>(); // i.e. PossiblePatterns.Count == 0
             }
         }
     }
@@ -124,7 +112,6 @@ public class ConstraintSolver : MonoBehaviour
     {
         while (true)
         {
-            _isCollapsing = true;
             GetNextTile();
             yield return new WaitForSeconds(0.5f);
         }
@@ -201,35 +188,6 @@ public class ConstraintSolver : MonoBehaviour
         // add a random tile to a random position
         var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
         TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignPattern(_patternLibrary[1]);
-    }
-
-    //Cardinal Directions Establishment 
-    public List<Vector3Int> GetTileDirectionList()
-    {
-        List<Vector3Int> tileDirections = new List<Vector3Int>();
-        foreach (Vector3Int tileDirection in Util.Directions)
-        {
-            if (Util.CheckInBounds(GridDimensions, Index))
-            {
-                tileDirections.Add(tileDirection);
-            }
-        }
-        return tileDirections;
-    }
-
-    //tile to unsetTile, added possibleNeighbours, List<Tile> newPossiblePatterns
-    public List<Tile> GetNeighbour(List<TilePattern> newPossiblePatterns)
-    {
-        List<Tile> possibleNeighbours = new List<Tile>();
-        IEnumerable<object> tileDirections = null;
-        foreach (var unsetTiles in tileDirections)
-        {
-            if (unsetTiles == newPossiblePatterns)
-            {
-                possibleNeighbours.Add((Tile)unsetTiles);
-            }
-        }
-        return possibleNeighbours;
     }
 
     public List<Tile> GetUnsetTiles()
@@ -338,7 +296,7 @@ public class ConstraintSolver : MonoBehaviour
         {
             StopCoroutine(_propagateStep);
             _propagateStep = null;
-        } 
+        }
         else
         {
             InitialiseWFCGrid();

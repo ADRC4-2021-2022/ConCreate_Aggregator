@@ -4,12 +4,10 @@ using System.Collections.Generic;
 public enum ConnectionType { WFC_conn0 = 0, WFC_connYellow = 1, WFC_connBlue = 2, WFC_connGreen = 3, WFC_connTop = 4, WFC_connBottom = 5 }
 public class TileConnection
 {
-
     #region public fields
     public ConnectionType Type;
     public string Name;
     public List<TilePattern> ConnectingTiles;
-
     #endregion
 
     #region constructors
@@ -18,7 +16,6 @@ public class TileConnection
         Type = type;
         Name = name;
     }
-
     #endregion
 
     #region public functions
@@ -27,7 +24,5 @@ public class TileConnection
         if (ConnectingTiles == null) ConnectingTiles = new List<TilePattern>();
         ConnectingTiles.Add(pattern);
     }
-
     #endregion
-
 }

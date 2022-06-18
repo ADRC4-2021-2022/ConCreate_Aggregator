@@ -2,16 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum PatternType { mat_ConPink, mat_ConYellow, mat_ConBlue, mat_ConOrange, mat_ConCyan, mat_ConGreen }
 public class TilePattern
 {
 
     #region public fields
-
     public List<TileConnection> ConnectionTypes;
     public TileConnection[] Connections;
     public int Index;
-
     #endregion
 
     #region private fields
@@ -27,7 +24,6 @@ public class TilePattern
         ConnectionTypes = connectionTypes;
         GetConnections();
     }
-
     #endregion
 
 

@@ -10,11 +10,10 @@ public class Tile
     public TilePattern CurrentTile;
     public GameObject CurrentGo;
 
-    private Dictionary<int, GameObject> _goTilePatternPrefabs;
     private bool _emptySet = false;
     private bool _showconnections = true;
     private Vector3 _tileSize;
-    private ConstraintSolver _solver;
+    private readonly ConstraintSolver _solver;
 
     //A tile is set if there is only one possible pattern
     public bool Set
@@ -30,17 +29,6 @@ public class Tile
         get
         {
             return PossiblePatterns.Count;
-        }
-    }
-
-    public MeshCollider Collider
-    {
-        get
-        {
-            if (CurrentGo == null)
-                return null;
-            else
-                return CurrentGo.GetComponentInChildren<MeshCollider>();
         }
     }
     #endregion
@@ -83,6 +71,7 @@ public class Tile
         }
 
         CurrentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[pattern.Index]);
+        CurrentGo.name = $"{_solver.GOPatternPrefabs[pattern.Index].name} [{Index.x}, {Index.y}, {Index.z}]";
         CurrentGo.transform.position = Util.IndexToRealPosition(Index, _tileSize);
         _solver.TileGOs.Add(CurrentGo);
         CurrentTile = pattern;
@@ -102,30 +91,28 @@ public class Tile
                 else if (i == 3) opposite = 2;
                 else if (i == 4) opposite = 5;
                 else opposite = 4;
-                neighbour.PossiblePatterns = neighbour.PossiblePatterns.Where(p => p.Connections[opposite].Type == connection).ToList();
+                neighbour.PossiblePatterns = neighbour.PossiblePatterns.Where(p => {
+                    if (p.Connections[opposite].Type == ConnectionType.WFC_conn0 && connection == ConnectionType.WFC_conn0)
+                    {
+                        return false;
+                    }
+                    else if (p.Connections[opposite].Type == ConnectionType.WFC_connBlue && connection == ConnectionType.WFC_conn0)
+                    {
+                        return true;
+                    }
+                    else if (p.Connections[opposite].Type == ConnectionType.WFC_conn0 && connection == ConnectionType.WFC_connBlue)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return p.Connections[opposite].Type == connection;
+                    }
+                }).ToList();
 
                 Debug.Log($"#No. of possible patterns for tile {neighbour.Index}: " + neighbour.PossiblePatterns.Count);
             }
         }
-
-
-
-
-        //Create a prefab of the selected pattern using the index and the voxelsize as position
-        //creating a prefab of a SELECTED pattern. Where is this pattern being selected?
-        //in TilePattern
-        //using _goTilePrefab
-        //Index
-        //TileSize
-        //Remove all possible patterns out of the list
-        //will be using List<TilePattern> PossiblePatterns
-        //remove the possible patterns that have not been selected
-
-
-        //You could add some weighted randomness in here - IGNORE THIS FOR NOW UNTIL WE FIGURE OUT REST OF PROJECT
-
-        //propogate the grid
-        //_solver.PropogateGrid(this);
     }
 
     public Tile[] GetNeighbours()
@@ -136,25 +123,7 @@ public class Tile
             Vector3Int nIndex = Index + Util.Directions[i];
             if (nIndex.ValidateIndex(_solver.GridDimensions)) neighbours[i] = _solver.TileGrid[nIndex.x, nIndex.y, nIndex.z];
         }
-
         return neighbours;
-    }
-
-
-    //Contains all Connections
-    public void CrossReferenceConnectionPatterns(List<TilePattern> patterns)
-    {
-        //Check if the patterns exist in both lists
-        List<TilePattern> newPossiblePatterns = new List<TilePattern>();
-        foreach (var pattern in patterns)
-        {
-            if (PossiblePatterns.Contains(pattern))  //if the pattern is contained in both lists...
-            {
-                newPossiblePatterns.Add(pattern);   //add the pattern
-            }
-        }
-
-        PossiblePatterns = newPossiblePatterns;
     }
 
     public void ToggleVisibility()
@@ -169,24 +138,6 @@ public class Tile
                 child.GetComponentInChildren<MeshRenderer>().enabled = _showconnections;
             }
         }
-    }
-
-    public Transform GetComponentCollider()
-    {
-        if (CurrentGo != null)
-        {
-            for (int i = 0; i < CurrentGo.transform.childCount; i++)
-            {
-                var child = CurrentGo.transform.GetChild(i);
-                if (child.CompareTag("Component"))
-                {
-
-                    return child;
-                }
-            }
-        }
-
-        return null;
     }
     #endregion
 }

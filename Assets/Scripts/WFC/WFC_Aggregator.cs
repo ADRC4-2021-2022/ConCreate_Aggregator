@@ -382,7 +382,7 @@ public class WFC_Aggregator : MonoBehaviour
                             }
                         }
                     }
-                    if (wallGOs.Count == 0) 
+                    if (wallGOs.Count == 0)
                         return false;
                     foreach (var wallGO in wallGOs)
                     {
@@ -402,7 +402,7 @@ public class WFC_Aggregator : MonoBehaviour
             {
                 return false;
             }
-                
+
         }
         return true;
     }
