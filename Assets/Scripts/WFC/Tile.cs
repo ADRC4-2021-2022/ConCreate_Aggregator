@@ -92,9 +92,9 @@ public class Tile
         for (int i = 0; i < neighbours.Length; i++)
         {
             var neighbour = neighbours[i];
-            var connection = CurrentTile.Connections[i].Type;
-            if (neighbour != null)
+            if (neighbour != null && neighbour.PossiblePatterns.Count != 0)
             {
+                var connection = CurrentTile.Connections[i].Type;
                 int opposite;
                 if (i == 0) opposite = 1;
                 else if (i == 1) opposite = 0;
@@ -104,8 +104,7 @@ public class Tile
                 else opposite = 4;
                 neighbour.PossiblePatterns = neighbour.PossiblePatterns.Where(p => p.Connections[opposite].Type == connection).ToList();
 
-                Debug.Log("Possible Neighbors: " + opposite);
-
+                Debug.Log($"#No. of possible patterns for tile {neighbour.Index}: " + neighbour.PossiblePatterns.Count);
             }
         }
 

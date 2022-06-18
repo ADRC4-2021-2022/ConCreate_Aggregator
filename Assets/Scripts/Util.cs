@@ -20,8 +20,8 @@ public static class Util
     {
         new Vector3Int(-1,0,0),// min x
         new Vector3Int(1,0,0),// plus x
-       // new Vector3Int(0,-1,0),// min y
-      //  new Vector3Int(0,1,0),// plus y
+        new Vector3Int(0,-1,0),// min y
+        new Vector3Int(0,1,0),// plus y
         new Vector3Int(0,0,-1),// min z
         new Vector3Int(0,0,1)// plus z
     };

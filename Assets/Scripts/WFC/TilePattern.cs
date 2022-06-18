@@ -44,38 +44,31 @@ public class TilePattern
             connection.AddTilePatternToConnection(this);
             Vector3 rotation = goConnection.transform.rotation.eulerAngles;
             Vector3 connectionPosition = goConnection.transform.localPosition;
-            if (connectionPosition.y != 0)
-            {
-                //we know it is a topBottom connection
-                if (connectionPosition.y == 1.5f)
-                {
-                    Connections[2] = connection; //positive y axis (debug once working to ensure that this is correct) 
-                }
-                else
-                {
-                    Connections[3] = connection; //negative y axis (debug once working to ensure that this is correct)
-                }
-            }
 
-            //Connections[(int)rotation.y % 90] = connection;
-            else if (rotation.y == 90)
-            {
-                Connections[1] = connection; //positive x axis   
-            }
-            else if (rotation.y == 180)
-            {
-                Connections[4] = connection; //negative z axis 
-            }
-            else if (rotation.y == 270)
-            {
-                Connections[0] = connection; //negative x axis  
-            }
-            else
-            {
-                Connections[5] = connection; //positive z axis  
-            }
+            // negative x axis
+            if (connectionPosition.x == -2 && rotation == new Vector3(0, 270, 0))
+                Connections[0] = connection;
+
+            // positive x axis
+            if (connectionPosition.x == 2 && rotation == new Vector3(0, 90, 0))
+                Connections[1] = connection;
+
+            // negative z axis
+            if (connectionPosition.z == -2 && rotation == new Vector3(0, 180, 0))
+                Connections[4] = connection;
+
+            // positive z axis
+            if (connectionPosition.z == 2 && rotation == Vector3.zero)
+                Connections[5] = connection;
+
+            // negative y axis
+            if (connectionPosition.y == -1.5f)
+                Connections[2] = connection;
+
+            // positive y axis
+            if (connectionPosition.y == 1.5f)
+                Connections[3] = connection;
         }
     }
     #endregion
-
 }

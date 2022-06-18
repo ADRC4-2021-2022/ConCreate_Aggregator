@@ -47,7 +47,8 @@ public class ConstraintSolver : MonoBehaviour
         _connections.Add(new TileConnection(ConnectionType.WFC_connYellow, "WFC_connYellow"));
         _connections.Add(new TileConnection(ConnectionType.WFC_connBlue, "WFC_connBlue"));
         _connections.Add(new TileConnection(ConnectionType.WFC_connGreen, "WFC_connGreen"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connTopBottom, "WFC_connTopBottom"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connTop, "WFC_connTop"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connBottom, "WFC_connBottom"));
 
         //Add all patterns
         _patternLibrary = new List<TilePattern>();
@@ -57,10 +58,9 @@ public class ConstraintSolver : MonoBehaviour
             _patternLibrary.Add(new TilePattern(i, goPattern, _connections));
         }
 
-        RunWFC();
-
-        //look into making this into a bounding box
         _propagateStep = PropagateStep();
+        InitialiseWFCGrid();
+        StartCoroutine(_propagateStep);
     }
 
     #region private functions
@@ -132,49 +132,19 @@ public class ConstraintSolver : MonoBehaviour
 
     private void GetNextTile()
     {
-        List<Tile> UnsetTiles = GetUnsetTiles();
+        List<Tile> unsetTiles = GetUnsetTiles();
 
         //Check if there still are tiles to set
-        if (UnsetTiles.Count == 0)
+        if (unsetTiles.Count == 0)
         {
             Debug.Log("All tiles are set");
             return;
         }
 
-        //this is currently not going to give you the lowest tile
-        List<Tile> lowestTiles = new List<Tile>();
-        int lowestTile = int.MaxValue;
-
-        //PropagateGrid on the set tile                     
-        foreach (Tile tile in UnsetTiles)
-        {
-            if (tile.NumberOfPossiblePatterns < lowestTile)
-            {
-                lowestTiles = new List<Tile>() { tile };
-
-                lowestTile = tile.NumberOfPossiblePatterns;
-
-            }
-            else if (tile.NumberOfPossiblePatterns == lowestTile)
-            {
-                lowestTiles.Add(tile);
-            }
-            else if (tile.NumberOfPossiblePatterns != lowestTile)
-            {
-                tile.AssignRandomPossiblePattern();
-            }
-
-            Debug.Log("Propagating Grid");
-        }
-
-        //Select a random tile out of the list
-        int rndIndex = UnityEngine.Random.Range(0, lowestTiles.Count);
-        Tile tileToSet = lowestTiles[rndIndex];
-
-        Debug.Log("Random Index " + lowestTiles.Count);
+        var tileWithLowestPossiblePatternCount = unsetTiles.OrderBy(p => p.NumberOfPossiblePatterns).First();
 
         //Assign one of the possible patterns to the tile
-        tileToSet.AssignRandomPossiblePattern();
+        tileWithLowestPossiblePatternCount.AssignRandomPossiblePattern();
     }
 
     private List<Tile> GetTilesFlattened()
@@ -213,7 +183,7 @@ public class ConstraintSolver : MonoBehaviour
     #endregion
 
     #region public functions
-    public void RunWFC()
+    private void InitialiseWFCGrid()
     {
         // destroy old tiles everytime we run WFC
         foreach (var GO in TileGOs)
@@ -231,8 +201,6 @@ public class ConstraintSolver : MonoBehaviour
         // add a random tile to a random position
         var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
         TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignPattern(_patternLibrary[1]);
-
-        GetNextTile();
     }
 
     //Cardinal Directions Establishment 
@@ -271,11 +239,8 @@ public class ConstraintSolver : MonoBehaviour
         //Loop over all the tiles and check which ones are not set
         foreach (var tile in GetTilesFlattened())
         {
-            if (!tile.Set) unsetTiles.Add(tile);
-
-            Debug.Log(tile.PossiblePatterns.Count);
+            if (!tile.Set && tile.PossiblePatterns.Count > 0) unsetTiles.Add(tile);
         }
-        Debug.Log(unsetTiles.Count);
         return unsetTiles;
     }
     #endregion
@@ -364,6 +329,21 @@ public class ConstraintSolver : MonoBehaviour
         else
         {
             aggregator.StopAutoFloorPlacement();
+        }
+    }
+
+    public void StartStopWFCCoroutine()
+    {
+        if (_propagateStep != null)
+        {
+            StopCoroutine(_propagateStep);
+            _propagateStep = null;
+        } 
+        else
+        {
+            InitialiseWFCGrid();
+            _propagateStep = PropagateStep();
+            StartCoroutine(_propagateStep);
         }
     }
     #endregion
