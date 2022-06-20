@@ -14,6 +14,7 @@ public class ConstraintSolver : MonoBehaviour
     List<TilePattern> _patternLibrary;
     List<TileConnection> _connections;
 
+    public GameObject GOEmptyTilePrefab;
     public GameObject[] GOPatternPrefabs;
     public GameObject[] GOFloorLayers;
     public List<GameObject> TileGOs;
@@ -21,11 +22,12 @@ public class ConstraintSolver : MonoBehaviour
 
     #region private fields
     private IEnumerator _propagateStep;
+    private const int _emptyTilePatternIndex = 999;
     #endregion
 
     void Start()
     {
-        GridDimensions = new Vector3Int(30, 4, 30);
+        GridDimensions = new Vector3Int(21, 6, 12); // Based on 4x3x4 TileSize, GridDimensions should be 19x4x10
         TileSize = new Vector3(4, 3, 4);
 
         //Add all connections
@@ -37,9 +39,14 @@ public class ConstraintSolver : MonoBehaviour
         _connections.Add(new TileConnection(ConnectionType.WFC_connGreen, "WFC_connGreen"));
         _connections.Add(new TileConnection(ConnectionType.WFC_connTop, "WFC_connTop"));
         _connections.Add(new TileConnection(ConnectionType.WFC_connBottom, "WFC_connBottom"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connRed, "WFC_connRed"));
 
-        //Add all patterns
         _patternLibrary = new List<TilePattern>();
+
+        //Add empty tile pattern
+        _patternLibrary.Add(new TilePattern(_emptyTilePatternIndex, GOEmptyTilePrefab, _connections));
+
+        //Add all other patterns
         for (int i = 0; i < GOPatternPrefabs.Length; i++)
         {
             var goPattern = GOPatternPrefabs[i];
@@ -60,20 +67,52 @@ public class ConstraintSolver : MonoBehaviour
         var validIndices = new List<Vector3Int>();
         foreach (var floorLayer in GOFloorLayers)
         {
-           validIndices.AddRange(GetValidIndicesInYLayer(floorLayer.transform));
+            validIndices.AddRange(GetValidIndicesInYLayer(floorLayer.transform));
         }
         return validIndices;
     }
 
     private void DisableTilesNotInSite(List<Vector3Int> validIndices)
     {
+        var visitedIndices = new List<Vector3Int>();
         foreach (var tile in TileGrid)
         {
             if (!validIndices.Contains(tile.Index))
             {
-                tile.PossiblePatterns = new List<TilePattern>(); // i.e. PossiblePatterns.Count == 0
+                // Set this tile to be an emptyTile
+                tile.PossiblePatterns = new List<TilePattern>() { _patternLibrary.Find(p => p.Index != _emptyTilePatternIndex) };
+
+                for (int i = 0; i < 6; i++) // Each tile can have 6 possible neighbours: +x, -x, +y, -y, +z, -z
+                {
+                    var neighbours = tile.GetNeighbours();
+                    var neighbour = neighbours[i];
+                    if (neighbour != null && !neighbour.Set && validIndices.Contains(neighbour.Index))
+                    {
+                        visitedIndices.Add(neighbour.Index);
+
+                        int opposite;
+                        if (i == 0) opposite = 1;
+                        else if (i == 1) opposite = 0;
+                        else if (i == 2) opposite = 3;
+                        else if (i == 3) opposite = 2;
+                        else if (i == 4) opposite = 5;
+                        else opposite = 4;
+
+                        //var possiblePatterns = _patternLibrary.Where(p => p.Connections[opposite].Type == ConnectionType.WFC_conn0).ToList();
+                        var possiblePatterns = neighbour.PossiblePatterns.Where(p => p.Index != _emptyTilePatternIndex && p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connRed)).ToList();
+                        neighbour.PossiblePatterns = possiblePatterns;
+                        Debug.Log($"tile0_EMPTY [{tile.Index.x}, {tile.Index.y}, {tile.Index.z}]: Has {neighbour.NumberOfPossiblePatterns} possible patterns");
+                    }
+                }
+                //tile.CurrentGo = GameObject.Instantiate(GOEmptyTilePrefab);
+                //tile.CurrentGo.name = $"tile0_EMPTY [{tile.Index.x}, {tile.Index.y}, {tile.Index.z}]";
+                //tile.CurrentGo.transform.position = tile.RealWorldPosition;
+                //TileGOs.Add(tile.CurrentGo);
+                tile.CurrentTile = _patternLibrary.Find(p => p.Index == _emptyTilePatternIndex);
             }
         }
+        Debug.Log($"Number of tiles visited: {visitedIndices.Count}");
+        Debug.Log($"Number of tiles with 0 possible patterns: {GetTilesFlattened().Where(t => t.NumberOfPossiblePatterns == 0).ToList().Count}");
     }
 
     private List<Vector3Int> GetValidIndicesInYLayer(Transform layerMeshes)
@@ -96,10 +135,11 @@ public class ConstraintSolver : MonoBehaviour
             {
                 for (int z = 0; z < GridDimensions.z; z++)
                 {
-                    TileGrid[x, y, z] = new Tile(new Vector3Int(x, y, z), _patternLibrary, this, TileSize);
+                    TileGrid[x, y, z] = new Tile(new Vector3Int(x, y, z), _patternLibrary.Where(p => p.Index != _emptyTilePatternIndex).ToList(), this, TileSize);
                 }
             }
         }
+        Debug.Log($"Total number of tiles created: {TileGrid.Length}");
     }
 
     private IEnumerator PropagateStep()
@@ -177,11 +217,12 @@ public class ConstraintSolver : MonoBehaviour
 
         // build tiles according to the site geometry
         var validIndices = GetValidIndices();
+        Debug.Log($"Number of valid indices (i.e. tiles in site bounds): {validIndices.Count}");
         DisableTilesNotInSite(validIndices);
 
         // add a random tile to a random position
         var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
-        TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignPattern(_patternLibrary[1]);
+        TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignRandomPossiblePattern();
     }
 
     public List<Tile> GetUnsetTiles()
@@ -191,7 +232,7 @@ public class ConstraintSolver : MonoBehaviour
         //Loop over all the tiles and check which ones are not set
         foreach (var tile in GetTilesFlattened())
         {
-            if (!tile.Set && tile.PossiblePatterns.Count > 0) unsetTiles.Add(tile);
+            if (!tile.Set && tile.NumberOfPossiblePatterns > 1) unsetTiles.Add(tile);
         }
         return unsetTiles;
     }

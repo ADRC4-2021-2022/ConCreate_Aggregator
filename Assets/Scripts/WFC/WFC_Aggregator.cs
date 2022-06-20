@@ -19,9 +19,6 @@ public class WFC_Aggregator : MonoBehaviour
     private bool _connectionMatchingEnabled = true;
     private bool _hasBeenInitialised = false;
 
-    private Collider[] _neighbours; // "ingredient" of compute penetration
-    private Vector3 _collisionTestSpherePosition = Vector3Int.zero; // "ingredient" of compute penetration
-
     private List<Part> _wallParts = new(); // LIBRARY OF WALL PARTS
     private List<Part> _floorParts = new(); // LIBRARY OF FLOOR PARTS
     private List<Part> _placedWallParts = new();
@@ -31,13 +28,8 @@ public class WFC_Aggregator : MonoBehaviour
     private int _currentWallLayer = 0;
     private int _floorFailureCounter = 0;
     private int _wallFailureCounter = 0;
-    private readonly int _failureTolerance = 3;
+    private readonly int _failureTolerance = 10;
     #endregion
-
-    public void Start()
-    {
-        _neighbours = new Collider[_maxNeighboursToCheck]; // initialize neighbors' array
-    }
 
     #region LOADING PREFABS (wall/floor)
     private void LoadWallPartPrefabs()
@@ -468,6 +460,7 @@ public class WFC_Aggregator : MonoBehaviour
         }
         return childrenGO;
     }
+
     /// <summary>
     /// Refactored version of the isInsideFloor and isInsideWall functions. Doesn't work at the moment.
     /// </summary>
@@ -513,9 +506,7 @@ public class WFC_Aggregator : MonoBehaviour
             }
         }
 
-
         return !vertexInside.Cast<bool>().Contains(false);
-
     }
 
     /// <summary>

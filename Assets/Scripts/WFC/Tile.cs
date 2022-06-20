@@ -7,6 +7,7 @@ public class Tile
     #region Variables
     public List<TilePattern> PossiblePatterns;
     public Vector3Int Index;
+    public Vector3 RealWorldPosition;
     public TilePattern CurrentTile;
     public GameObject CurrentGo;
 
@@ -38,6 +39,7 @@ public class Tile
     {
         PossiblePatterns = tileLibrary;
         Index = index;
+        RealWorldPosition = Util.IndexToRealPosition(index, tileSize);
         _solver = solver;
         _tileSize = tileSize;
     }
@@ -57,9 +59,8 @@ public class Tile
             //Select a random pattern out of the list of possible patterns
             int rndPatternIndex = Random.Range(0, PossiblePatterns.Count);
 
-            AssignPattern(PossiblePatterns[rndPatternIndex]);
-
             PossiblePatterns = new List<TilePattern>() { PossiblePatterns[rndPatternIndex] };
+            AssignPattern(PossiblePatterns[0]);
         }
     }
 
@@ -72,18 +73,17 @@ public class Tile
 
         CurrentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[pattern.Index]);
         CurrentGo.name = $"{_solver.GOPatternPrefabs[pattern.Index].name} [{Index.x}, {Index.y}, {Index.z}]";
-        CurrentGo.transform.position = Util.IndexToRealPosition(Index, _tileSize);
+        CurrentGo.transform.position = RealWorldPosition;
         _solver.TileGOs.Add(CurrentGo);
         CurrentTile = pattern;
         var neighbours = GetNeighbours();
 
-        // set neighbour.PossiblePatters to match what this tile defines
+        // set neighbour.PossiblePatterns to match what this tile defines
         for (int i = 0; i < neighbours.Length; i++)
         {
             var neighbour = neighbours[i];
-            if (neighbour != null && neighbour.PossiblePatterns.Count != 0)
+            if (neighbour != null && neighbour.NumberOfPossiblePatterns != 0)
             {
-                var connection = CurrentTile.Connections[i].Type;
                 int opposite;
                 if (i == 0) opposite = 1;
                 else if (i == 1) opposite = 0;
@@ -92,25 +92,84 @@ public class Tile
                 else if (i == 4) opposite = 5;
                 else opposite = 4;
                 neighbour.PossiblePatterns = neighbour.PossiblePatterns.Where(p => {
-                    if (p.Connections[opposite].Type == ConnectionType.WFC_conn0 && connection == ConnectionType.WFC_conn0)
+                    // CATCH THESE CASES FIRST
+
+                    // ALLOW RED TO RED (must be done before checking pink to pink, so we enforce exterior walls)
+                    if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connRed) && p.Connections[opposite].Count == 1 && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connRed))
+                    {
+                        return true;
+                    }
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connRed) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connRed) && CurrentTile.Connections[i].Count == 1)
+                    {
+                        return true;
+                    }
+                    // DON'T ALLOW PINK TO PINK
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_conn0) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_conn0))
                     {
                         return false;
                     }
-                    else if (p.Connections[opposite].Type == ConnectionType.WFC_connBlue && connection == ConnectionType.WFC_conn0)
+
+                    // THEN WE CAN SAFELY CATCH THESE
+
+                    //// ALLOW BLUE TO PINK
+                    //else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connBlue) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_conn0))
+                    //{
+                    //    return true;
+                    //}
+                    //// ALLOW PINK TO BLUE
+                    //else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_conn0) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connBlue))
+                    //{
+                    //    return true;
+                    //}
+                    // ALLOW YELLOW TO YELLOW
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connYellow) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connYellow))
                     {
                         return true;
                     }
-                    else if (p.Connections[opposite].Type == ConnectionType.WFC_conn0 && connection == ConnectionType.WFC_connBlue)
+                    // ALLOW BLUE TO BLUE
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connBlue) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connBlue))
                     {
                         return true;
                     }
-                    else
+                    // ALLOW GREEN TO GREEN
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connGreen) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connGreen))
                     {
-                        return p.Connections[opposite].Type == connection;
+                        return true;
                     }
+                    // ALLOW TOP TO BOTTOM
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connTop) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connBottom))
+                    {
+                        return true;
+                    }
+                    // ALLOW BOTTOM TO TOP
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connBottom) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connTop))
+                    {
+                        return true;
+                    }
+                    // ALLOW PINK TO GREEN
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_conn0) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connGreen))
+                    {
+                        return true;
+                    }
+                    // ALLOW GREEN TO PINK
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connGreen) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_conn0))
+                    {
+                        return true;
+                    }
+                    // ALLOW BLUE TO GREEN
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connBlue) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connGreen))
+                    {
+                        return true;
+                    }
+                    // ALLOW GREEN TO BLUE
+                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connGreen) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connBlue))
+                    {
+                        return true;
+                    }
+                    else return false;
                 }).ToList();
 
-                Debug.Log($"#No. of possible patterns for tile {neighbour.Index}: " + neighbour.PossiblePatterns.Count);
+                //Debug.Log($"Possible patterns for tile {neighbour.Index}: " + neighbour.PossiblePatterns.Count);
             }
         }
     }
