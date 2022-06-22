@@ -21,7 +21,7 @@ public class Tile
     {
         get
         {
-            return (PossiblePatterns.Count == 1) || _emptySet;
+            return (PossiblePatterns != null && PossiblePatterns.Count == 1) || _emptySet;
         }
     }
 
@@ -29,7 +29,7 @@ public class Tile
     {
         get
         {
-            return PossiblePatterns.Count;
+            if (PossiblePatterns != null) return PossiblePatterns.Count; else return -1;
         }
     }
     #endregion
@@ -46,7 +46,11 @@ public class Tile
     #endregion
 
     #region public functions
-    public void AssignRandomPossiblePattern()
+    /// <summary>
+    /// Attempt to 'set' this tile with whichever of it's PossiblePatterns allows it's neighbours to have > 0 PossiblePatterns
+    /// </summary>
+    /// <returns>true if it managed to place the tile in a valid way, false if not</returns>
+    public bool AssignRandomPossiblePattern()
     {
         if (PossiblePatterns.Count == 0)
         {
@@ -56,15 +60,25 @@ public class Tile
         //At the moment we will set the tile. This will allow for empty tiles. Better to create a generic tile and assign this one. Even better to keep track of the former option and select on of those
         else
         {
-            //Select a random pattern out of the list of possible patterns
-            int rndPatternIndex = Random.Range(0, PossiblePatterns.Count);
-
-            PossiblePatterns = new List<TilePattern>() { PossiblePatterns[rndPatternIndex] };
-            AssignPattern(PossiblePatterns[0]);
+            PossiblePatterns.Shuffle();
+            foreach (var pattern in PossiblePatterns)
+            {
+                if (AssignPattern(pattern))
+                {
+                    PossiblePatterns = new List<TilePattern>() { pattern };
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
-    public void AssignPattern(TilePattern pattern)
+    /// <summary>
+    /// Check through this Tile's neighbours, using the TilePattern passed as a parameter, ensuring no neighbours have their PossiblePatterns.Count reduced to 0
+    /// </summary>
+    /// <param name="pattern">The TilePattern we are trying to set this Tile to</param>
+    /// <returns>True if every neighbour still has PossiblePatterns.Count > 0 after assigning the TilePattern, false if not</returns>
+    public bool AssignPattern(TilePattern pattern)
     {
         if (CurrentGo != null)
         {
@@ -72,13 +86,14 @@ public class Tile
         }
 
         CurrentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[pattern.Index]);
-        CurrentGo.name = $"{_solver.GOPatternPrefabs[pattern.Index].name} [{Index.x}, {Index.y}, {Index.z}]";
+        CurrentGo.name = $"Tile {_solver.GOPatternPrefabs[pattern.Index].name} [{Index.x}, {Index.y}, {Index.z}]";
         CurrentGo.transform.position = RealWorldPosition;
         _solver.TileGOs.Add(CurrentGo);
         CurrentTile = pattern;
         var neighbours = GetNeighbours();
 
         // set neighbour.PossiblePatterns to match what this tile defines
+        var neighboursPossiblePatterns = new List<TilePattern>[6];
         for (int i = 0; i < neighbours.Length; i++)
         {
             var neighbour = neighbours[i];
@@ -91,87 +106,43 @@ public class Tile
                 else if (i == 3) opposite = 2;
                 else if (i == 4) opposite = 5;
                 else opposite = 4;
-                neighbour.PossiblePatterns = neighbour.PossiblePatterns.Where(p => {
-                    // CATCH THESE CASES FIRST
 
-                    // ALLOW RED TO RED (must be done before checking pink to pink, so we enforce exterior walls)
-                    if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connRed) && p.Connections[opposite].Count == 1 && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connRed))
+                // BIG RED SPHERE FOR DEBUGGING WHEN WE ENCOUNTER PossiblePatterns == null IN A NEIGHBOUR
+                //if (neighboursPossiblePatterns[i] == null)
+                //{
+                //    var brokenPossiblePatternSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //    brokenPossiblePatternSphere.name = $"Fucked up {neighbour.Index}";
+                //    brokenPossiblePatternSphere.transform.position = Util.IndexToRealPosition(neighbour.Index, _tileSize);
+                //    brokenPossiblePatternSphere.GetComponent<Renderer>().material.color = Color.red;
+                //}
+                neighboursPossiblePatterns[i] = neighbour.PossiblePatterns.Where(p => {
+                    foreach (var connection in p.Connections[opposite])
                     {
-                        return true;
-                    }
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connRed) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connRed) && CurrentTile.Connections[i].Count == 1)
-                    {
-                        return true;
-                    }
-                    // DON'T ALLOW PINK TO PINK
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_conn0) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_conn0))
-                    {
-                        return false;
+                        if (p.HasFaceWithConnectionType(opposite, connection.Type) && CurrentTile.HasFaceWithConnectionType(i, connection.Type))
+                        {
+                            return true; // found a matching pair of connections, so return true (meaning this pattern will stay in the PossiblePatterns list for that face)
+                        }
                     }
 
-                    // THEN WE CAN SAFELY CATCH THESE
-
-                    //// ALLOW BLUE TO PINK
-                    //else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connBlue) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_conn0))
-                    //{
-                    //    return true;
-                    //}
-                    //// ALLOW PINK TO BLUE
-                    //else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_conn0) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connBlue))
-                    //{
-                    //    return true;
-                    //}
-                    // ALLOW YELLOW TO YELLOW
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connYellow) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connYellow))
-                    {
-                        return true;
-                    }
-                    // ALLOW BLUE TO BLUE
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connBlue) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connBlue))
-                    {
-                        return true;
-                    }
-                    // ALLOW GREEN TO GREEN
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connGreen) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connGreen))
-                    {
-                        return true;
-                    }
-                    // ALLOW TOP TO BOTTOM
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connTop) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connBottom))
-                    {
-                        return true;
-                    }
-                    // ALLOW BOTTOM TO TOP
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connBottom) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connTop))
-                    {
-                        return true;
-                    }
-                    // ALLOW PINK TO GREEN
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_conn0) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connGreen))
-                    {
-                        return true;
-                    }
-                    // ALLOW GREEN TO PINK
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connGreen) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_conn0))
-                    {
-                        return true;
-                    }
-                    // ALLOW BLUE TO GREEN
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connBlue) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connGreen))
-                    {
-                        return true;
-                    }
-                    // ALLOW GREEN TO BLUE
-                    else if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connGreen) && CurrentTile.HasFaceWithConnectionType(i, ConnectionType.WFC_connBlue))
-                    {
-                        return true;
-                    }
-                    else return false;
+                    return false; // If we couldn't find any matching pairs of connections, so return false (meaning this pattern WILL NOT stay in the PossiblePatterns list for that face)
                 }).ToList();
 
-                //Debug.Log($"Possible patterns for tile {neighbour.Index}: " + neighbour.PossiblePatterns.Count);
+                // If we made any of the neighbours have no possible patterns, we need to reverse this action, so return false here
+                if (neighboursPossiblePatterns[i].Count == 0) return false;
             }
         }
+
+        // Everything went well, so set the tile patterns for each of the neighbours
+        for (int i = 0; i < neighbours.Length; i++)
+        {
+            var neighbour = neighbours[i];
+            if (neighbour != null)
+            {
+                neighbour.PossiblePatterns = neighboursPossiblePatterns[i];
+            }
+        }
+
+        return true;
     }
 
     public Tile[] GetNeighbours()

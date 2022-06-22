@@ -13,7 +13,6 @@ public class TilePattern
 
     #region private fields
     readonly GameObject _goTilePrefab;
-
     #endregion
 
     #region constructors
@@ -27,6 +26,12 @@ public class TilePattern
     #endregion
 
     #region public functions
+    /// <summary>
+    /// Check if the provided faceIndex's connection list has the provided connectionType in it
+    /// </summary>
+    /// <param name="faceIndex">Face of the TilePattern to check for the connection</param>
+    /// <param name="connectionType">ConnectionType to check for</param>
+    /// <returns></returns>
     public bool HasFaceWithConnectionType(int faceIndex, ConnectionType connectionType)
     {
         var c = Connections[faceIndex].Find(c => c.Type == connectionType);
@@ -65,11 +70,11 @@ public class TilePattern
                 Connections[5].Add(connection);
 
             // negative y axis
-            else if (connectionPosition.y == -1.5f)
+            else if (connectionPosition.y == -1.55f)
                 Connections[2].Add(connection);
 
             // positive y axis
-            else if (connectionPosition.y == 1.5f)
+            else if (connectionPosition.y == 1.55f)
                 Connections[3].Add(connection);
         }
     }

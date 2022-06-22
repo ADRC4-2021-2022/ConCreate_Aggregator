@@ -27,19 +27,18 @@ public class ConstraintSolver : MonoBehaviour
 
     void Start()
     {
-        GridDimensions = new Vector3Int(21, 6, 12); // Based on 4x3x4 TileSize, GridDimensions should be 19x4x10
-        TileSize = new Vector3(4, 3, 4);
+        GridDimensions = new Vector3Int(21, 6, 12); // Based on 4x3x4 TileSize, GridDimensions should be 19x4x10, plus any margin needed around the grid
+        TileSize = new Vector3(4, 3.05f, 4);
 
         //Add all connections
         _connections = new List<TileConnection>();
 
-        _connections.Add(new TileConnection(ConnectionType.WFC_conn0, "WFC_conn0"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connOrange, "WFC_connOrange"));
         _connections.Add(new TileConnection(ConnectionType.WFC_connYellow, "WFC_connYellow"));
         _connections.Add(new TileConnection(ConnectionType.WFC_connBlue, "WFC_connBlue"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connGreen, "WFC_connGreen"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connTop, "WFC_connTop"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connBottom, "WFC_connBottom"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connRed, "WFC_connRed"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connApple, "WFC_connApple"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connBlack, "WFC_connBlack"));
+        _connections.Add(new TileConnection(ConnectionType.WFC_connPink, "WFC_connPink"));
 
         _patternLibrary = new List<TilePattern>();
 
@@ -80,15 +79,15 @@ public class ConstraintSolver : MonoBehaviour
             if (!validIndices.Contains(tile.Index))
             {
                 // Set this tile to be an emptyTile
-                tile.PossiblePatterns = new List<TilePattern>() { _patternLibrary.Find(p => p.Index != _emptyTilePatternIndex) };
-
+                tile.PossiblePatterns = new List<TilePattern>() { _patternLibrary.Find(p => p.Index == _emptyTilePatternIndex) };
+                visitedIndices.Add(tile.Index);
                 for (int i = 0; i < 6; i++) // Each tile can have 6 possible neighbours: +x, -x, +y, -y, +z, -z
                 {
                     var neighbours = tile.GetNeighbours();
                     var neighbour = neighbours[i];
-                    if (neighbour != null && !neighbour.Set && validIndices.Contains(neighbour.Index))
+                    if (neighbour != null && !neighbour.Set && validIndices.Contains(neighbour.Index) && !visitedIndices.Contains(neighbour.Index) && !visitedIndices.Contains(tile.Index))
                     {
-                        visitedIndices.Add(neighbour.Index);
+                        visitedIndices.Add(tile.Index);
 
                         int opposite;
                         if (i == 0) opposite = 1;
@@ -98,17 +97,18 @@ public class ConstraintSolver : MonoBehaviour
                         else if (i == 4) opposite = 5;
                         else opposite = 4;
 
-                        //var possiblePatterns = _patternLibrary.Where(p => p.Connections[opposite].Type == ConnectionType.WFC_conn0).ToList();
-                        var possiblePatterns = neighbour.PossiblePatterns.Where(p => p.Index != _emptyTilePatternIndex && p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connRed)).ToList();
+                        //New list of PossiblePatterns should be current list, but with any TilePatterns that do NOT have an exterior wall connection on the opposite face taken out
+                        var possiblePatterns = neighbour.PossiblePatterns.Where(p => p.Index != _emptyTilePatternIndex && p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connApple)).ToList();
                         neighbour.PossiblePatterns = possiblePatterns;
-                        Debug.Log($"tile0_EMPTY [{tile.Index.x}, {tile.Index.y}, {tile.Index.z}]: Has {neighbour.NumberOfPossiblePatterns} possible patterns");
+                        Debug.Log($"Tile EMPTY [{tile.Index.x}, {tile.Index.y}, {tile.Index.z}]: Has {neighbour.NumberOfPossiblePatterns} possible patterns");
+                        tile.CurrentGo = GameObject.Instantiate(GOEmptyTilePrefab);
+                        tile.CurrentGo.name = $"Tile EMPTY [{tile.Index.x}, {tile.Index.y}, {tile.Index.z}]";
+                        tile.CurrentGo.transform.position = tile.RealWorldPosition;
+                        TileGOs.Add(tile.CurrentGo);
+                        tile.CurrentTile = _patternLibrary.Find(p => p.Index == _emptyTilePatternIndex);
                     }
                 }
-                //tile.CurrentGo = GameObject.Instantiate(GOEmptyTilePrefab);
-                //tile.CurrentGo.name = $"tile0_EMPTY [{tile.Index.x}, {tile.Index.y}, {tile.Index.z}]";
-                //tile.CurrentGo.transform.position = tile.RealWorldPosition;
-                //TileGOs.Add(tile.CurrentGo);
-                tile.CurrentTile = _patternLibrary.Find(p => p.Index == _emptyTilePatternIndex);
+                
             }
         }
         Debug.Log($"Number of tiles visited: {visitedIndices.Count}");
@@ -220,9 +220,13 @@ public class ConstraintSolver : MonoBehaviour
         Debug.Log($"Number of valid indices (i.e. tiles in site bounds): {validIndices.Count}");
         DisableTilesNotInSite(validIndices);
 
-        // add a random tile to a random position
-        var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
-        TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignRandomPossiblePattern();
+        //keep trying to place a first tile, until we get one which doesn't reduce any of it's neighbours' PossibilePatterns.Count to 0
+        // (the AssignRandomPossiblePattern function handles this, returning true if it managed to place a tile in a valid way; false if not)
+        while(true)
+        {
+            var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
+            if (TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignRandomPossiblePattern()) return;
+        }
     }
 
     public List<Tile> GetUnsetTiles()
