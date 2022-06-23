@@ -118,7 +118,8 @@ public class Tile
                 //    brokenPossiblePatternSphere.transform.position = Util.IndexToRealPosition(neighbour.Index, _tileSize);
                 //    brokenPossiblePatternSphere.GetComponent<Renderer>().material.color = Color.red;
                 //}
-                neighboursPossiblePatterns[i] = neighbour.PossiblePatterns.Where(p => {
+                neighboursPossiblePatterns[i] = neighbour.PossiblePatterns.Where(p =>
+                {
                     foreach (var connection in p.Connections[opposite])
                     {
                         if (p.HasFaceWithConnectionType(opposite, connection.Type) && patternToAssign.HasFaceWithConnectionType(i, connection.Type))

@@ -114,11 +114,55 @@ public class WFC_Aggregator : MonoBehaviour
             _solver = constraintSolver;
             _currentWallLayer = _solver.GetGroundFloorLayerNumber();
             _currentFloorLayer = _currentWallLayer;
-            LoadWallPartPrefabs();
-            LoadFloorPartPrefabs();
-            PlaceWallPartRandomPosition();
-            PlaceFloorPartRandomPosition();
         }
+    }
+
+    public void PlaceExteriorWallPartRandomPosition()
+    {
+        _wallParts.Shuffle();
+        var setTilesInCurrentLayer = _solver.ExteriorWallsByYLayer[_currentWallLayer];
+        //var setTilesInCurrentLayer = _solver.TileGOs.Where(GO => Util.RealPositionToIndex(GO.transform.position, _tileSize).y == _currentWallLayer).ToList();
+        var randomWallGO = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
+        for (int i = 0; i < _wallParts.Count; i++)
+        {
+            Part part = _wallParts[i];
+            var size = part.Collider.sharedMesh.bounds.size;
+            var extents = size / 2;
+
+            var minPoint = randomWallGO.GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
+            for (int k = 0; k < 4; k++)
+            {
+                part.PlaceFirstPart(minPoint + extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
+                bool isInsideWithPositiveExtents = !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
+                if (isInsideWithPositiveExtents)
+                {
+                    _wallParts.Remove(part);
+                    _placedWallParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedWallParts.Count} (wall)";
+                    return;
+                }
+                else
+                {
+                    part.ResetPart();
+                    Debug.Log($"First part {part.Name} was outside");
+                }
+                part.PlaceFirstPart(minPoint - extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
+                bool isInsideWithNegativeExtents = !IsColliding(part, _placedWallParts) && IsInsideWalls(part);
+                if (isInsideWithNegativeExtents)
+                {
+                    _wallParts.Remove(part);
+                    _placedWallParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedWallParts.Count} (wall)";
+                    return;
+                }
+                else
+                {
+                    part.ResetPart();
+                    Debug.Log($"First part {part.Name} was outside");
+                }
+            }
+        }
+        Debug.Log("Failed to place new part in random position");
     }
 
     public void PlaceWallPartRandomPosition()
@@ -217,7 +261,12 @@ public class WFC_Aggregator : MonoBehaviour
     #endregion
 
     #region PLACING NEXT PARTS (wall/floor)
-    private bool PlaceNextWallPart()
+    /// <summary>
+    /// Places next part in the walls
+    /// </summary>
+    /// <param name="exteriorWalls">True if we want to place the exterior walls, false if we want to place interior walls</param>
+    /// <returns></returns>
+    private bool PlaceNextWallPart(bool exteriorWalls)
     {
         // find all the available connections in the entire building made up of placed parts
         List<Connection> availableConnectionsInCurrentBuilding = new();
@@ -253,7 +302,9 @@ public class WFC_Aggregator : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedWallParts) || !IsInsideWalls(unplacedConnection.ThisPart))
+            if (IsColliding(unplacedConnection.ThisPart, _placedWallParts)
+                || (!exteriorWalls && !IsInsideWalls(unplacedConnection.ThisPart))
+                || (exteriorWalls && !IsInsideExteriorWalls(unplacedConnection.ThisPart)))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -354,6 +405,39 @@ public class WFC_Aggregator : MonoBehaviour
         float maxWidth = connectionWidth + _connectionTolerance;
 
         return connectionToPlace.Properties.ConnectionWidth > minWidth && connectionToPlace.Properties.ConnectionWidth < maxWidth;
+    }
+
+    private bool IsInsideExteriorWalls(Part part)
+    {
+        var vertices = part.Collider.sharedMesh.vertices;
+        foreach (var vertex in vertices)
+        {
+            bool foundNearbyTileForVertex = false;
+            foreach (var wallGO in _solver.ExteriorWallsByYLayer[_currentWallLayer].Where(GO => GO != null))
+            {
+                //check if the part is within an acceptable distance to be able to collide
+                Vector3 tilePosition = wallGO.transform.position;
+                Vector3 partPosition = part.GOPart.transform.position;
+                if ((tilePosition - partPosition).magnitude < _tileToPartMaxDistance)
+                {
+                    var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
+                    if ((vertexToWorldSpace - wallGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                    {
+                        foundNearbyTileForVertex = true;
+                        break; // go to next vertex
+                    }
+                }
+                if (foundNearbyTileForVertex)
+                {
+                    break;
+                }
+            }
+            if (!foundNearbyTileForVertex)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     private bool IsInsideWalls(Part part)
@@ -652,24 +736,20 @@ public class WFC_Aggregator : MonoBehaviour
     private IEnumerator ExteriorWallsPlacement()
     {
         Debug.Log("Exterior walls placement started");
+        _wallFailureCounter = 0;
         while (true)
         {
-            foreach (var yLayer in _solver.ExteriorWallsByYLayer.Keys)
+            LoadWallPartPrefabs();
+            if (!PlaceNextWallPart(exteriorWalls: true)) _wallFailureCounter++;
+            if (_wallFailureCounter > _failureTolerance)
             {
-                foreach (var wallGO in _solver.ExteriorWallsByYLayer[yLayer])
-                {
-                    if (wallGO != null)
-                    {
-                        // For debugging, show the exterior walls in red and print their gameobject name
-                        Debug.Log(wallGO.name);
-                        wallGO.GetComponent<Renderer>().material.color = Color.red;
-                    }
-                }
+                PlaceExteriorWallPartRandomPosition();
+                _wallFailureCounter = 0;
             }
             yield return new WaitForSeconds(0.01f);
         }
     }
-    
+
     private IEnumerator AutoWallPlacement()
     {
         Debug.Log("Auto wall placement started");
@@ -677,7 +757,7 @@ public class WFC_Aggregator : MonoBehaviour
         while (true)
         {
             LoadWallPartPrefabs();
-            if (!PlaceNextWallPart()) _wallFailureCounter++;
+            if (!PlaceNextWallPart(exteriorWalls: false)) _wallFailureCounter++;
             if (_wallFailureCounter > _failureTolerance)
             {
                 PlaceWallPartRandomPosition();
@@ -706,12 +786,16 @@ public class WFC_Aggregator : MonoBehaviour
 
     public void OnAutoWallPlacementButtonClicked()
     {
+        LoadWallPartPrefabs();
+        PlaceWallPartRandomPosition();
         AutoWallPlacementCoroutine = AutoWallPlacement();
         StartCoroutine(AutoWallPlacementCoroutine);
     }
 
     public void OnAutoFloorPlacementButtonClicked()
     {
+        LoadFloorPartPrefabs();
+        PlaceFloorPartRandomPosition();
         AutoFloorPlacementCoroutine = AutoFloorPlacement();
         StartCoroutine(AutoFloorPlacementCoroutine);
     }
@@ -722,9 +806,11 @@ public class WFC_Aggregator : MonoBehaviour
         Debug.Log("Auto wall placement stopped by user");
         AutoWallPlacementCoroutine = null;
     }
-    
+
     public void OnExteriorWallsPlacementButtonClicked()
     {
+        LoadWallPartPrefabs();
+        PlaceExteriorWallPartRandomPosition();
         ExteriorWallsPlacementCoroutine = ExteriorWallsPlacement();
         StartCoroutine(ExteriorWallsPlacementCoroutine);
     }

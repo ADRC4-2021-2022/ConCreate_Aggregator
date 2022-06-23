@@ -18,7 +18,7 @@ public class ConstraintSolver : MonoBehaviour
     public GameObject[] GOPatternPrefabs;
     public GameObject[] GOFloorLayers;
     public List<GameObject> TileGOs;
-    
+
     public Dictionary<int, List<GameObject>> ExteriorWallsByYLayer;
     #endregion
 
@@ -116,7 +116,7 @@ public class ConstraintSolver : MonoBehaviour
                         tile.CurrentTile = _patternLibrary.Find(p => p.Index == EmptyTilePatternIndex);
                     }
                 }
-                
+
             }
         }
         Debug.Log($"Number of tiles visited: {visitedIndices.Count}");
@@ -300,7 +300,7 @@ public class ConstraintSolver : MonoBehaviour
             renderer.enabled = !renderer.enabled;
         }
     }
-    
+
     public void AggregateExteriorWalls()
     {
         var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();

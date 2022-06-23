@@ -1,9 +1,9 @@
-using System.Collections;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.IO;
 using System;
+using System.Collections;
+using System.IO;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class ScreenRecorder : MonoBehaviour
 {
