@@ -249,6 +249,11 @@ public class ConstraintSolver : MonoBehaviour
         }
         return unsetTiles;
     }
+
+    public int GetGroundFloorLayerNumber()
+    {
+        return GetValidIndices().Min(idx => idx.y);
+    }
     #endregion
 
     #region Buttons

@@ -112,6 +112,8 @@ public class WFC_Aggregator : MonoBehaviour
             _hasBeenInitialised = true;
             _tileSize = tileSize;
             _solver = constraintSolver;
+            _currentWallLayer = _solver.GetGroundFloorLayerNumber();
+            _currentFloorLayer = _currentWallLayer;
             LoadWallPartPrefabs();
             LoadFloorPartPrefabs();
             PlaceWallPartRandomPosition();
@@ -123,6 +125,7 @@ public class WFC_Aggregator : MonoBehaviour
     {
         _wallParts.Shuffle();
         var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentWallLayer).Where(t => t.CurrentGo != null).ToList();
+        //var setTilesInCurrentLayer = _solver.TileGOs.Where(GO => Util.RealPositionToIndex(GO.transform.position, _tileSize).y == _currentWallLayer).ToList();
         var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _wallParts.Count; i++)
         {
@@ -176,6 +179,7 @@ public class WFC_Aggregator : MonoBehaviour
     {
         _floorParts.Shuffle();
         var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentFloorLayer).Where(t => t.CurrentGo != null).ToList();
+        //var setTilesInCurrentLayer = _solver.TileGOs.Where(GO => Util.RealPositionToIndex(GO.transform.position, _tileSize).y == _currentFloorLayer).ToList();
         var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _floorParts.Count; i++)
         {
@@ -193,8 +197,8 @@ public class WFC_Aggregator : MonoBehaviour
             for (int k = 0; k < 4; k++)
             {
                 part.PlaceFirstPart(new Vector3(minPoint.x + extents.x, extents.z, minPoint.z + extents.y), Quaternion.Euler(new Vector3(90, 90 * k, 0)));
-                bool isInsideWithPositiveExtents = !IsColliding(part, _placedFloorParts) && IsInsideFloors(part);
-                if (isInsideWithPositiveExtents)
+                bool isInside = !IsColliding(part, _placedFloorParts) && IsInsideFloors(part);
+                if (isInside)
                 {
                     _floorParts.Remove(part);
                     _placedFloorParts.Add(part);
@@ -669,6 +673,7 @@ public class WFC_Aggregator : MonoBehaviour
     private IEnumerator AutoWallPlacement()
     {
         Debug.Log("Auto wall placement started");
+        _wallFailureCounter = 0;
         while (true)
         {
             LoadWallPartPrefabs();
@@ -685,6 +690,7 @@ public class WFC_Aggregator : MonoBehaviour
     private IEnumerator AutoFloorPlacement()
     {
         Debug.Log("Auto floor placement started");
+        _floorFailureCounter = 0;
         while (true)
         {
             LoadFloorPartPrefabs();
