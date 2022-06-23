@@ -26,6 +26,20 @@ public static class Util
         new Vector3Int(0,0,1)// plus z
     };
 
+    public static string GetWallTagForConnection(int connectionFace)
+    {
+        return connectionFace switch
+        {
+            0 => "WFC_wall_negX",
+            1 => "WFC_wall_posX",
+            2 => null,
+            3 => null,
+            4 => "WFC_wall_negZ",
+            5 => "WFC_wall_posZ",
+            _ => null,
+        };
+    }
+
     public static Dictionary<int, int> InversedDirections = new Dictionary<int, int>()
     {
         { 2, 3 },

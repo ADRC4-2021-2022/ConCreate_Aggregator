@@ -29,6 +29,10 @@ public class WFC_Aggregator : MonoBehaviour
     private int _floorFailureCounter = 0;
     private int _wallFailureCounter = 0;
     private readonly int _failureTolerance = 10;
+
+    //_saveRecorder.SaveScreen() - and look for a folder in the project with screenshots of frames saved
+    [SerializeField]
+    private ScreenRecorder _screenRecorder;
     #endregion
 
     #region LOADING PREFABS (wall/floor)

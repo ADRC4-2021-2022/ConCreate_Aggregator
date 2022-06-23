@@ -11,24 +11,32 @@ public class ConstraintSolver : MonoBehaviour
     public GameObject WFCAggregator;
     public Vector3 TileSize;
     public Tile[,,] TileGrid { private set; get; }
-    List<TilePattern> _patternLibrary;
+    public List<TilePattern> _patternLibrary;
     List<TileConnection> _connections;
 
     public GameObject GOEmptyTilePrefab;
     public GameObject[] GOPatternPrefabs;
     public GameObject[] GOFloorLayers;
     public List<GameObject> TileGOs;
+    
+    public Dictionary<int, List<GameObject>> ExteriorWallsByYLayer;
     #endregion
 
     #region private fields
     private IEnumerator _propagateStep;
-    private const int _emptyTilePatternIndex = 999;
+    public readonly int EmptyTilePatternIndex = 999;
     #endregion
 
     void Start()
     {
-        GridDimensions = new Vector3Int(21, 6, 12); // Based on 4x3x4 TileSize, GridDimensions should be 19x4x10, plus any margin needed around the grid
+        GridDimensions = new Vector3Int(30, 15, 30); // Based on 4x3x4 TileSize, GridDimensions should be 19x4x10, plus any margin needed around the grid
         TileSize = new Vector3(4, 3.05f, 4);
+
+        ExteriorWallsByYLayer = new Dictionary<int, List<GameObject>>();
+        for (int y = 0; y < GridDimensions.y; y++)
+        {
+            ExteriorWallsByYLayer[y] = new List<GameObject>();
+        }
 
         //Add all connections
         _connections = new List<TileConnection>();
@@ -43,7 +51,7 @@ public class ConstraintSolver : MonoBehaviour
         _patternLibrary = new List<TilePattern>();
 
         //Add empty tile pattern
-        _patternLibrary.Add(new TilePattern(_emptyTilePatternIndex, GOEmptyTilePrefab, _connections));
+        _patternLibrary.Add(new TilePattern(EmptyTilePatternIndex, GOEmptyTilePrefab, _connections));
 
         //Add all other patterns
         for (int i = 0; i < GOPatternPrefabs.Length; i++)
@@ -79,7 +87,7 @@ public class ConstraintSolver : MonoBehaviour
             if (!validIndices.Contains(tile.Index))
             {
                 // Set this tile to be an emptyTile
-                tile.PossiblePatterns = new List<TilePattern>() { _patternLibrary.Find(p => p.Index == _emptyTilePatternIndex) };
+                tile.PossiblePatterns = new List<TilePattern>() { _patternLibrary.Find(p => p.Index == EmptyTilePatternIndex) };
                 visitedIndices.Add(tile.Index);
                 for (int i = 0; i < 6; i++) // Each tile can have 6 possible neighbours: +x, -x, +y, -y, +z, -z
                 {
@@ -98,14 +106,14 @@ public class ConstraintSolver : MonoBehaviour
                         else opposite = 4;
 
                         //New list of PossiblePatterns should be current list, but with any TilePatterns that do NOT have an exterior wall connection on the opposite face taken out
-                        var possiblePatterns = neighbour.PossiblePatterns.Where(p => p.Index != _emptyTilePatternIndex && p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connApple)).ToList();
+                        var possiblePatterns = neighbour.PossiblePatterns.Where(p => p.Index != EmptyTilePatternIndex && p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connApple)).ToList();
                         neighbour.PossiblePatterns = possiblePatterns;
                         Debug.Log($"Tile EMPTY [{tile.Index.x}, {tile.Index.y}, {tile.Index.z}]: Has {neighbour.NumberOfPossiblePatterns} possible patterns");
                         tile.CurrentGo = GameObject.Instantiate(GOEmptyTilePrefab);
                         tile.CurrentGo.name = $"Tile EMPTY [{tile.Index.x}, {tile.Index.y}, {tile.Index.z}]";
                         tile.CurrentGo.transform.position = tile.RealWorldPosition;
                         TileGOs.Add(tile.CurrentGo);
-                        tile.CurrentTile = _patternLibrary.Find(p => p.Index == _emptyTilePatternIndex);
+                        tile.CurrentTile = _patternLibrary.Find(p => p.Index == EmptyTilePatternIndex);
                     }
                 }
                 
@@ -135,7 +143,7 @@ public class ConstraintSolver : MonoBehaviour
             {
                 for (int z = 0; z < GridDimensions.z; z++)
                 {
-                    TileGrid[x, y, z] = new Tile(new Vector3Int(x, y, z), _patternLibrary.Where(p => p.Index != _emptyTilePatternIndex).ToList(), this, TileSize);
+                    TileGrid[x, y, z] = new Tile(new Vector3Int(x, y, z), _patternLibrary.Where(p => p.Index != EmptyTilePatternIndex).ToList(), this, TileSize);
                 }
             }
         }
@@ -144,14 +152,25 @@ public class ConstraintSolver : MonoBehaviour
 
     private IEnumerator PropagateStep()
     {
-        while (true)
+        while (GetNextTile())
         {
-            GetNextTile();
             yield return new WaitForSeconds(0.25f);
+        }
+        foreach (var yLayer in ExteriorWallsByYLayer.Keys)
+        {
+            foreach (var wallGO in ExteriorWallsByYLayer[yLayer])
+            {
+                if (wallGO != null)
+                {
+                    // For debugging, show the exterior walls in red and print their gameobject name
+                    Debug.Log(wallGO.name);
+                    wallGO.GetComponent<Renderer>().material.color = Color.red;
+                }
+            }
         }
     }
 
-    private void GetNextTile()
+    private bool GetNextTile()
     {
         List<Tile> unsetTiles = GetUnsetTiles();
 
@@ -159,13 +178,15 @@ public class ConstraintSolver : MonoBehaviour
         if (unsetTiles.Count == 0)
         {
             Debug.Log("All tiles are set");
-            return;
+            return false;
         }
 
         var tileWithLowestPossiblePatternCount = unsetTiles.OrderBy(p => p.NumberOfPossiblePatterns).First();
 
         //Assign one of the possible patterns to the tile
         tileWithLowestPossiblePatternCount.AssignRandomPossiblePattern();
+
+        return true;
     }
 
     private List<Tile> GetTilesFlattened()
@@ -222,7 +243,7 @@ public class ConstraintSolver : MonoBehaviour
 
         //keep trying to place a first tile, until we get one which doesn't reduce any of it's neighbours' PossibilePatterns.Count to 0
         // (the AssignRandomPossiblePattern function handles this, returning true if it managed to place a tile in a valid way; false if not)
-        while(true)
+        while (true)
         {
             var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
             if (TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignRandomPossiblePattern()) return;

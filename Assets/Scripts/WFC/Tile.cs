@@ -111,7 +111,7 @@ public class Tile
                 //if (neighboursPossiblePatterns[i] == null)
                 //{
                 //    var brokenPossiblePatternSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                //    brokenPossiblePatternSphere.name = $"Fucked up {neighbour.Index}";
+                //    brokenPossiblePatternSphere.name = $"BROKEN {neighbour.Index}";
                 //    brokenPossiblePatternSphere.transform.position = Util.IndexToRealPosition(neighbour.Index, _tileSize);
                 //    brokenPossiblePatternSphere.GetComponent<Renderer>().material.color = Color.red;
                 //}
@@ -120,6 +120,33 @@ public class Tile
                     {
                         if (p.HasFaceWithConnectionType(opposite, connection.Type) && CurrentTile.HasFaceWithConnectionType(i, connection.Type))
                         {
+                            // If we matched to an exterior wall, store the connection
+                            if (neighbour.PossiblePatterns.Contains(_solver._patternLibrary[0]))
+                            {
+                                var wallTag = Util.GetWallTagForConnection(i);
+                                if (wallTag != null)
+                                {
+                                    for (int i = 0; i < CurrentGo.transform.childCount; i++)
+                                    {
+                                        var child = CurrentGo.transform.GetChild(i);
+                                        if (child.gameObject.layer == 7)
+                                        {
+                                            for (int j = 0; j < child.transform.childCount; j++)
+                                            {
+                                                var wall = child.GetChild(j);
+                                                if (wall.CompareTag(wallTag))
+                                                {
+                                                    _solver.ExteriorWallsByYLayer[Index.y].Add(wall.gameObject);
+                                                    //var debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                                                    //debugSphere.name = $"EXTERIOR WALL {wall.GetComponent<MeshCollider>().bounds.center}";
+                                                    //debugSphere.transform.position = wall.GetComponent<MeshCollider>().bounds.center;
+                                                    //debugSphere.GetComponent<Renderer>().material.color = Color.red;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             return true; // found a matching pair of connections, so return true (meaning this pattern will stay in the PossiblePatterns list for that face)
                         }
                     }
