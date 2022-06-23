@@ -6,6 +6,7 @@ using UnityEngine;
 public class WFC_Aggregator : MonoBehaviour
 {
     #region VARIABLES
+    public IEnumerator ExteriorWallsPlacementCoroutine;
     public IEnumerator AutoWallPlacementCoroutine;
     public IEnumerator AutoFloorPlacementCoroutine;
 
@@ -644,6 +645,27 @@ public class WFC_Aggregator : MonoBehaviour
     #endregion
 
     #region BUTTONS FOR COROUTINES
+    private IEnumerator ExteriorWallsPlacement()
+    {
+        Debug.Log("Exterior walls placement started");
+        while (true)
+        {
+            foreach (var yLayer in _solver.ExteriorWallsByYLayer.Keys)
+            {
+                foreach (var wallGO in _solver.ExteriorWallsByYLayer[yLayer])
+                {
+                    if (wallGO != null)
+                    {
+                        // For debugging, show the exterior walls in red and print their gameobject name
+                        Debug.Log(wallGO.name);
+                        wallGO.GetComponent<Renderer>().material.color = Color.red;
+                    }
+                }
+            }
+            yield return new WaitForSeconds(0.01f);
+        }
+    }
+    
     private IEnumerator AutoWallPlacement()
     {
         Debug.Log("Auto wall placement started");
@@ -693,6 +715,19 @@ public class WFC_Aggregator : MonoBehaviour
         StopCoroutine(AutoWallPlacementCoroutine);
         Debug.Log("Auto wall placement stopped by user");
         AutoWallPlacementCoroutine = null;
+    }
+    
+    public void OnExteriorWallsPlacementButtonClicked()
+    {
+        ExteriorWallsPlacementCoroutine = ExteriorWallsPlacement();
+        StartCoroutine(ExteriorWallsPlacementCoroutine);
+    }
+
+    public void StopExteriorWallsPlacement()
+    {
+        StopCoroutine(ExteriorWallsPlacementCoroutine);
+        Debug.Log("Exterior walls placement stopped by user");
+        ExteriorWallsPlacementCoroutine = null;
     }
 
     public void StopAutoFloorPlacement()

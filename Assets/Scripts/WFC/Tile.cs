@@ -57,6 +57,10 @@ public class Tile
             _emptySet = true;
             Debug.Log($"No pattern available for tile {Index} ");
         }
+        else if (PossiblePatterns.Count == 1)
+        {
+            Debug.Log($"Tile {Index} is already set");
+        }
         //At the moment we will set the tile. This will allow for empty tiles. Better to create a generic tile and assign this one. Even better to keep track of the former option and select on of those
         else
         {
@@ -76,21 +80,20 @@ public class Tile
     /// <summary>
     /// Check through this Tile's neighbours, using the TilePattern passed as a parameter, ensuring no neighbours have their PossiblePatterns.Count reduced to 0
     /// </summary>
-    /// <param name="pattern">The TilePattern we are trying to set this Tile to</param>
+    /// <param name="patternToAssign">The TilePattern we are trying to set this Tile to</param>
     /// <returns>True if every neighbour still has PossiblePatterns.Count > 0 after assigning the TilePattern, false if not</returns>
-    public bool AssignPattern(TilePattern pattern)
+    public bool AssignPattern(TilePattern patternToAssign)
     {
-        if (CurrentGo != null)
-        {
-            GameObject.Destroy(CurrentGo);
-        }
+        //if (CurrentGo != null)
+        //{
+        //    GameObject.Destroy(CurrentGo);
+        //}
 
-        CurrentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[pattern.Index]);
-        CurrentGo.name = $"Tile {_solver.GOPatternPrefabs[pattern.Index].name} [{Index.x}, {Index.y}, {Index.z}]";
+        CurrentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[patternToAssign.Index]);
+        CurrentGo.name = $"Tile {_solver.GOPatternPrefabs[patternToAssign.Index].name} [{Index.x}, {Index.y}, {Index.z}]";
         CurrentGo.transform.position = RealWorldPosition;
-        _solver.TileGOs.Add(CurrentGo);
-        CurrentTile = pattern;
         var neighbours = GetNeighbours();
+        var wallGOsFound = new List<GameObject>();
 
         // set neighbour.PossiblePatterns to match what this tile defines
         var neighboursPossiblePatterns = new List<TilePattern>[6];
@@ -118,7 +121,7 @@ public class Tile
                 neighboursPossiblePatterns[i] = neighbour.PossiblePatterns.Where(p => {
                     foreach (var connection in p.Connections[opposite])
                     {
-                        if (p.HasFaceWithConnectionType(opposite, connection.Type) && CurrentTile.HasFaceWithConnectionType(i, connection.Type))
+                        if (p.HasFaceWithConnectionType(opposite, connection.Type) && patternToAssign.HasFaceWithConnectionType(i, connection.Type))
                         {
                             // If we matched to an exterior wall, store the connection
                             if (neighbour.PossiblePatterns.Contains(_solver._patternLibrary[0]))
@@ -136,7 +139,7 @@ public class Tile
                                                 var wall = child.GetChild(j);
                                                 if (wall.CompareTag(wallTag))
                                                 {
-                                                    _solver.ExteriorWallsByYLayer[Index.y].Add(wall.gameObject);
+                                                    wallGOsFound.Add(wall.gameObject);
                                                     //var debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                                                     //debugSphere.name = $"EXTERIOR WALL {wall.GetComponent<MeshCollider>().bounds.center}";
                                                     //debugSphere.transform.position = wall.GetComponent<MeshCollider>().bounds.center;
@@ -150,12 +153,15 @@ public class Tile
                             return true; // found a matching pair of connections, so return true (meaning this pattern will stay in the PossiblePatterns list for that face)
                         }
                     }
-
                     return false; // If we couldn't find any matching pairs of connections, so return false (meaning this pattern WILL NOT stay in the PossiblePatterns list for that face)
                 }).ToList();
 
                 // If we made any of the neighbours have no possible patterns, we need to reverse this action, so return false here
-                if (neighboursPossiblePatterns[i].Count == 0) return false;
+                if (neighboursPossiblePatterns[i].Count == 0)
+                {
+                    GameObject.Destroy(CurrentGo);
+                    return false;
+                }
             }
         }
 
@@ -168,7 +174,9 @@ public class Tile
                 neighbour.PossiblePatterns = neighboursPossiblePatterns[i];
             }
         }
-
+        _solver.ExteriorWallsByYLayer[Index.y].AddRange(wallGOsFound);
+        _solver.TileGOs.Add(CurrentGo);
+        CurrentTile = patternToAssign;
         return true;
     }
 

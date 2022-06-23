@@ -156,18 +156,6 @@ public class ConstraintSolver : MonoBehaviour
         {
             yield return new WaitForSeconds(0.25f);
         }
-        foreach (var yLayer in ExteriorWallsByYLayer.Keys)
-        {
-            foreach (var wallGO in ExteriorWallsByYLayer[yLayer])
-            {
-                if (wallGO != null)
-                {
-                    // For debugging, show the exterior walls in red and print their gameobject name
-                    Debug.Log(wallGO.name);
-                    wallGO.GetComponent<Renderer>().material.color = Color.red;
-                }
-            }
-        }
     }
 
     private bool GetNextTile()
@@ -305,6 +293,20 @@ public class ConstraintSolver : MonoBehaviour
         foreach (var renderer in tileRenderers)
         {
             renderer.enabled = !renderer.enabled;
+        }
+    }
+    
+    public void AggregateExteriorWalls()
+    {
+        var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
+        aggregator.Initialise(TileSize, this);
+        if (aggregator.ExteriorWallsPlacementCoroutine == null)
+        {
+            aggregator.OnExteriorWallsPlacementButtonClicked();
+        }
+        else
+        {
+            aggregator.StopExteriorWallsPlacement();
         }
     }
 
