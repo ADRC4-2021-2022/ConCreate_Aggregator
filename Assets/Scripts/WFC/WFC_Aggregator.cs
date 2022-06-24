@@ -45,7 +45,7 @@ public class WFC_Aggregator : MonoBehaviour
         }
 
         //Load all the prefabs
-        GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/Parts");
+        GameObject[] prefabs = Resources.LoadAll<GameObject>("Prefabs/PartsForWFC");
 
         //Select the prefabs with tag Part
         _wallParts = prefabs.Where(g =>
