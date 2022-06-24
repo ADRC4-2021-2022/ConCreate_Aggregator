@@ -359,5 +359,11 @@ public class ConstraintSolver : MonoBehaviour
             StartCoroutine(_propagateStep);
         }
     }
+
+    public void AggregateNextFloor()
+    {
+        var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
+        aggregator.OnAggregateNextFloorButtonClicked();
+    }
     #endregion
 }

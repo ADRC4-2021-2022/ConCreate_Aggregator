@@ -784,6 +784,27 @@ public class WFC_Aggregator : MonoBehaviour
         }
     }
 
+    public void OnAggregateNextFloorButtonClicked()
+    {
+        if (ExteriorWallsPlacementCoroutine != null)
+        {
+            StopCoroutine(ExteriorWallsPlacementCoroutine);
+            ExteriorWallsPlacementCoroutine = null;
+        }
+        if (AutoWallPlacementCoroutine != null)
+        {
+            StopCoroutine(AutoWallPlacementCoroutine);
+            AutoWallPlacementCoroutine = null;
+        }
+        if (AutoFloorPlacementCoroutine != null)
+        {
+            StopCoroutine(AutoFloorPlacementCoroutine);
+            AutoFloorPlacementCoroutine = null;
+        }
+        _currentWallLayer++;
+        _currentFloorLayer++;
+    }
+
     public void OnAutoWallPlacementButtonClicked()
     {
         LoadWallPartPrefabs();

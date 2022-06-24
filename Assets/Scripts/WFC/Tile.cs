@@ -122,7 +122,11 @@ public class Tile
                 {
                     foreach (var connection in p.Connections[opposite])
                     {
-                        if (p.HasFaceWithConnectionType(opposite, connection.Type) && patternToAssign.HasFaceWithConnectionType(i, connection.Type))
+                        //if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connPink) && patternToAssign.HasFaceWithConnectionType(i, ConnectionType.WFC_connPink))
+                        //{
+                        //    return false;
+                        //}
+                         if (p.HasFaceWithConnectionType(opposite, connection.Type) && patternToAssign.HasFaceWithConnectionType(i, connection.Type))
                         {
                             // If we matched to an exterior wall, store the connection
                             if (neighbour.PossiblePatterns.Contains(_solver._patternLibrary[0]))
