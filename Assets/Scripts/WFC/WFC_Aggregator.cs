@@ -13,15 +13,17 @@ public class WFC_Aggregator : MonoBehaviour
     public Vector3 _tileSize;
     private ConstraintSolver _solver;
     private readonly int _maxNeighboursToCheck = 50; // how many neighbouring colliders to check in IsColliding function
-    private readonly float _overlapTolerance = 0.03f; // used by compute penetration
+    private readonly float _overlapTolerance = 0.05f; // used by compute penetration
     private readonly float _connectionTolerance = 0.2f; // tolerance of matching connections
     private readonly float _vertexDistanceTolerance = 0.1f;
     private readonly float _tileToPartMaxDistance = 4f;
     private bool _connectionMatchingEnabled = true;
     private bool _hasBeenInitialised = false;
 
+    private List<Part> _exteriorWallParts = new(); // LIBRARY OF EXTERIOR WALL PARTS
     private List<Part> _wallParts = new(); // LIBRARY OF WALL PARTS
     private List<Part> _floorParts = new(); // LIBRARY OF FLOOR PARTS
+    private List<Part> _placedExteriorWallParts = new();
     private List<Part> _placedWallParts = new();
     private List<Part> _placedFloorParts = new();
 
@@ -60,7 +62,7 @@ public class WFC_Aggregator : MonoBehaviour
             return false;
         }).Select(g => new Part(g)).ToList();
         //Add one more arch so that there are more arches into the aggregation
-        GameObject prefab08P_c = Resources.Load<GameObject>("Prefabs/Parts/08P_c");
+        GameObject prefab08P_c = Resources.Load<GameObject>("Prefabs/PartsForWFC/SMALLARCH");
         _wallParts.Add(new Part(prefab08P_c));
         EnableAllConnections();
     }
@@ -119,13 +121,12 @@ public class WFC_Aggregator : MonoBehaviour
 
     public void PlaceExteriorWallPartRandomPosition()
     {
-        _wallParts.Shuffle();
         var setTilesInCurrentLayer = _solver.ExteriorWallsByYLayer[_currentWallLayer];
         //var setTilesInCurrentLayer = _solver.TileGOs.Where(GO => Util.RealPositionToIndex(GO.transform.position, _tileSize).y == _currentWallLayer).ToList();
         var randomWallGO = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
-        for (int i = 0; i < _wallParts.Count; i++)
+        for (int i = 0; i < _exteriorWallParts.Count; i++)
         {
-            Part part = _wallParts[i];
+            Part part = _exteriorWallParts[i];
             var size = part.Collider.sharedMesh.bounds.size;
             var extents = size / 2;
 
@@ -133,12 +134,12 @@ public class WFC_Aggregator : MonoBehaviour
             for (int k = 0; k < 4; k++)
             {
                 part.PlaceFirstPart(minPoint + extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithPositiveExtents = !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
+                bool isInsideWithPositiveExtents = !IsColliding(part, _placedExteriorWallParts) && IsInsideExteriorWalls(part);
                 if (isInsideWithPositiveExtents)
                 {
-                    _wallParts.Remove(part);
-                    _placedWallParts.Add(part);
-                    part.Name = $"{part.Name} added {_placedWallParts.Count} (wall)";
+                    _exteriorWallParts.Remove(part);
+                    _placedExteriorWallParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
                     return;
                 }
                 else
@@ -147,12 +148,12 @@ public class WFC_Aggregator : MonoBehaviour
                     Debug.Log($"First part {part.Name} was outside");
                 }
                 part.PlaceFirstPart(minPoint - extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithNegativeExtents = !IsColliding(part, _placedWallParts) && IsInsideWalls(part);
+                bool isInsideWithNegativeExtents = !IsColliding(part, _placedExteriorWallParts) && IsInsideWalls(part);
                 if (isInsideWithNegativeExtents)
                 {
-                    _wallParts.Remove(part);
-                    _placedWallParts.Add(part);
-                    part.Name = $"{part.Name} added {_placedWallParts.Count} (wall)";
+                    _exteriorWallParts.Remove(part);
+                    _placedExteriorWallParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
                     return;
                 }
                 else
@@ -261,12 +262,65 @@ public class WFC_Aggregator : MonoBehaviour
     #endregion
 
     #region PLACING NEXT PARTS (wall/floor)
-    /// <summary>
-    /// Places next part in the walls
-    /// </summary>
-    /// <param name="exteriorWalls">True if we want to place the exterior walls, false if we want to place interior walls</param>
-    /// <returns></returns>
-    private bool PlaceNextWallPart(bool exteriorWalls)
+    private bool PlaceNextExteriorWallPart()
+    {
+        // find all the available connections in the entire building made up of placed parts
+        List<Connection> availableConnectionsInCurrentBuilding = new();
+        foreach (Part placedPart in _placedExteriorWallParts)
+        {
+            foreach (Connection connection in placedPart.Connections)
+            {
+                if (connection.Available) availableConnectionsInCurrentBuilding.Add(connection);
+            }
+        }
+
+        // take random connection
+        int randomIndexInCurrentBuilding = Random.Range(0, availableConnectionsInCurrentBuilding.Count);
+        Connection randomAvailableConnectionInCurrentBuilding = availableConnectionsInCurrentBuilding[randomIndexInCurrentBuilding];
+
+        // get list of av connections in UNPLACED PARTS
+        List<Connection> availableConnectionsInUnplacedParts = new();
+        foreach (Part unplacedPart in _exteriorWallParts)
+        {
+            foreach (Connection connection in unplacedPart.Connections)
+            {
+                // compatible = the toggle is on and we want matching connections
+                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection)
+                     && (connection.GOConnection.CompareTag("onlyWallConn") || connection.GOConnection.CompareTag("bothWallFloorConn")))
+                {
+                    availableConnectionsInUnplacedParts.Add(connection);
+                }
+            }
+        }
+
+        foreach (Connection unplacedConnection in availableConnectionsInUnplacedParts)
+        {
+            unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
+
+            if (IsColliding(unplacedConnection.ThisPart, _placedExteriorWallParts) || !IsInsideExteriorWalls(unplacedConnection.ThisPart))
+            {
+                //the part collided, so go to the next part in the list
+                unplacedConnection.ThisPart.ResetPart();
+            }
+            else
+            {
+                //Set the part as placed
+                unplacedConnection.ThisPart.PlacePart(unplacedConnection);
+                Debug.Log($"{_wallFailureCounter} wall failures");
+                _wallFailureCounter = 0;
+
+                randomAvailableConnectionInCurrentBuilding.Available = false;
+                string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedExteriorWallParts.Count + 1} (wall)";
+                unplacedConnection.ThisPart.Name = newName;
+                _exteriorWallParts.Remove(unplacedConnection.ThisPart);
+                _placedExteriorWallParts.Add(unplacedConnection.ThisPart);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool PlaceNextWallPart()
     {
         // find all the available connections in the entire building made up of placed parts
         List<Connection> availableConnectionsInCurrentBuilding = new();
@@ -302,9 +356,7 @@ public class WFC_Aggregator : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedWallParts)
-                || (!exteriorWalls && !IsInsideWalls(unplacedConnection.ThisPart))
-                || (exteriorWalls && !IsInsideExteriorWalls(unplacedConnection.ThisPart)))
+            if (IsColliding(unplacedConnection.ThisPart, _placedWallParts) || !IsInsideWalls(unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -640,6 +692,88 @@ public class WFC_Aggregator : MonoBehaviour
         // if we reach this point there's no collision --> place part
         return false;
     }
+
+    public List<Part> GetLSystemPattern(int sequenceLength)
+    {
+        var finalPattern = new List<string>();
+
+        var axiom = "COLUMN";
+        var columnRule = new List<string>() {
+            "WALL1",
+            "SMALLARCH",
+            "WALL1"
+        };
+        var smallWallRule = new List<string>() {
+            "COLUMN",
+            "BIGARCH",
+            "COLUMN"
+        };
+        var smallArchRule = new List<string>() {
+            "COLUMN",
+            "SMALLARCH",
+            "COLUMN",
+            "SMALLARCH",
+            "COLUMN"
+        };
+        var bigArchRule = new List<string>() {
+            "WALL2",
+            "BIGARCH",
+            "WALL2"
+        };
+        var bigWallRule = new List<string>() {
+            "COLUMN",
+            "SMALLARCH",
+            "COLUMN"
+        };
+
+        List<string> lastSequence = null;
+        for (int i = 0; i < sequenceLength; i++)
+        {
+            if (lastSequence == null)
+            {
+                lastSequence = new List<string>() { axiom };
+                finalPattern.Add(axiom);
+            } 
+            else
+            {
+                var currentSequence = new List<string>();
+                foreach (var partName in lastSequence)
+                {
+                    switch (partName)
+                    {
+                        case "COLUMN":
+                            currentSequence.AddRange(columnRule);
+                            finalPattern.AddRange(columnRule);
+                            break;
+                        case "WALL1":
+                            currentSequence.AddRange(smallWallRule);
+                            finalPattern.AddRange(smallWallRule);
+                            break;
+                        case "SMALLARCH":
+                            currentSequence.AddRange(smallArchRule);
+                            finalPattern.AddRange(smallArchRule);
+                            break;
+                        case "BIGARCH":
+                            currentSequence.AddRange(bigArchRule);
+                            finalPattern.AddRange(bigArchRule);
+                            break;
+                        case "WALL2":
+                            currentSequence.AddRange(bigWallRule);
+                            finalPattern.AddRange(bigWallRule);
+                            break;
+                    }
+                }
+                lastSequence = currentSequence;
+            }
+        }
+        var finalPartsList = new List<Part>();
+        foreach (var partName in finalPattern)
+        {
+            GameObject partGO = Resources.Load<GameObject>($"Prefabs/PartsForWFC/{partName}");
+            finalPartsList.Add(new Part(partGO));
+        }
+        return finalPartsList;
+    }
     #endregion
 
     #region CLICK > RAYCAST > TRY TO PLACE PART WHERE CLICKED
@@ -739,8 +873,8 @@ public class WFC_Aggregator : MonoBehaviour
         _wallFailureCounter = 0;
         while (true)
         {
-            LoadWallPartPrefabs();
-            if (!PlaceNextWallPart(exteriorWalls: true)) _wallFailureCounter++;
+            _exteriorWallParts = GetLSystemPattern(5);
+            if (!PlaceNextExteriorWallPart()) _wallFailureCounter++;
             if (_wallFailureCounter > _failureTolerance)
             {
                 PlaceExteriorWallPartRandomPosition();
@@ -757,7 +891,7 @@ public class WFC_Aggregator : MonoBehaviour
         while (true)
         {
             LoadWallPartPrefabs();
-            if (!PlaceNextWallPart(exteriorWalls: false)) _wallFailureCounter++;
+            if (!PlaceNextWallPart()) _wallFailureCounter++;
             if (_wallFailureCounter > _failureTolerance)
             {
                 PlaceWallPartRandomPosition();
@@ -830,7 +964,7 @@ public class WFC_Aggregator : MonoBehaviour
 
     public void OnExteriorWallsPlacementButtonClicked()
     {
-        LoadWallPartPrefabs();
+        _exteriorWallParts = GetLSystemPattern(5);
         PlaceExteriorWallPartRandomPosition();
         ExteriorWallsPlacementCoroutine = ExteriorWallsPlacement();
         StartCoroutine(ExteriorWallsPlacementCoroutine);
