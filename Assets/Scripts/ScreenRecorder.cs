@@ -39,14 +39,14 @@ public class ScreenRecorder : MonoBehaviour
 
         if (Keyboard.current[Key.S].wasPressedThisFrame)
         {
-            string file = _captureDirectory + $"Frame_{DateTime.Now.ToString("y-MM-dd-THH-mm-ss")}.png";
+            string file = _captureDirectory + $"Frame_{DateTime.Now:y-MM-dd-THH-mm-ss}.png";
             ScreenCapture.CaptureScreenshot(file, Supersize);
         }
     }
 
     public void SaveScreen()
     {
-        string file = _captureDirectory + $"Frame_{DateTime.Now.ToString("y-MM-dd-THH-mm-ss")}.png";
+        string file = _captureDirectory + $"Frame_{DateTime.Now:y-MM-dd-THH-mm-ss}.png";
         ScreenCapture.CaptureScreenshot(file, Supersize);
     }
 

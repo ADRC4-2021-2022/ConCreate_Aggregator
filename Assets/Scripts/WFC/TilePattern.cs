@@ -44,7 +44,7 @@ public class TilePattern
     {
         Connections = new List<TileConnection>[6] { new List<TileConnection>(), new List<TileConnection>(), new List<TileConnection>(), new List<TileConnection>(), new List<TileConnection>(), new List<TileConnection>() };
 
-        List<GameObject> goConnections = Util.GetChildObjectByLayer(_goTilePrefab.transform, LayerMask.NameToLayer("Connections"));
+        List<GameObject> goConnections = Util.GetChildObjectsByLayer(_goTilePrefab.transform, LayerMask.NameToLayer("Connections"));
 
         foreach (var goConnection in goConnections)
         {

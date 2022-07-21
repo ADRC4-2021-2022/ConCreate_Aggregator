@@ -298,7 +298,7 @@ public static class Util
     }
 
     //Put this function into a UTIl class, you can use it in your entire project
-    public static List<GameObject> GetChildObjectByLayer(Transform parent, int layer)
+    public static List<GameObject> GetChildObjectsByLayer(Transform parent, int layer)
     {
         List<GameObject> layerChildren = new List<GameObject>();
 
@@ -311,7 +311,7 @@ public static class Util
             }
             if (child.childCount > 0)
             {
-                GetChildObjectByLayer(child, layer);
+                GetChildObjectsByLayer(child, layer);
             }
         }
 

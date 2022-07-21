@@ -15,6 +15,7 @@ public class Tile
     private bool _showconnections = true;
     private Vector3 _tileSize;
     private readonly ConstraintSolver _solver;
+    private readonly ScreenRecorder _screenRecorder;
 
     //A tile is set if there is only one possible pattern
     public bool Set
@@ -35,12 +36,13 @@ public class Tile
     #endregion
 
     #region constructors
-    public Tile(Vector3Int index, List<TilePattern> tileLibrary, ConstraintSolver solver, Vector3 tileSize)
+    public Tile(ScreenRecorder screenRecorder, Vector3Int index, List<TilePattern> tileLibrary, ConstraintSolver solver, Vector3 tileSize)
     {
         PossiblePatterns = tileLibrary;
         Index = index;
         RealWorldPosition = Util.IndexToRealPosition(index, tileSize);
         _solver = solver;
+        _screenRecorder = screenRecorder;
         _tileSize = tileSize;
     }
     #endregion
@@ -182,6 +184,37 @@ public class Tile
         _solver.ExteriorWallsByYLayer[Index.y].AddRange(wallGOsFound);
         _solver.TileGOs.Add(CurrentGo);
         CurrentTile = patternToAssign;
+        //var walls = Util.GetChildObjectsByLayer(CurrentGo.transform, LayerMask.NameToLayer("Wall"));
+        //foreach (var child in walls)
+        //{
+        //    var renderers = child.GetComponentsInChildren<MeshRenderer>();
+        //    foreach (var renderer in renderers)
+        //    {
+        //        renderer.enabled = false;
+        //    }
+        //}
+        //var floors = Util.GetChildObjectsByLayer(CurrentGo.transform, LayerMask.NameToLayer("Floor"));
+        //foreach (var child in floors)
+        //{
+        //    var renderers = child.GetComponentsInChildren<MeshRenderer>();
+        //    foreach (var renderer in renderers)
+        //    {
+        //        renderer.enabled = false;
+        //    }
+        //}
+        var connections = Util.GetChildObjectsByLayer(CurrentGo.transform, LayerMask.NameToLayer("Connections"));
+        foreach (var child in connections)
+        {
+            //if (!child.CompareTag("WFC_connPink") && !child.CompareTag("WFC_connBlack"))
+            //{
+                var renderers = child.GetComponentsInChildren<MeshRenderer>();
+                foreach (var renderer in renderers)
+                {
+                    renderer.enabled = false;
+                }
+            //}
+        }
+        _screenRecorder.SaveScreen();
         return true;
     }
 

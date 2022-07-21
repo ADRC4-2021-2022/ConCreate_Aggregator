@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ConstraintSolver : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class ConstraintSolver : MonoBehaviour
     #region private fields
     private IEnumerator _propagateStep;
     public readonly int EmptyTilePatternIndex = 999;
+    public ScreenRecorder _screenRecorder;
     #endregion
 
     void Start()
@@ -63,6 +65,22 @@ public class ConstraintSolver : MonoBehaviour
         _propagateStep = PropagateStep();
         InitialiseWFCGrid();
         StartCoroutine(_propagateStep);
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current[Key.Digit1].wasPressedThisFrame)
+        {
+            AggregateExteriorWalls();
+        }
+        if (Keyboard.current[Key.Digit2].wasPressedThisFrame)
+        {
+            AggregateWallParts();
+        }
+        if (Keyboard.current[Key.Digit3].wasPressedThisFrame)
+        {
+            AggregateNextFloor();
+        }
     }
 
     #region private functions
@@ -143,7 +161,7 @@ public class ConstraintSolver : MonoBehaviour
             {
                 for (int z = 0; z < GridDimensions.z; z++)
                 {
-                    TileGrid[x, y, z] = new Tile(new Vector3Int(x, y, z), _patternLibrary.Where(p => p.Index != EmptyTilePatternIndex).ToList(), this, TileSize);
+                    TileGrid[x, y, z] = new Tile(_screenRecorder, new Vector3Int(x, y, z), _patternLibrary.Where(p => p.Index != EmptyTilePatternIndex).ToList(), this, TileSize);
                 }
             }
         }
@@ -233,7 +251,8 @@ public class ConstraintSolver : MonoBehaviour
         // (the AssignRandomPossiblePattern function handles this, returning true if it managed to place a tile in a valid way; false if not)
         while (true)
         {
-            var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
+            //var randomIndex = validIndices[UnityEngine.Random.Range(0, validIndices.Count)];
+            var randomIndex = validIndices[0]; // start on the first available tile
             if (TileGrid[randomIndex.x, randomIndex.y, randomIndex.z].AssignRandomPossiblePattern()) return;
         }
     }
@@ -294,10 +313,71 @@ public class ConstraintSolver : MonoBehaviour
 
     public void ToggleTilesVisibility()
     {
-        var tileRenderers = GetTilesFlattened().Where(t => t.CurrentGo != null).SelectMany(t => t.CurrentGo.GetComponentsInChildren<MeshRenderer>());
-        foreach (var renderer in tileRenderers)
+        var tiles = GetTilesFlattened().Where(t => t.CurrentGo != null);
+        foreach (var tile in tiles)
         {
-            renderer.enabled = !renderer.enabled;
+            if (tile.Index.y == GetGroundFloorLayerNumber())
+            {
+                var children = Util.GetChildObjectsByLayer(tile.CurrentGo.transform, LayerMask.NameToLayer("Wall"));
+                foreach (var child in children)
+                {
+                    var renderers = child.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        renderer.enabled = !renderer.enabled;
+                    }
+                }
+            }
+            else
+            {
+                var walls = Util.GetChildObjectsByLayer(tile.CurrentGo.transform, LayerMask.NameToLayer("Wall"));
+                foreach (var child in walls)
+                {
+                    var renderers = child.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        renderer.enabled = !renderer.enabled;
+                    }
+                }
+                var floors = Util.GetChildObjectsByLayer(tile.CurrentGo.transform, LayerMask.NameToLayer("Floor"));
+                foreach (var child in floors)
+                {
+                    var renderers = child.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        renderer.enabled = !renderer.enabled;
+                    }
+                }
+            }
+        }
+    }
+
+    public void SetOnlyFloorToBeVisibleOnYLayer(int currentYLayer)
+    {
+        var tiles = GetTilesFlattened().Where(t => t.CurrentGo != null);
+        foreach (var tile in tiles)
+        {
+            if (tile.Index.y == currentYLayer)
+            {
+                var walls = Util.GetChildObjectsByLayer(tile.CurrentGo.transform, LayerMask.NameToLayer("Wall"));
+                foreach (var child in walls)
+                {
+                    var renderers = child.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        renderer.enabled = false;
+                    }
+                }
+                var floors = Util.GetChildObjectsByLayer(tile.CurrentGo.transform, LayerMask.NameToLayer("Floor"));
+                foreach (var child in floors)
+                {
+                    var renderers = child.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        renderer.enabled = true;
+                    }
+                }
+            }
         }
     }
 

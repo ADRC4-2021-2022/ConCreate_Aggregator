@@ -134,7 +134,7 @@ public class WFC_Aggregator : MonoBehaviour
             for (int k = 0; k < 4; k++)
             {
                 part.PlaceFirstPart(minPoint + extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithPositiveExtents = !IsColliding(part, _placedExteriorWallParts) && IsInsideExteriorWalls(part);
+                bool isInsideWithPositiveExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
                 if (isInsideWithPositiveExtents)
                 {
                     _exteriorWallParts.Remove(part);
@@ -148,7 +148,7 @@ public class WFC_Aggregator : MonoBehaviour
                     Debug.Log($"First part {part.Name} was outside");
                 }
                 part.PlaceFirstPart(minPoint - extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithNegativeExtents = !IsColliding(part, _placedExteriorWallParts) && IsInsideWalls(part);
+                bool isInsideWithNegativeExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideWalls(part);
                 if (isInsideWithNegativeExtents)
                 {
                     _exteriorWallParts.Remove(part);
@@ -188,7 +188,7 @@ public class WFC_Aggregator : MonoBehaviour
             for (int k = 0; k < 4; k++)
             {
                 part.PlaceFirstPart(minPoint + extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithPositiveExtents = !IsColliding(part, _placedWallParts) && IsInsideWalls(part);
+                bool isInsideWithPositiveExtents = !IsColliding(part, _placedWallParts) && !IsColliding(part, _placedExteriorWallParts) && IsInsideWalls(part);
                 if (isInsideWithPositiveExtents)
                 {
                     _wallParts.Remove(part);
@@ -202,7 +202,7 @@ public class WFC_Aggregator : MonoBehaviour
                     Debug.Log($"First part {part.Name} was outside");
                 }
                 part.PlaceFirstPart(minPoint - extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithNegativeExtents = !IsColliding(part, _placedWallParts) && IsInsideWalls(part);
+                bool isInsideWithNegativeExtents = !IsColliding(part, _placedWallParts) && !IsColliding(part, _placedExteriorWallParts) && IsInsideWalls(part);
                 if (isInsideWithNegativeExtents)
                 {
                     _wallParts.Remove(part);
@@ -285,19 +285,29 @@ public class WFC_Aggregator : MonoBehaviour
             foreach (Connection connection in unplacedPart.Connections)
             {
                 // compatible = the toggle is on and we want matching connections
-                if (connection.Available && AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection)
-                     && (connection.GOConnection.CompareTag("onlyWallConn") || connection.GOConnection.CompareTag("bothWallFloorConn")))
+                var compatible = connection.Available /*&& AreConnectionsCompatible(randomAvailableConnectionInCurrentBuilding, connection)*/
+                     && connection.GOConnection.CompareTag("onlyWallConn");
+                //if (connection.Available)
+                //{
+                //    Debug.Log("yay");
+                //}
+                
+                if (compatible)
                 {
                     availableConnectionsInUnplacedParts.Add(connection);
                 }
             }
         }
+        //if (availableConnectionsInUnplacedParts.Count > 0)
+        //{
+        //    Debug.Log("You have available connections in unplaced parts");
+        //}
 
         foreach (Connection unplacedConnection in availableConnectionsInUnplacedParts)
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedExteriorWallParts) || !IsInsideExteriorWalls(unplacedConnection.ThisPart))
+            if (IsColliding(unplacedConnection.ThisPart, _placedExteriorWallParts) ||  IsColliding(unplacedConnection.ThisPart, _placedWallParts) || !IsInsideExteriorWalls(unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -314,6 +324,7 @@ public class WFC_Aggregator : MonoBehaviour
                 unplacedConnection.ThisPart.Name = newName;
                 _exteriorWallParts.Remove(unplacedConnection.ThisPart);
                 _placedExteriorWallParts.Add(unplacedConnection.ThisPart);
+                _screenRecorder.SaveScreen();
                 return true;
             }
         }
@@ -356,7 +367,7 @@ public class WFC_Aggregator : MonoBehaviour
         {
             unplacedConnection.ThisPart.PositionPart(randomAvailableConnectionInCurrentBuilding, unplacedConnection);
 
-            if (IsColliding(unplacedConnection.ThisPart, _placedWallParts) || !IsInsideWalls(unplacedConnection.ThisPart))
+            if (IsColliding(unplacedConnection.ThisPart, _placedWallParts) || IsColliding(unplacedConnection.ThisPart, _placedExteriorWallParts) || !IsInsideWalls(unplacedConnection.ThisPart))
             {
                 //the part collided, so go to the next part in the list
                 unplacedConnection.ThisPart.ResetPart();
@@ -373,6 +384,7 @@ public class WFC_Aggregator : MonoBehaviour
                 unplacedConnection.ThisPart.Name = newName;
                 _wallParts.Remove(unplacedConnection.ThisPart);
                 _placedWallParts.Add(unplacedConnection.ThisPart);
+                _screenRecorder.SaveScreen();
                 return true;
             }
         }
@@ -465,7 +477,7 @@ public class WFC_Aggregator : MonoBehaviour
         foreach (var vertex in vertices)
         {
             bool foundNearbyTileForVertex = false;
-            foreach (var wallGO in _solver.ExteriorWallsByYLayer[_currentWallLayer].Where(GO => GO != null))
+            foreach (var wallGO in _solver.ExteriorWallsByYLayer[_currentWallLayer]/*.Where(GO => GO != null)*/)
             {
                 //check if the part is within an acceptable distance to be able to collide
                 Vector3 tilePosition = wallGO.transform.position;
@@ -479,10 +491,10 @@ public class WFC_Aggregator : MonoBehaviour
                         break; // go to next vertex
                     }
                 }
-                if (foundNearbyTileForVertex)
-                {
-                    break;
-                }
+                //if (foundNearbyTileForVertex)
+                //{
+                //    break;
+                //}
             }
             if (!foundNearbyTileForVertex)
             {
@@ -697,33 +709,33 @@ public class WFC_Aggregator : MonoBehaviour
     {
         var finalPattern = new List<string>();
 
-        var axiom = "COLUMN";
+        var axiom = "BIGARCH";
         var columnRule = new List<string>() {
             "WALL1",
-            "SMALLARCH",
-            "WALL1"
+            //"SMALLARCH",
+            //"WALL1"
         };
         var smallWallRule = new List<string>() {
-            "COLUMN",
-            "BIGARCH",
-            "COLUMN"
+            //"COLUMN",
+            "WALL2",
+            //"COLUMN"
         };
         var smallArchRule = new List<string>() {
             "COLUMN",
-            "SMALLARCH",
-            "COLUMN",
-            "SMALLARCH",
+            //"SMALLARCH",
+            //"COLUMN",
+            "WALL1",
             "COLUMN"
         };
         var bigArchRule = new List<string>() {
             "WALL2",
-            "BIGARCH",
+            "WALL1",
             "WALL2"
         };
         var bigWallRule = new List<string>() {
-            "COLUMN",
-            "SMALLARCH",
-            "COLUMN"
+            //"COLUMN",
+            "SMALLARCH"
+            //"COLUMN"
         };
 
         List<string> lastSequence = null;
@@ -937,6 +949,7 @@ public class WFC_Aggregator : MonoBehaviour
         }
         _currentWallLayer++;
         _currentFloorLayer++;
+        _solver.SetOnlyFloorToBeVisibleOnYLayer(_currentWallLayer);
     }
 
     public void OnAutoWallPlacementButtonClicked()

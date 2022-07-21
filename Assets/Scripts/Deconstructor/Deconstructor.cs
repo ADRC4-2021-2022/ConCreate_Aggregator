@@ -14,7 +14,7 @@ public class Deconstructor : MonoBehaviour
     private List<Collider> _colliders = new();
     private Bounds _meshBounds;
     private int _voxelOffset = 2;
-    private float _voxelSize = 0.2f;
+    private float _voxelSize = 0.25f;
 
     private Color _supportsColor;
     private Color _floorsColor;

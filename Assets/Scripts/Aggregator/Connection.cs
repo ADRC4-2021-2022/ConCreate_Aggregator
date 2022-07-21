@@ -82,6 +82,7 @@ public class Connection
         Length = GOConnection.transform.localScale.z;
         Width = GOConnection.transform.localScale.x;
         ThisPart = thisPart;
+        Available = true;
         Properties = goConnection.GetComponent<ConnectionProperties>();
     }
     #endregion
