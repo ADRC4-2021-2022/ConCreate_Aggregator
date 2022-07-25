@@ -67,6 +67,13 @@ public class Tile
         else
         {
             PossiblePatterns.Shuffle();
+            int jokerIndex = PossiblePatterns.FindIndex(p => p.Index == 0);
+            if (jokerIndex != -1)
+            {
+                var joker = PossiblePatterns[jokerIndex];
+                PossiblePatterns.RemoveAt(jokerIndex);
+                PossiblePatterns.Insert(PossiblePatterns.Count -1, joker);
+            }
             foreach (var pattern in PossiblePatterns)
             {
                 if (AssignPattern(pattern))
@@ -214,7 +221,7 @@ public class Tile
             }
             //}
         }
-        _screenRecorder.SaveScreen();
+        //_screenRecorder.SaveScreen();
         return true;
     }
 
