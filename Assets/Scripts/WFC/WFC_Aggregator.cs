@@ -12,10 +12,11 @@ public class WFC_Aggregator : MonoBehaviour
     public Vector3 _tileSize;
 
     private ConstraintSolver _solver; //WFC algorithm
+    private List<GameObject> _setTilesInCurrentLayer;
 
     private readonly float _overlapTolerance = 0.05f; // used by compute penetration
     private readonly float _vertexDistanceTolerance = 0.05f;
-    private readonly float _tileToPartMaxDistance = 2f;
+    private readonly float _tileToPartMaxDistance = 3f;
 
     private bool _hasBeenInitialised = false;
 
@@ -69,6 +70,7 @@ public class WFC_Aggregator : MonoBehaviour
             _tileSize = tileSize;
             _solver = constraintSolver;
             _currentWallLayer = _solver.GetGroundFloorLayerNumber();
+            _setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentWallLayer).Select(t => t.CurrentGo).Where(GO => GO != null).ToList();
         }
     }
 
@@ -122,8 +124,7 @@ public class WFC_Aggregator : MonoBehaviour
     public void PlaceWallPartRandomPosition()
     {
         _wallParts.Shuffle();
-        var setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentWallLayer).Where(t => t.CurrentGo != null).ToList();
-        var randomTile = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
+        var randomWallGO = _setTilesInCurrentLayer[Random.Range(0, _setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _wallParts.Count; i++)
         {
             Part part = _wallParts[i];
@@ -131,12 +132,12 @@ public class WFC_Aggregator : MonoBehaviour
             var extents = size / 2;
 
             GameObject wallGO = null;
-            for (int j = 0; j < randomTile.CurrentGo.transform.childCount; j++)
+            for (int j = 0; j < randomWallGO.transform.childCount; j++)
             {
-                var child = randomTile.CurrentGo.transform.GetChild(j);
+                var child = randomWallGO.transform.GetChild(j);
                 if (child.name.Equals("Wall")) wallGO = child.GetChild(0).gameObject;
             }
-            if (wallGO == null) Debug.Log($"Failed to find wall GO for tile {randomTile}");
+            if (wallGO == null) Debug.Log($"Failed to find wall GO for tile {randomWallGO}");
             var minPoint = wallGO.GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
 
             for (int k = 0; k < 4; k++)
@@ -329,18 +330,18 @@ public class WFC_Aggregator : MonoBehaviour
         foreach (var vertex in vertices)
         {
             bool foundNearbyTileForVertex = false;
-            foreach (var tile in _solver.GetTilesByYLayer(_currentWallLayer).Where(t => t.CurrentGo != null))
+            foreach (var tile in _setTilesInCurrentLayer)
             {
                 //check if the part is within an acceptable distance to be able to collide
-                Vector3 tilePosition = tile.CurrentGo.transform.position;
+                Vector3 tilePosition = tile.transform.position;
                 Vector3 partPosition = part.GOPart.transform.position;
                 if ((tilePosition - partPosition).magnitude < _tileToPartMaxDistance)
                 {
                     var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
                     List<GameObject> wallGOs = new();
-                    for (int i = 0; i < tile.CurrentGo.transform.childCount; i++)
+                    for (int i = 0; i < tile.transform.childCount; i++)
                     {
-                        var child = tile.CurrentGo.transform.GetChild(i);
+                        var child = tile.transform.GetChild(i);
                         if (child.gameObject.layer == 7)
                         {
                             for (int j = 0; j < child.transform.childCount; j++)
@@ -543,6 +544,7 @@ public class WFC_Aggregator : MonoBehaviour
         }
         _currentWallLayer++;
         _solver.SetOnlyFloorToBeVisibleOnYLayer(_currentWallLayer);
+        _setTilesInCurrentLayer = _solver.GetTilesByYLayer(_currentWallLayer).Select(t => t.CurrentGo).Where(GO => GO != null).ToList();
     }
 
     public void OnAutoWallPlacementButtonClicked()
