@@ -95,7 +95,7 @@ public class Tile
         CurrentGo.name = $"Tile {_solver.GOPatternPrefabs[patternToAssign.Index].name} [{Index.x}, {Index.y}, {Index.z}]";
         CurrentGo.transform.position = RealWorldPosition;
         var neighbours = GetNeighbours();
-        var wallGOsFound = new List<GameObject>();
+        var exteriorWallGOsFound = new List<GameObject>();
 
         // set neighbour.PossiblePatterns to match what this tile defines
         var neighboursPossiblePatterns = new List<TilePattern>[6];
@@ -124,11 +124,11 @@ public class Tile
                 {
                     foreach (var connection in p.Connections[opposite])
                     {
-                        //if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connPink) && patternToAssign.HasFaceWithConnectionType(i, ConnectionType.WFC_connPink))
-                        //{
-                        //    return false;
-                        //}
-                         if (p.HasFaceWithConnectionType(opposite, connection.Type) && patternToAssign.HasFaceWithConnectionType(i, connection.Type))
+                        if (p.HasFaceWithConnectionType(opposite, ConnectionType.WFC_connPink) && patternToAssign.HasFaceWithConnectionType(i, ConnectionType.WFC_connPink))
+                        {
+                            return false;
+                        }
+                        if (p.HasFaceWithConnectionType(opposite, connection.Type) && patternToAssign.HasFaceWithConnectionType(i, connection.Type))
                         {
                             // If we matched to an exterior wall, store the connection
                             if (neighbour.PossiblePatterns.Contains(_solver._patternLibrary[0]))
@@ -146,7 +146,7 @@ public class Tile
                                                 var wall = child.GetChild(j);
                                                 if (wall.CompareTag(wallTag))
                                                 {
-                                                    wallGOsFound.Add(wall.gameObject);
+                                                    exteriorWallGOsFound.Add(wall.gameObject);
                                                     //var debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                                                     //debugSphere.name = $"EXTERIOR WALL {wall.GetComponent<MeshCollider>().bounds.center}";
                                                     //debugSphere.transform.position = wall.GetComponent<MeshCollider>().bounds.center;
@@ -181,7 +181,7 @@ public class Tile
                 neighbour.PossiblePatterns = neighboursPossiblePatterns[i];
             }
         }
-        _solver.ExteriorWallsByYLayer[Index.y].AddRange(wallGOsFound);
+        _solver.ExteriorWallsByYLayer[Index.y].AddRange(exteriorWallGOsFound);
         _solver.TileGOs.Add(CurrentGo);
         CurrentTile = patternToAssign;
         //var walls = Util.GetChildObjectsByLayer(CurrentGo.transform, LayerMask.NameToLayer("Wall"));
@@ -207,11 +207,11 @@ public class Tile
         {
             //if (!child.CompareTag("WFC_connPink") && !child.CompareTag("WFC_connBlack"))
             //{
-                var renderers = child.GetComponentsInChildren<MeshRenderer>();
-                foreach (var renderer in renderers)
-                {
-                    renderer.enabled = false;
-                }
+            var renderers = child.GetComponentsInChildren<MeshRenderer>();
+            foreach (var renderer in renderers)
+            {
+                renderer.enabled = false;
+            }
             //}
         }
         _screenRecorder.SaveScreen();

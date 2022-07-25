@@ -410,21 +410,6 @@ public class ConstraintSolver : MonoBehaviour
         }
     }
 
-    public void AggregateFloorParts()
-    {
-        var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
-        aggregator.Initialise(TileSize, this);
-        aggregator.PlaceFloorPartRandomPosition();
-        if (aggregator.AutoFloorPlacementCoroutine == null)
-        {
-            aggregator.OnAutoFloorPlacementButtonClicked();
-        }
-        else
-        {
-            aggregator.StopAutoFloorPlacement();
-        }
-    }
-
     public void StartStopWFCCoroutine()
     {
         if (_propagateStep != null)
