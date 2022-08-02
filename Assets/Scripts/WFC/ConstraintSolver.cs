@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 public class ConstraintSolver : MonoBehaviour
@@ -29,8 +30,19 @@ public class ConstraintSolver : MonoBehaviour
     public ScreenRecorder _screenRecorder;
     #endregion
 
+    [SerializeField]
+    private Slider _opennessSlider;
+
+    [SerializeField]
+    private Text _opennessPercentage;
+
+    public int TargetOpenness = 0;
+
+    #region Unity functions
     void Start()
     {
+        //_opennessSlider.onValueChanged.AddListener( delegate { OnOpennessSliderValueChanged(); });
+
         GridDimensions = new Vector3Int(30, 15, 30); // Based on 4x3x4 TileSize, GridDimensions should be 19x4x10, plus any margin needed around the grid
         TileSize = new Vector3(4, 3.05f, 4);
 
@@ -82,6 +94,7 @@ public class ConstraintSolver : MonoBehaviour
             AggregateNextFloor();
         }
     }
+    #endregion
 
     #region private functions
     /// <summary>
@@ -151,7 +164,6 @@ public class ConstraintSolver : MonoBehaviour
         return validIndicesCurrentLayer;
     }
 
-    //Create the tile grid
     private void MakeTiles()
     {
         TileGrid = new Tile[GridDimensions.x, GridDimensions.y, GridDimensions.z];
@@ -429,6 +441,21 @@ public class ConstraintSolver : MonoBehaviour
     {
         var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
         aggregator.OnAggregateNextFloorButtonClicked();
+    }
+
+    public void PlaceBalconies()
+    {
+        var aggregator = WFCAggregator.GetComponent<WFC_Aggregator>();
+        aggregator.PlaceBalconies();
+    }
+
+    public void OnOpennessSliderValueChanged()
+    {
+        float val = _opennessSlider.value;
+        string percentageText;
+        if (val == -1) percentageText = "0%"; else if (val == 0) percentageText = "50%"; else percentageText = "100%";
+        _opennessPercentage.text = percentageText;
+        TargetOpenness = (int)val;
     }
     #endregion
 }

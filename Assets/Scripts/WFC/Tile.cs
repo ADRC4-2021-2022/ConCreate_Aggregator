@@ -5,6 +5,7 @@ using UnityEngine;
 public class Tile
 {
     #region Variables
+    public int TileOpenness = 0;
     public List<TilePattern> PossiblePatterns;
     public Vector3Int Index;
     public Vector3 RealWorldPosition;
@@ -13,7 +14,6 @@ public class Tile
 
     private bool _emptySet = false;
     private bool _showconnections = true;
-    private Vector3 _tileSize;
     private readonly ConstraintSolver _solver;
     private readonly ScreenRecorder _screenRecorder;
 
@@ -43,7 +43,6 @@ public class Tile
         RealWorldPosition = Util.IndexToRealPosition(index, tileSize);
         _solver = solver;
         _screenRecorder = screenRecorder;
-        _tileSize = tileSize;
     }
     #endregion
 
@@ -67,13 +66,23 @@ public class Tile
         else
         {
             PossiblePatterns.Shuffle();
-            int jokerIndex = PossiblePatterns.FindIndex(p => p.Index == 0);
-            if (jokerIndex != -1)
+            var openPatterns = PossiblePatterns.Where(p => p.GOTilePrefab.CompareTag("OpenTile"));
+            var openClosedPatterns = PossiblePatterns.Where(p => p.GOTilePrefab.CompareTag("OpenClosedTile"));
+            var closedPatterns = PossiblePatterns.Where(p => p.GOTilePrefab.CompareTag("ClosedTile"));
+            PossiblePatterns = new List<TilePattern>();
+            if (GetCurrentBuildingOpenness() > _solver.TargetOpenness)
             {
-                var joker = PossiblePatterns[jokerIndex];
-                PossiblePatterns.RemoveAt(jokerIndex);
-                PossiblePatterns.Insert(PossiblePatterns.Count -1, joker);
+                PossiblePatterns.AddRange(closedPatterns);
+                PossiblePatterns.AddRange(openClosedPatterns);
+                PossiblePatterns.AddRange(openPatterns);
             }
+            else
+            {
+                PossiblePatterns.AddRange(openPatterns);
+                PossiblePatterns.AddRange(openClosedPatterns);
+                PossiblePatterns.AddRange(closedPatterns);
+            }
+
             foreach (var pattern in PossiblePatterns)
             {
                 if (AssignPattern(pattern))
@@ -93,11 +102,6 @@ public class Tile
     /// <returns>True if every neighbour still has PossiblePatterns.Count > 0 after assigning the TilePattern, false if not</returns>
     public bool AssignPattern(TilePattern patternToAssign)
     {
-        //if (CurrentGo != null)
-        //{
-        //    GameObject.Destroy(CurrentGo);
-        //}
-
         CurrentGo = GameObject.Instantiate(_solver.GOPatternPrefabs[patternToAssign.Index]);
         CurrentGo.name = $"Tile {_solver.GOPatternPrefabs[patternToAssign.Index].name} [{Index.x}, {Index.y}, {Index.z}]";
         CurrentGo.transform.position = RealWorldPosition;
@@ -119,14 +123,6 @@ public class Tile
                 else if (i == 4) opposite = 5;
                 else opposite = 4;
 
-                // BIG RED SPHERE FOR DEBUGGING WHEN WE ENCOUNTER PossiblePatterns == null IN A NEIGHBOUR
-                //if (neighboursPossiblePatterns[i] == null)
-                //{
-                //    var brokenPossiblePatternSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                //    brokenPossiblePatternSphere.name = $"BROKEN {neighbour.Index}";
-                //    brokenPossiblePatternSphere.transform.position = Util.IndexToRealPosition(neighbour.Index, _tileSize);
-                //    brokenPossiblePatternSphere.GetComponent<Renderer>().material.color = Color.red;
-                //}
                 neighboursPossiblePatterns[i] = neighbour.PossiblePatterns.Where(p =>
                 {
                     foreach (var connection in p.Connections[opposite])
@@ -154,10 +150,6 @@ public class Tile
                                                 if (wall.CompareTag(wallTag))
                                                 {
                                                     exteriorWallGOsFound.Add(wall.gameObject);
-                                                    //var debugSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                                                    //debugSphere.name = $"EXTERIOR WALL {wall.GetComponent<MeshCollider>().bounds.center}";
-                                                    //debugSphere.transform.position = wall.GetComponent<MeshCollider>().bounds.center;
-                                                    //debugSphere.GetComponent<Renderer>().material.color = Color.red;
                                                 }
                                             }
                                         }
@@ -191,37 +183,19 @@ public class Tile
         _solver.ExteriorWallsByYLayer[Index.y].AddRange(exteriorWallGOsFound);
         _solver.TileGOs.Add(CurrentGo);
         CurrentTile = patternToAssign;
-        //var walls = Util.GetChildObjectsByLayer(CurrentGo.transform, LayerMask.NameToLayer("Wall"));
-        //foreach (var child in walls)
-        //{
-        //    var renderers = child.GetComponentsInChildren<MeshRenderer>();
-        //    foreach (var renderer in renderers)
-        //    {
-        //        renderer.enabled = false;
-        //    }
-        //}
-        //var floors = Util.GetChildObjectsByLayer(CurrentGo.transform, LayerMask.NameToLayer("Floor"));
-        //foreach (var child in floors)
-        //{
-        //    var renderers = child.GetComponentsInChildren<MeshRenderer>();
-        //    foreach (var renderer in renderers)
-        //    {
-        //        renderer.enabled = false;
-        //    }
-        //}
+
         var connections = Util.GetChildObjectsByLayer(CurrentGo.transform, LayerMask.NameToLayer("Connections"));
         foreach (var child in connections)
         {
-            //if (!child.CompareTag("WFC_connPink") && !child.CompareTag("WFC_connBlack"))
-            //{
             var renderers = child.GetComponentsInChildren<MeshRenderer>();
             foreach (var renderer in renderers)
             {
                 renderer.enabled = false;
             }
-            //}
         }
         //_screenRecorder.SaveScreen();
+
+        TileOpenness = GetTilePatternOpenness();
         return true;
     }
 
@@ -248,6 +222,34 @@ public class Tile
                 child.GetComponentInChildren<MeshRenderer>().enabled = _showconnections;
             }
         }
+    }
+    #endregion
+
+    #region private functions
+    private int GetTilePatternOpenness()
+    {
+        if (CurrentGo.CompareTag("OpenTile"))
+        {
+            return 1;
+        }
+        else if (CurrentGo.CompareTag("ClosedTile"))
+        {
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    private float GetCurrentBuildingOpenness()
+    {
+        int openTileCount = _solver.TileGOs.Where(GO => GO.CompareTag("OpenTile")).Count();
+        int closedTileCount = _solver.TileGOs.Where(GO => GO.CompareTag("ClosedTile")).Count();
+        int openClosedTileCount = _solver.TileGOs.Where(GO => GO.CompareTag("OpenClosedTile")).Count();
+        if (openTileCount == 0 || closedTileCount == 0 || openClosedTileCount == 0) return 0;
+        int totalTileCount = openTileCount + closedTileCount + openClosedTileCount;
+        return (float)((-1 * closedTileCount) + openTileCount) / totalTileCount;
     }
     #endregion
 }

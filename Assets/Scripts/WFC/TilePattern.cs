@@ -12,14 +12,14 @@ public class TilePattern
     #endregion
 
     #region private fields
-    readonly GameObject _goTilePrefab;
+    public readonly GameObject GOTilePrefab;
     #endregion
 
     #region constructors
     public TilePattern(int index, GameObject goTilePrefab, List<TileConnection> connectionTypes)
     {
         Index = index;
-        _goTilePrefab = goTilePrefab;
+        GOTilePrefab = goTilePrefab;
         ConnectionTypes = connectionTypes;
         GetConnections();
     }
@@ -44,7 +44,7 @@ public class TilePattern
     {
         Connections = new List<TileConnection>[6] { new List<TileConnection>(), new List<TileConnection>(), new List<TileConnection>(), new List<TileConnection>(), new List<TileConnection>(), new List<TileConnection>() };
 
-        List<GameObject> goConnections = Util.GetChildObjectsByLayer(_goTilePrefab.transform, LayerMask.NameToLayer("Connections"));
+        List<GameObject> goConnections = Util.GetChildObjectsByLayer(GOTilePrefab.transform, LayerMask.NameToLayer("Connections"));
 
         foreach (var goConnection in goConnections)
         {

@@ -10,6 +10,7 @@ public class Part
     public GameObject GOPart;
     //For communication with object in unity
     public PartTrigger connectedGOPart;
+    public string PrefabName;
 
     public bool Intersecting = false;
     public PartStatus Status;
@@ -53,6 +54,7 @@ public class Part
     public Part(GameObject partPrefab)
     {
         _prefab = partPrefab;
+        PrefabName = partPrefab.name;
         InitializeGO();
         LoadPartConnections();
         Status = PartStatus.Available;
@@ -60,9 +62,6 @@ public class Part
 
     public void InitializeGO()
     {
-        //GOPart = _prefab;
-
-        //GameObject.Destroy(GOPart);
         if (GOPart == null)
         {
             GOPart = GameObject.Instantiate(_prefab, Vector3.zero, Quaternion.identity);
@@ -73,9 +72,6 @@ public class Part
         GOPart.transform.rotation = Quaternion.identity;
 
         GOPart.SetActive(false);
-
-
-
     }
     #endregion
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WFC_Aggregator : MonoBehaviour
 {
@@ -575,6 +576,87 @@ public class WFC_Aggregator : MonoBehaviour
         StopCoroutine(ExteriorWallsPlacementCoroutine);
         Debug.Log("Exterior walls placement stopped by user");
         ExteriorWallsPlacementCoroutine = null;
+    }
+
+    public void PlaceBalconies()
+    {
+        foreach (var arch in _placedExteriorWallParts.Where(p => p.PrefabName == "BIGARCH"))
+        {
+            var balconyPrefab = Resources.Load<GameObject>("Prefabs/PartsForWFC/BALCONY");
+            var archPos = arch.GOPart.transform.position;
+            var archSize = arch.Collider.sharedMesh.bounds.size;
+            GameObject balcony = GameObject.Instantiate(balconyPrefab, archPos, arch.GOPart.transform.rotation);
+            var balconySize = balcony.transform.GetChild(0).GetChild(0).GetComponent<Collider>().bounds.size;
+
+            balcony.transform.position = new Vector3(archPos.x, archPos.y - archSize.y / 2 - balconySize.y / 2, archPos.z);
+            //balcony.transform.position = new Vector3(archPos.x, archPos.y - archSize.y / 2 - balconySize.y / 2, archPos.z - balconySize.z / 2);
+            //if (IsInsideFloors(balcony))
+            //{
+            //    balcony.transform.position = new Vector3(archPos.x - balconySize.x / 2, archPos.y - archSize.y / 2 - balconySize.y / 2, archPos.z);
+            //    if (IsInsideFloors(balcony))
+            //    {
+            //        balcony.transform.position = new Vector3(archPos.x + balconySize.x / 2, archPos.y - archSize.y / 2 - balconySize.y / 2, archPos.z);
+            //        if (IsInsideFloors(balcony))
+            //        {
+            //            balcony.transform.position = new Vector3(archPos.x, archPos.y - archSize.y / 2 - balconySize.y / 2, archPos.z + balconySize.z / 2);
+            //            if (IsInsideFloors(balcony))
+            //            {
+            //                Debug.Log($"Failed to place balcony for {arch.Name}");
+            //                Destroy(balcony);
+            //            }
+            //        }
+            //    }
+            //}
+        }
+    }
+
+    private bool IsInsideFloors(GameObject balcony)
+    {
+        var vertices = balcony.transform.GetChild(0).GetChild(0).GetComponent<MeshCollider>().sharedMesh.vertices;
+        foreach (var vertex in vertices)
+        {
+            bool foundNearbyTileForVertex = false;
+            foreach (var tile in _setTilesInCurrentLayer)
+            {
+                //check if the part is within an acceptable distance to be able to collide
+                Vector3 tilePosition = tile.transform.position;
+                Vector3 balconyPos = balcony.transform.position;
+                if ((tilePosition - balconyPos).magnitude < _tileToPartMaxDistance)
+                {
+                    var vertexToWorldSpace = balcony.transform.TransformPoint(vertex); // take the world position of the vertex
+                    List<GameObject> floorGOs = new();
+                    for (int i = 0; i < tile.transform.childCount; i++)
+                    {
+                        var child = tile.transform.GetChild(i);
+                        if (child.gameObject.layer == 8)
+                        {
+                            for (int j = 0; j < child.transform.childCount; j++)
+                            {
+                                floorGOs.Add(child.GetChild(j).gameObject);
+                            }
+                        }
+                    }
+                    if (floorGOs.Count == 0) return false;
+                    foreach (var floorGO in floorGOs)
+                    {
+                        if ((vertexToWorldSpace - floorGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < _vertexDistanceTolerance)
+                        {
+                            foundNearbyTileForVertex = true;
+                            break; // go to next vertex
+                        }
+                    }
+                    if (foundNearbyTileForVertex)
+                    {
+                        break; // go to next vertex
+                    }
+                }
+            }
+            if (!foundNearbyTileForVertex)
+            {
+                return false;
+            }
+        }
+        return true;
     }
     #endregion
 }
