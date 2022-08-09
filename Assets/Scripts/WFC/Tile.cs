@@ -190,7 +190,10 @@ public class Tile
             var renderers = child.GetComponentsInChildren<MeshRenderer>();
             foreach (var renderer in renderers)
             {
-                renderer.enabled = false;
+                if (!child.CompareTag("WFC_connApple") && !child.CompareTag("WFC_connBlack"))
+                {
+                    renderer.enabled = false;
+                }
             }
         }
         //_screenRecorder.SaveScreen();

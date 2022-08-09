@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class ConstraintSolver : MonoBehaviour
 {
@@ -92,6 +92,10 @@ public class ConstraintSolver : MonoBehaviour
         if (Keyboard.current[Key.Digit3].wasPressedThisFrame)
         {
             AggregateNextFloor();
+        }
+        if (Keyboard.current[Key.S].wasPressedThisFrame)
+        {
+            _screenRecorder.SaveScreen();
         }
     }
     #endregion

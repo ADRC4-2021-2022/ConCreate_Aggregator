@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class WFC_Aggregator : MonoBehaviour
 {
@@ -16,8 +15,8 @@ public class WFC_Aggregator : MonoBehaviour
     private List<GameObject> _setTilesInCurrentLayer;
 
     private readonly float _overlapTolerance = 0.05f; // used by compute penetration
-    private readonly float _vertexDistanceTolerance = 0.05f;
-    private readonly float _tileToPartMaxDistance = 3f;
+    private readonly float _vertexDistanceTolerance = 0.1f;
+    private readonly float _tileToPartMaxDistance = 4f;
 
     private bool _hasBeenInitialised = false;
 
@@ -28,6 +27,7 @@ public class WFC_Aggregator : MonoBehaviour
 
     private int _currentWallLayer = 0;
     private int _wallFailureCounter = 0;
+    private int _exteriorWallFailureCounter = 0;
     private readonly int _failureTolerance = 10;
 
     [SerializeField]
@@ -149,7 +149,7 @@ public class WFC_Aggregator : MonoBehaviour
                 {
                     _wallParts.Remove(part);
                     _placedWallParts.Add(part);
-                    part.Name = $"{part.Name} added {_placedWallParts.Count} (wall)";
+                    part.Name = $"{part.Name} placed {_placedWallParts.Count} (wall)";
                     return;
                 }
                 else
@@ -163,7 +163,7 @@ public class WFC_Aggregator : MonoBehaviour
                 {
                     _wallParts.Remove(part);
                     _placedWallParts.Add(part);
-                    part.Name = $"{part.Name} added {_placedWallParts.Count} (wall)";
+                    part.Name = $"{part.Name} placed {_placedWallParts.Count} (wall)";
                     return;
                 }
                 else
@@ -220,8 +220,8 @@ public class WFC_Aggregator : MonoBehaviour
             {
                 //Set the part as placed
                 unplacedConnection.ThisPart.PlacePart(unplacedConnection);
-                Debug.Log($"{_wallFailureCounter} wall failures");
-                _wallFailureCounter = 0;
+                Debug.Log($"{_exteriorWallFailureCounter} wall failures");
+                _exteriorWallFailureCounter = 0;
 
                 randomAvailableConnectionInCurrentBuilding.Available = false;
                 string newName = $"{unplacedConnection.ThisPart.Name} placed {_placedExteriorWallParts.Count + 1} (wall)";
@@ -417,33 +417,24 @@ public class WFC_Aggregator : MonoBehaviour
     {
         var finalPattern = new List<string>();
 
-        var axiom = "BIGARCH";
+        var axiom = "WALL1";
         var columnRule = new List<string>() {
-            "WALL1",
-            //"SMALLARCH",
-            //"WALL1"
+            "WALL1"
         };
         var smallWallRule = new List<string>() {
-            //"COLUMN",
+            "SMALLARCH",
+            "BIGARCH",
             "WALL2",
-            //"COLUMN"
-        };
-        var smallArchRule = new List<string>() {
-            "COLUMN",
-            //"SMALLARCH",
-            //"COLUMN",
-            "WALL1",
             "COLUMN"
         };
+        var smallArchRule = new List<string>() {
+            "BIGARCH"
+        };
         var bigArchRule = new List<string>() {
-            "WALL2",
-            "WALL1",
             "WALL2"
         };
         var bigWallRule = new List<string>() {
-            //"COLUMN",
-            "SMALLARCH"
-            //"COLUMN"
+            "COLUMN"
         };
 
         List<string> lastSequence = null;
@@ -500,15 +491,16 @@ public class WFC_Aggregator : MonoBehaviour
     private IEnumerator ExteriorWallsPlacement()
     {
         Debug.Log("Exterior walls placement started");
-        _wallFailureCounter = 0;
+        _exteriorWallFailureCounter = 0;
         while (true)
         {
             _exteriorWallParts = GetLSystemPattern(5);
-            if (!PlaceNextExteriorWallPart()) _wallFailureCounter++;
-            if (_wallFailureCounter > _failureTolerance)
+            if (!PlaceNextExteriorWallPart()) _exteriorWallFailureCounter++;
+            if (_exteriorWallFailureCounter > 0)
             {
+                _exteriorWallParts = GetLSystemPattern(5);
                 PlaceExteriorWallPartRandomPosition();
-                _wallFailureCounter = 0;
+                _exteriorWallFailureCounter = 0;
             }
             yield return new WaitForSeconds(0.01f);
         }
