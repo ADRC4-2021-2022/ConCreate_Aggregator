@@ -75,17 +75,15 @@ public class WFC_Aggregator : MonoBehaviour
         }
     }
 
-    public void PlaceExteriorWallPartRandomPosition()
+    public Part PlaceExteriorWallPartInTileWall(GameObject wallGO)
     {
-        var setTilesInCurrentLayer = _solver.ExteriorWallsByYLayer[_currentWallLayer];
-        var randomWallGO = setTilesInCurrentLayer[Random.Range(0, setTilesInCurrentLayer.Count)];
         for (int i = 0; i < _exteriorWallParts.Count; i++)
         {
             Part part = _exteriorWallParts[i];
             var size = part.Collider.sharedMesh.bounds.size;
             var extents = size / 2;
 
-            var minPoint = randomWallGO.GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
+            var minPoint = wallGO.GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
 
             for (int k = 0; k < 4; k++)
             {
@@ -96,7 +94,7 @@ public class WFC_Aggregator : MonoBehaviour
                     _exteriorWallParts.Remove(part);
                     _placedExteriorWallParts.Add(part);
                     part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
-                    return;
+                    return part;
                 }
                 else
                 {
@@ -104,13 +102,13 @@ public class WFC_Aggregator : MonoBehaviour
                     Debug.Log($"First part {part.Name} was outside");
                 }
                 part.PlaceFirstPart(minPoint - extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithNegativeExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideWalls(part);
+                bool isInsideWithNegativeExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
                 if (isInsideWithNegativeExtents)
                 {
                     _exteriorWallParts.Remove(part);
                     _placedExteriorWallParts.Add(part);
                     part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
-                    return;
+                    return part;
                 }
                 else
                 {
@@ -120,6 +118,51 @@ public class WFC_Aggregator : MonoBehaviour
             }
         }
         Debug.Log("Failed to place new part in random position");
+        return null;
+    }
+
+    public Part PlaceExteriorWallPartInTileWall(Vector3 position)
+    {
+        for (int i = 0; i < _exteriorWallParts.Count; i++)
+        {
+            Part part = _exteriorWallParts[i];
+            var size = part.Collider.sharedMesh.bounds.size;
+            var extents = size / 2;
+
+            for (int k = 0; k < 4; k++)
+            {
+                part.PlaceFirstPart(position + extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
+                bool isInsideWithPositiveExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
+                if (isInsideWithPositiveExtents)
+                {
+                    _exteriorWallParts.Remove(part);
+                    _placedExteriorWallParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
+                    return part;
+                }
+                else
+                {
+                    part.ResetPart();
+                    Debug.Log($"First part {part.Name} was outside");
+                }
+                part.PlaceFirstPart(position - extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
+                bool isInsideWithNegativeExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
+                if (isInsideWithNegativeExtents)
+                {
+                    _exteriorWallParts.Remove(part);
+                    _placedExteriorWallParts.Add(part);
+                    part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
+                    return part;
+                }
+                else
+                {
+                    part.ResetPart();
+                    Debug.Log($"First part {part.Name} was outside");
+                }
+            }
+        }
+        Debug.Log("Failed to place new part in random position");
+        return null;
     }
 
     public void PlaceWallPartRandomPosition()
@@ -490,20 +533,69 @@ public class WFC_Aggregator : MonoBehaviour
     #region BUTTONS FOR COROUTINES
     private IEnumerator ExteriorWallsPlacement()
     {
-        Debug.Log("Exterior walls placement started");
-        _exteriorWallFailureCounter = 0;
-        while (true)
+        // group the exterior walls into sublists by their tag (unordered)
+        // list:
+        // --> sublist 1: posX walls
+        // --> sublist 2: negX walls
+        // --> sublist 3: posZ walls
+        // --> sublist 4: negZ walls
+        var wallGOsByTags = _solver.ExteriorWallsByYLayer[_currentWallLayer].Select((x, i) => new { Index = i, Value = x })
+            .GroupBy(x => x.Value.tag)
+            .Select(x => x.Select(v => v.Value).ToList())
+            .ToList();
+
+        var posXAxisWallsList = new List<GameObject>();
+        var negXAxisWallsList = new List<GameObject>();
+        var posZAxisWallsList = new List<GameObject>();
+        var negZAxisWallsList = new List<GameObject>();
+
+        foreach (var list in wallGOsByTags)
         {
-            _exteriorWallParts = GetLSystemPattern(5);
-            if (!PlaceNextExteriorWallPart()) _exteriorWallFailureCounter++;
-            if (_exteriorWallFailureCounter > 0)
+            var tag = list[0].tag; // find out which tags are in this list, so we can order them properly below
+            if (tag == "WFC_wall_posX")
             {
-                _exteriorWallParts = GetLSystemPattern(5);
-                PlaceExteriorWallPartRandomPosition();
-                _exteriorWallFailureCounter = 0;
+                posXAxisWallsList.AddRange(list); // AddRange takes the entire collection of wallGOs and adds it to the poxXAxisWallsList
             }
-            yield return new WaitForSeconds(0.01f);
+            if (tag == "WFC_wall_negX")
+            {
+                negXAxisWallsList.AddRange(list);
+            }
+            if (tag == "WFC_wall_posZ")
+            {
+                posZAxisWallsList.AddRange(list);
+            }
+            if (tag == "WFC_wall_negZ")
+            {
+                negZAxisWallsList.AddRange(list);
+            }
         }
+
+        posXAxisWallsList = posXAxisWallsList.OrderBy(wallGO => wallGO.transform.parent.parent.position.x).ThenBy(wallGO => wallGO.transform.parent.parent.position.z).ToList();
+        negXAxisWallsList = negXAxisWallsList.OrderBy(wallGO => wallGO.transform.parent.parent.position.x).ThenBy(wallGO => wallGO.transform.parent.parent.position.z).ToList();
+        posZAxisWallsList = posZAxisWallsList.OrderBy(wallGO => wallGO.transform.parent.parent.position.z).ThenBy(wallGO => wallGO.transform.parent.parent.position.x).ToList();
+        negZAxisWallsList = negZAxisWallsList.OrderBy(wallGO => wallGO.transform.parent.parent.position.z).ThenBy(wallGO => wallGO.transform.parent.parent.position.x).ToList();
+
+        // GOAL: creates lists where each list contains a set of continuous walls:
+        // --> sublist 1: (10, 4.5, 10), (10, 4.5, 14), (10, 4.5, 18) 
+        // --> sublist 2: (10, 4.5, 30), (10, 4.5, 24)
+        // --> sublist 3: (18, 4.5, 14), (18, 4.5, 18)
+        // --> etc.....
+        var posXAxisContinuousWalls = new List<List<GameObject>>();
+        var temp = new List<GameObject>() { posXAxisWallsList[0] }; // temporary list of wallGOs that make up a continuous wall (when we find a gap, we add these to the list above, then clear the temporary list)
+        for (int i = 1; i < posXAxisWallsList.Count(); i++)
+        {
+            if ((posXAxisWallsList[i].transform.parent.parent.position.z - posXAxisWallsList[i-1].transform.parent.parent.position.z) <= 4)
+            {
+                temp.Add(posXAxisWallsList[i]);
+            }
+            else // when we find a gap
+            {
+                posXAxisContinuousWalls.Add(temp);
+                temp = new List<GameObject>{ posXAxisWallsList[i] };
+            }
+        }
+        Debug.Log(posXAxisContinuousWalls.Count());
+        yield return new WaitForSeconds(0.01f);
     }
 
     private IEnumerator AutoWallPlacement()
@@ -557,8 +649,6 @@ public class WFC_Aggregator : MonoBehaviour
 
     public void OnExteriorWallsPlacementButtonClicked()
     {
-        _exteriorWallParts = GetLSystemPattern(5);
-        PlaceExteriorWallPartRandomPosition();
         ExteriorWallsPlacementCoroutine = ExteriorWallsPlacement();
         StartCoroutine(ExteriorWallsPlacementCoroutine);
     }
