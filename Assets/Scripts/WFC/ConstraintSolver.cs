@@ -43,7 +43,7 @@ public class ConstraintSolver : MonoBehaviour
     {
         //_opennessSlider.onValueChanged.AddListener( delegate { OnOpennessSliderValueChanged(); });
 
-        GridDimensions = new Vector3Int(30, 15, 30); // Based on 4x3x4 TileSize, GridDimensions should be 19x4x10, plus any margin needed around the grid
+        GridDimensions = new Vector3Int(38, 8, 20); // Based on 4x3x4 TileSize, GridDimensions should be 19x4x10, plus any margin needed around the grid
         TileSize = new Vector3(4, 3.05f, 4);
 
         ExteriorWallsByYLayer = new Dictionary<int, List<GameObject>>();
@@ -53,14 +53,15 @@ public class ConstraintSolver : MonoBehaviour
         }
 
         //Add all connections
-        _connections = new List<TileConnection>();
-
-        _connections.Add(new TileConnection(ConnectionType.WFC_connOrange, "WFC_connOrange"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connYellow, "WFC_connYellow"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connBlue, "WFC_connBlue"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connApple, "WFC_connApple"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connBlack, "WFC_connBlack"));
-        _connections.Add(new TileConnection(ConnectionType.WFC_connPink, "WFC_connPink"));
+        _connections = new List<TileConnection>
+        {
+            new TileConnection(ConnectionType.WFC_connOrange, "WFC_connOrange"),
+            new TileConnection(ConnectionType.WFC_connYellow, "WFC_connYellow"),
+            new TileConnection(ConnectionType.WFC_connBlue, "WFC_connBlue"),
+            new TileConnection(ConnectionType.WFC_connApple, "WFC_connApple"),
+            new TileConnection(ConnectionType.WFC_connBlack, "WFC_connBlack"),
+            new TileConnection(ConnectionType.WFC_connPink, "WFC_connPink")
+        };
 
         _patternLibrary = new List<TilePattern>();
 
@@ -428,6 +429,17 @@ public class ConstraintSolver : MonoBehaviour
 
     public void StartStopWFCCoroutine()
     {
+        //if (_propagateStep != null)
+        //{
+        //    StopCoroutine(_propagateStep);
+        //    _propagateStep = null;
+        //}
+        //else
+        //{
+        //    InitialiseWFCGrid();
+        //    _propagateStep = PropagateStep();
+        //    StartCoroutine(_propagateStep);
+        //}
         if (_propagateStep != null)
         {
             StopCoroutine(_propagateStep);
@@ -435,7 +447,6 @@ public class ConstraintSolver : MonoBehaviour
         }
         else
         {
-            InitialiseWFCGrid();
             _propagateStep = PropagateStep();
             StartCoroutine(_propagateStep);
         }

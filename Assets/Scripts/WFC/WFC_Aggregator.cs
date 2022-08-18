@@ -75,49 +75,45 @@ public class WFC_Aggregator : MonoBehaviour
         }
     }
 
-    public Part PlaceExteriorWallPartInTileWall(GameObject wallGO)
+    public Part PlaceExteriorWallPartInTileWall(Part part, GameObject wallGO, Quaternion rotation)
     {
-        for (int i = 0; i < _exteriorWallParts.Count; i++)
+        var size = part.Collider.sharedMesh.bounds.size;
+        var extents = size / 2;
+
+        var minPoint = wallGO.GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
+
+        for (int k = 0; k < 4; k++)
         {
-            Part part = _exteriorWallParts[i];
-            var size = part.Collider.sharedMesh.bounds.size;
-            var extents = size / 2;
-
-            var minPoint = wallGO.GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
-
-            for (int k = 0; k < 4; k++)
+            part.PlaceFirstPart(new Vector3(minPoint.x + extents.x, minPoint.y + extents.y, minPoint.z + extents.z), rotation);
+            bool isInsideWithPositiveExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
+            if (isInsideWithPositiveExtents)
             {
-                part.PlaceFirstPart(minPoint + extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithPositiveExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
-                if (isInsideWithPositiveExtents)
-                {
-                    _exteriorWallParts.Remove(part);
-                    _placedExteriorWallParts.Add(part);
-                    part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
-                    return part;
-                }
-                else
-                {
-                    part.ResetPart();
-                    Debug.Log($"First part {part.Name} was outside");
-                }
-                part.PlaceFirstPart(minPoint - extents, Quaternion.Euler(new Vector3(0, 90 * k, 0)));
-                bool isInsideWithNegativeExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
-                if (isInsideWithNegativeExtents)
-                {
-                    _exteriorWallParts.Remove(part);
-                    _placedExteriorWallParts.Add(part);
-                    part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
-                    return part;
-                }
-                else
-                {
-                    part.ResetPart();
-                    Debug.Log($"First part {part.Name} was outside");
-                }
+                _exteriorWallParts.Remove(part);
+                _placedExteriorWallParts.Add(part);
+                part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
+                return part;
+            }
+            else
+            {
+                part.ResetPart();
+                Debug.Log($"First part {part.Name} was outside");
+            }
+            part.PlaceFirstPart(new Vector3(minPoint.x - extents.x, minPoint.y + extents.y, minPoint.z - extents.z), rotation);
+            bool isInsideWithNegativeExtents = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part);
+            if (isInsideWithNegativeExtents)
+            {
+                _exteriorWallParts.Remove(part);
+                _placedExteriorWallParts.Add(part);
+                part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
+                return part;
+            }
+            else
+            {
+                part.ResetPart();
+                Debug.Log($"First part {part.Name} was outside");
             }
         }
-        Debug.Log("Failed to place new part in random position");
+        Debug.Log("Failed to place new part inside exterior wall GO");
         return null;
     }
 
@@ -368,6 +364,38 @@ public class WFC_Aggregator : MonoBehaviour
         return true;
     }
 
+    private bool IsInsideExteriorWalls(Part part, List<GameObject> continuousWallGOs)
+    {
+        var vertices = part.Collider.sharedMesh.vertices;
+        var partSize = part.Collider.sharedMesh.bounds.size;
+        var partExtents = partSize / 2;
+        var halfOfPartLength = Mathf.Max(partExtents.z, partExtents.x);
+        foreach (var vertex in vertices)
+        {
+            bool foundNearbyTileForVertex = false;
+            foreach (var wallGO in continuousWallGOs/*.Where(GO => GO != null)*/)
+            {
+                //check if the part is within an acceptable distance to be able to collide
+                Vector3 tilePosition = wallGO.transform.position;
+                Vector3 partPosition = part.GOPart.transform.position;
+                if ((tilePosition - partPosition).magnitude < _tileToPartMaxDistance)
+                {
+                    var vertexToWorldSpace = part.GOPart.transform.TransformPoint(vertex); // take the world position of the vertex
+                    if ((vertexToWorldSpace - wallGO.GetComponent<MeshCollider>().ClosestPoint(vertexToWorldSpace)).magnitude < halfOfPartLength)
+                    {
+                        foundNearbyTileForVertex = true;
+                        break; // go to next vertex
+                    }
+                }
+            }
+            if (!foundNearbyTileForVertex)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private bool IsInsideWalls(Part part)
     {
         var vertices = part.Collider.sharedMesh.vertices;
@@ -460,24 +488,23 @@ public class WFC_Aggregator : MonoBehaviour
     {
         var finalPattern = new List<string>();
 
-        var axiom = "WALL1";
+        var axiom = "COLUMN";
         var columnRule = new List<string>() {
-            "WALL1"
-        };
-        var smallWallRule = new List<string>() {
-            "SMALLARCH",
-            "BIGARCH",
-            "WALL2",
-            "COLUMN"
-        };
-        var smallArchRule = new List<string>() {
             "BIGARCH"
         };
-        var bigArchRule = new List<string>() {
+        var smallWallRule = new List<string>() {
+            "SMALLARCH"
+        };
+        var smallArchRule = new List<string>() {
             "WALL2"
         };
-        var bigWallRule = new List<string>() {
+        var bigArchRule = new List<string>() {
+            "WALL1",
             "COLUMN"
+        };
+        var bigWallRule = new List<string>() {
+            "BIGARCH",
+            "WALL1"
         };
 
         List<string> lastSequence = null;
@@ -523,7 +550,7 @@ public class WFC_Aggregator : MonoBehaviour
         var finalPartsList = new List<Part>();
         foreach (var partName in finalPattern)
         {
-            GameObject partGO = Resources.Load<GameObject>($"Prefabs/PartsForWFC/{partName}");
+            GameObject partGO = Resources.Load<GameObject>($"Prefabs/PartsForWFCExteriorWalls/{partName}");
             finalPartsList.Add(new Part(partGO));
         }
         return finalPartsList;
@@ -581,10 +608,15 @@ public class WFC_Aggregator : MonoBehaviour
         // --> sublist 3: (18, 4.5, 14), (18, 4.5, 18)
         // --> etc.....
         var posXAxisContinuousWalls = new List<List<GameObject>>();
+        var negXAxisContinuousWalls = new List<List<GameObject>>();
+        var posZAxisContinuousWalls = new List<List<GameObject>>();
+        var negZAxisContinuousWalls = new List<List<GameObject>>();
+
         var temp = new List<GameObject>() { posXAxisWallsList[0] }; // temporary list of wallGOs that make up a continuous wall (when we find a gap, we add these to the list above, then clear the temporary list)
         for (int i = 1; i < posXAxisWallsList.Count(); i++)
         {
-            if ((posXAxisWallsList[i].transform.parent.parent.position.z - posXAxisWallsList[i-1].transform.parent.parent.position.z) <= 4)
+            if ((posXAxisWallsList[i].transform.parent.parent.position.z - posXAxisWallsList[i-1].transform.parent.parent.position.z) <= 4
+                && posXAxisWallsList[i].transform.parent.parent.position.x == posXAxisWallsList[i-1].transform.parent.parent.position.x)
             {
                 temp.Add(posXAxisWallsList[i]);
             }
@@ -594,8 +626,221 @@ public class WFC_Aggregator : MonoBehaviour
                 temp = new List<GameObject>{ posXAxisWallsList[i] };
             }
         }
-        Debug.Log(posXAxisContinuousWalls.Count());
+        temp = new List<GameObject>() { negXAxisWallsList[0] }; // temporary list of wallGOs that make up a continuous wall (when we find a gap, we add these to the list above, then clear the temporary list)
+        for (int i = 1; i < negXAxisWallsList.Count(); i++)
+        {
+            if ((negXAxisWallsList[i].transform.parent.parent.position.z - negXAxisWallsList[i-1].transform.parent.parent.position.z) <= 4
+                && negXAxisWallsList[i].transform.parent.parent.position.x == negXAxisWallsList[i-1].transform.parent.parent.position.x)
+            {
+                temp.Add(negXAxisWallsList[i]);
+            }
+            else // when we find a gap
+            {
+                negXAxisContinuousWalls.Add(temp);
+                temp = new List<GameObject>{ negXAxisWallsList[i] };
+            }
+        }
+        temp = new List<GameObject>() { posZAxisWallsList[0] }; // temporary list of wallGOs that make up a continuous wall (when we find a gap, we add these to the list above, then clear the temporary list)
+        for (int i = 1; i < posZAxisWallsList.Count(); i++)
+        {
+            if ((posZAxisWallsList[i].transform.parent.parent.position.x - posZAxisWallsList[i-1].transform.parent.parent.position.x) <= 4
+                && posZAxisWallsList[i].transform.parent.parent.position.z == posZAxisWallsList[i-1].transform.parent.parent.position.z)
+            {
+                temp.Add(posZAxisWallsList[i]);
+            }
+            else // when we find a gap
+            {
+                posZAxisContinuousWalls.Add(temp);
+                temp = new List<GameObject>{ posZAxisWallsList[i] };
+            }
+        }
+        temp = new List<GameObject>() { negZAxisWallsList[0] }; // temporary list of wallGOs that make up a continuous wall (when we find a gap, we add these to the list above, then clear the temporary list)
+        for (int i = 1; i < negZAxisWallsList.Count(); i++)
+        {
+            if ((negZAxisWallsList[i].transform.parent.parent.position.x - negZAxisWallsList[i-1].transform.parent.parent.position.x) <= 4
+                && negZAxisWallsList[i].transform.parent.parent.position.z == negZAxisWallsList[i-1].transform.parent.parent.position.z)
+            {
+                temp.Add(negZAxisWallsList[i]);
+            }
+            else // when we find a gap
+            {
+                negZAxisContinuousWalls.Add(temp);
+                temp = new List<GameObject>{ negZAxisWallsList[i] };
+            }
+        }
+
+        foreach (var continuousWallList in posXAxisContinuousWalls)
+        {
+            //int minZ = continuousWallList.Min(wallGO => (int)wallGO.transform.parent.parent.position.z) - 2;
+            //int maxZ = continuousWallList.Max(wallGO => (int)wallGO.transform.parent.parent.position.z) + 2;
+            //int wallLength = Mathf.Abs(maxZ) - Mathf.Abs(minZ);
+
+            var partsToPlace = GetLSystemPattern(15);
+
+            Part lastPlacedPart = partsToPlace[0];
+            var lastPartSize = lastPlacedPart.Collider.sharedMesh.bounds.size;
+            var lastPartExtents = lastPartSize / 2;
+            var rotation = Quaternion.Euler(0, 90, 0);
+            var minPointInWall = continuousWallList[0].GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
+            var lastPartPosition = new Vector3(
+                minPointInWall.x + lastPartExtents.z,
+                minPointInWall.y + lastPartExtents.y,
+                minPointInWall.z + lastPartExtents.x);
+            PlacePartAtPosition(lastPlacedPart, lastPartPosition, rotation, continuousWallList);
+
+            for (int i = 1; i < partsToPlace.Count(); i++)
+            {
+                var part = partsToPlace[i];
+                lastPartPosition = lastPlacedPart.GOPart.transform.position;
+                lastPartSize = lastPlacedPart.Collider.sharedMesh.bounds.size;
+                lastPartExtents = lastPartSize / 2;
+                
+                var nextPartSize = part.Collider.sharedMesh.bounds.size;
+                var nextPartExtents = nextPartSize / 2;
+                var nextPartPos = new Vector3(
+                    lastPartPosition.x,
+                    lastPartPosition.y,
+                    lastPartPosition.z + Mathf.Max(lastPartExtents.x, lastPartExtents.z) + Mathf.Max(nextPartExtents.x, nextPartExtents.z)); // we use Max(extents.x, extents.z) in order to check for the longest side, as this might be messed up after rotation
+
+                lastPlacedPart = PlacePartAtPosition(part, nextPartPos, rotation, continuousWallList);
+                
+                if (lastPlacedPart.Status != PartStatus.Placed) break;
+            }
+        }
+        foreach (var continuousWallList in negXAxisContinuousWalls)
+        {
+            //int minZ = continuousWallList.Min(wallGO => (int)wallGO.transform.parent.parent.position.z) - 2;
+            //int maxZ = continuousWallList.Max(wallGO => (int)wallGO.transform.parent.parent.position.z) + 2;
+            //int wallLength = Mathf.Abs(maxZ) - Mathf.Abs(minZ);
+
+            var partsToPlace = GetLSystemPattern(15);
+
+            Part lastPlacedPart = partsToPlace[0];
+            var lastPartSize = lastPlacedPart.Collider.sharedMesh.bounds.size;
+            var lastPartExtents = lastPartSize / 2;
+            var rotation = Quaternion.Euler(0, 90, 0);
+            var minPointInWall = continuousWallList[0].GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
+            var lastPartPosition = new Vector3(
+                minPointInWall.x + lastPartExtents.z,
+                minPointInWall.y + lastPartExtents.y,
+                minPointInWall.z + lastPartExtents.x);
+            PlacePartAtPosition(lastPlacedPart, lastPartPosition, rotation, continuousWallList);
+
+            for (int i = 1; i < partsToPlace.Count(); i++)
+            {
+                var part = partsToPlace[i];
+                lastPartPosition = lastPlacedPart.GOPart.transform.position;
+                lastPartSize = lastPlacedPart.Collider.sharedMesh.bounds.size;
+                lastPartExtents = lastPartSize / 2;
+
+                var nextPartSize = part.Collider.sharedMesh.bounds.size;
+                var nextPartExtents = nextPartSize / 2;
+                var nextPartPos = new Vector3(
+                    lastPartPosition.x,
+                    lastPartPosition.y,
+                    lastPartPosition.z + Mathf.Max(lastPartExtents.x, lastPartExtents.z) + Mathf.Max(nextPartExtents.x, nextPartExtents.z)); // we use Max(extents.x, extents.z) in order to check for the longest side, as this might be messed up after rotation
+
+                lastPlacedPart = PlacePartAtPosition(part, nextPartPos, rotation, continuousWallList);
+
+                if (lastPlacedPart.Status != PartStatus.Placed) break;
+            }
+        }
+        foreach (var continuousWallList in posZAxisContinuousWalls)
+        {
+            //int minZ = continuousWallList.Min(wallGO => (int)wallGO.transform.parent.parent.position.z) - 2;
+            //int maxZ = continuousWallList.Max(wallGO => (int)wallGO.transform.parent.parent.position.z) + 2;
+            //int wallLength = Mathf.Abs(maxZ) - Mathf.Abs(minZ);
+
+            var partsToPlace = GetLSystemPattern(15);
+
+            Part lastPlacedPart = partsToPlace[0];
+            var lastPartSize = lastPlacedPart.Collider.sharedMesh.bounds.size;
+            var lastPartExtents = lastPartSize / 2;
+            var rotation = Quaternion.Euler(0, 0, 0);
+            var minPointInWall = continuousWallList[0].GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
+            var lastPartPosition = new Vector3(
+                minPointInWall.x + lastPartExtents.x,
+                minPointInWall.y + lastPartExtents.y,
+                minPointInWall.z + lastPartExtents.z);
+            PlacePartAtPosition(lastPlacedPart, lastPartPosition, rotation, continuousWallList);
+
+            for (int i = 1; i < partsToPlace.Count(); i++)
+            {
+                var part = partsToPlace[i];
+                lastPartPosition = lastPlacedPart.GOPart.transform.position;
+                lastPartSize = lastPlacedPart.Collider.sharedMesh.bounds.size;
+                lastPartExtents = lastPartSize / 2;
+
+                var nextPartSize = part.Collider.sharedMesh.bounds.size;
+                var nextPartExtents = nextPartSize / 2;
+                var nextPartPos = new Vector3(
+                    lastPartPosition.x + Mathf.Max(lastPartExtents.x, lastPartExtents.z) + Mathf.Max(nextPartExtents.x, nextPartExtents.z), // we use Max(extents.x, extents.z) in order to check for the longest side, as this might be messed up after rotation
+                    lastPartPosition.y,
+                    lastPartPosition.z);
+
+                lastPlacedPart = PlacePartAtPosition(part, nextPartPos, rotation, continuousWallList);
+
+                if (lastPlacedPart.Status != PartStatus.Placed) break;
+            }
+        }
+        foreach (var continuousWallList in negZAxisContinuousWalls)
+        {
+            //int minZ = continuousWallList.Min(wallGO => (int)wallGO.transform.parent.parent.position.z) - 2;
+            //int maxZ = continuousWallList.Max(wallGO => (int)wallGO.transform.parent.parent.position.z) + 2;
+            //int wallLength = Mathf.Abs(maxZ) - Mathf.Abs(minZ);
+
+            var partsToPlace = GetLSystemPattern(15);
+
+            Part lastPlacedPart = partsToPlace[0];
+            var lastPartSize = lastPlacedPart.Collider.sharedMesh.bounds.size;
+            var lastPartExtents = lastPartSize / 2;
+            var rotation = Quaternion.Euler(0, 0, 0);
+            var minPointInWall = continuousWallList[0].GetComponent<MeshCollider>().ClosestPoint(Vector3.zero);
+            var lastPartPosition = new Vector3(
+                minPointInWall.x + lastPartExtents.x,
+                minPointInWall.y + lastPartExtents.y,
+                minPointInWall.z + lastPartExtents.z);
+            PlacePartAtPosition(lastPlacedPart, lastPartPosition, rotation, continuousWallList);
+
+            for (int i = 1; i < partsToPlace.Count(); i++)
+            {
+                var part = partsToPlace[i];
+                lastPartPosition = lastPlacedPart.GOPart.transform.position;
+                lastPartSize = lastPlacedPart.Collider.sharedMesh.bounds.size;
+                lastPartExtents = lastPartSize / 2;
+
+                var nextPartSize = part.Collider.sharedMesh.bounds.size;
+                var nextPartExtents = nextPartSize / 2;
+                var nextPartPos = new Vector3(
+                    lastPartPosition.x + Mathf.Max(lastPartExtents.x, lastPartExtents.z) + Mathf.Max(nextPartExtents.x, nextPartExtents.z), // we use Max(extents.x, extents.z) in order to check for the longest side, as this might be messed up after rotation
+                    lastPartPosition.y,
+                    lastPartPosition.z);
+
+                lastPlacedPart = PlacePartAtPosition(part, nextPartPos, rotation, continuousWallList);
+
+                if (lastPlacedPart.Status != PartStatus.Placed) break;
+            }
+        }
         yield return new WaitForSeconds(0.01f);
+    }
+
+    private Part PlacePartAtPosition(Part part, Vector3 position, Quaternion rotation, List<GameObject> continuousWallGOs)
+    {
+        part.PlaceFirstPart(position, rotation);
+        bool isInside = !IsColliding(part, _placedExteriorWallParts) && !IsColliding(part, _placedWallParts) && IsInsideExteriorWalls(part, continuousWallGOs);
+        if (isInside)
+        {
+            _exteriorWallParts.Remove(part);
+            _placedExteriorWallParts.Add(part);
+            part.Name = $"{part.Name} added {_placedExteriorWallParts.Count} (wall)";
+            return part;
+        }
+        else
+        {
+            part.ResetPart();
+            Debug.Log($"First part {part.Name} was outside");
+            return part;
+        }
     }
 
     private IEnumerator AutoWallPlacement()
